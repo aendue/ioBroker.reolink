@@ -1,0 +1,330 @@
+{
+    "common": {
+        "name": "reolink",
+        "version": "0.0.1",
+        "news": {
+            "0.0.1": {
+                "en": "initial release",
+                "de": "Erstveröffentlichung",
+                "ru": "Начальная версия",
+                "pt": "lançamento inicial",
+                "nl": "Eerste uitgave",
+                "fr": "Première version",
+                "it": "Versione iniziale",
+                "es": "Versión inicial",
+                "pl": "Pierwsze wydanie",
+                "zh-cn": "首次出版"
+            }
+        },
+        "title": "reolink",
+        "titleLang": {
+            "en": "reolink",
+            "de": "reolink",
+            "ru": "реолин",
+            "pt": "religação",
+            "nl": "reolink",
+            "fr": "reolink",
+            "it": "reolink",
+            "es": "reolink",
+            "pl": "reolinka",
+            "zh-cn": "重新联系"
+        },
+        "desc": {
+            "en": "reolink",
+            "de": "reolink",
+            "ru": "реолин",
+            "pt": "religação",
+            "nl": "reolink",
+            "fr": "reolink",
+            "it": "reolink",
+            "es": "reolink",
+            "pl": "reolinka",
+            "zh-cn": "重新联系"
+        },
+        "authors": [
+            "Andy Grundt <andy.grundt@icloud.com>"
+        ],
+        "keywords": [
+            "ioBroker",
+            "template",
+            "Smart Home",
+            "home automation",
+            "camera"
+        ],
+        "license": "MIT",
+        "platform": "Javascript/Node.js",
+        "main": "main.js",
+        "icon": "reolink.png",
+        "enabled": true,
+        "extIcon": "https://raw.githubusercontent.com/aendue/ioBroker.reolink/main/admin/reolink.png",
+        "readme": "https://github.com/aendue/ioBroker.reolink/blob/main/README.md",
+        "loglevel": "info",
+        "mode": "daemon",
+        "type": "alarm",
+        "compact": true,
+        "connectionType": "local",
+        "dataSource": "poll",
+        "materialize": true,
+        "adminUI": {
+            "config": "json"
+        },
+        "dependencies": [
+            {
+                "js-controller": ">=2.0.0"
+            }
+        ],
+        "globalDependencies": [
+            {
+                "admin": ">=5.1.28"
+            }
+        ]
+    },
+    "native": {
+        "options.cameraType": "",
+        "cameraIp": " ",
+        "cameraChannel": "0",
+
+        "cameraUser": "",
+        "cameraPassword": "",
+        "apiRefreshInterval": "10"
+    },
+    "objects": [],
+    "instanceObjects": [
+        {
+            "_id": "States",
+            "type": "channel",
+            "common": {
+                "name": "States"
+            },
+            "native": {}
+        },
+        {
+            "_id": "States.Md",
+            "type": "state",
+            "common": {
+                "role": "value",
+                "name": "Motion Detection",
+                "type": "text",
+                "read": true,
+                "write": true
+            },
+            "native": {}
+        },
+        {
+            "_id": "Network",
+            "type": "channel",
+            "common": {
+                "name": "Network"
+            },
+            "native": {}
+        },
+        {
+            "_id": "Network.Ip",
+            "type": "state",
+            "common": {
+                "role": "value",
+                "name": "IP address",
+                "type": "text",
+                "read": true,
+                "write": true
+            },
+            "native": {}
+        },
+        {
+            "_id": "Network.Channel",
+            "type": "state",
+            "common": {
+                "role": "value",
+                "name": "Channel",
+                "type": "number",
+                "read": true,
+                "write": true
+            },
+            "native": {}
+        },
+        {
+            "_id": "Network.Connected",
+            "type": "state",
+            "common": {
+                "role": "indicator.connected",
+                "name": "Camera connected",
+                "type": "boolean",
+                "read": true,
+                "write": false
+            }
+        },
+        {
+            "_id": "Network.Mac",
+            "type": "state",
+            "common": {
+                "role": "value",
+                "name": "Camera mac",
+                "type": "string",
+                "read": true,
+                "write": false
+            }
+        },
+        {
+            "_id": "Network.ActiveLink",
+            "type": "state",
+            "common": {
+                "role": "value",
+                "name": "active link",
+                "type": "string",
+                "read": true,
+                "write": false
+            }
+        },
+        {
+            "_id": "Network.Dns",
+            "type": "state",
+            "common": {
+                "role": "value",
+                "name": "DNS address",
+                "type": "string",
+                "read": true,
+                "write": false
+            }
+        },
+        {
+            "_id": "Network.Gateway",
+            "type": "state",
+            "common": {
+                "role": "value",
+                "name": "Gateway address",
+                "type": "string",
+                "read": true,
+                "write": false
+            }
+        },
+        {
+            "_id": "Network.Mask",
+            "type": "state",
+            "common": {
+                "role": "value",
+                "name": "Subnetmask",
+                "type": "string",
+                "read": true,
+                "write": false
+            }
+        },
+        {
+            "_id": "Network.NetworkType",
+            "type": "state",
+            "common": {
+                "role": "value",
+                "name": "NetworkType",
+                "type": "string",
+                "read": true,
+                "write": false
+            }
+        },
+        {
+            "_id": "Device",
+            "type": "channel",
+            "common": {
+                "name": "Information from Device"
+            },
+            "native": {}
+        },
+        {
+            "_id": "Device.Model",
+            "type": "state",
+            "common": {
+                "role": "value",
+                "name": "Camera model",
+                "type": "string",
+                "read": true,
+                "write": false
+            }
+        },
+        {
+            "_id": "Device.BuildDay",
+            "type": "state",
+            "common": {
+                "role": "value",
+                "name": "Camera buildDay",
+                "type": "string",
+                "read": true,
+                "write": false
+            }
+        },
+        {
+            "_id": "Device.CfgVer",
+            "type": "state",
+            "common": {
+                "role": "value",
+                "name": "Camera cfgVer",
+                "type": "string",
+                "read": true,
+                "write": false
+            }
+        },
+        {
+            "_id": "Device.Detail",
+            "type": "state",
+            "common": {
+                "role": "value",
+                "name": "Camera detail",
+                "type": "string",
+                "read": true,
+                "write": false
+            }
+        },
+        {
+            "_id": "Device.DiskNum",
+            "type": "state",
+            "common": {
+                "role": "value",
+                "name": "Camera diskNum",
+                "type": "number",
+                "read": true,
+                "write": false
+            }
+        },
+        {
+            "_id": "Device.FirmVer",
+            "type": "state",
+            "common": {
+                "role": "value",
+                "name": "Camera firmVer",
+                "type": "string",
+                "read": true,
+                "write": false
+            }
+        },
+        {
+            "_id": "Device.Name",
+            "type": "state",
+            "common": {
+                "role": "value",
+                "name": "Camera name",
+                "type": "string",
+                "read": true,
+                "write": false
+            }
+        },
+        {
+            "_id": "Device.Serial",
+            "type": "state",
+            "common": {
+                "role": "value",
+                "name": "Camera serial",
+                "type": "string",
+                "read": true,
+                "write": false
+            }
+        },
+        {
+            "_id": "Device.Wifi",
+            "type": "state",
+            "common": {
+                "role": "value",
+                "name": "Camera wifi",
+                "type": "number",
+                "read": true,
+                "write": false
+            }
+        }
+    ]
+}
