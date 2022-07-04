@@ -56,7 +56,7 @@
         "main": "main.js",
         "icon": "reolink.png",
         "enabled": true,
-        "extIcon": "https://raw.githubusercontent.com/aendue/ioBroker.reolink/main/admin/reolink_logo.png",
+        "extIcon": "https://raw.githubusercontent.com/aendue/ioBroker.reolink/main/admin/reolink.png",
         "readme": "https://github.com/aendue/ioBroker.reolink/blob/main/README.md",
         "loglevel": "info",
         "mode": "daemon",
