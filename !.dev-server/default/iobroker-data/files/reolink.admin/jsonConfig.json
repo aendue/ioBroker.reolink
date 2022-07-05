@@ -1,0 +1,71 @@
+{
+    "i18n": true,
+    "type": "tabs",
+    "items": {
+        "_options": {
+            "type": "panel",
+            "label": "Kamera Typ",
+            "items": {
+                "cameraType": { 
+                    "type": "select",
+                    "label": "Kamera",
+                    "sm": 6,
+                    "md": 6,
+                    "lg": 6,
+                    "options": [
+                        {"label": "RLC-510A", "value": "rlc510A"},
+                        {"label": "Andere", "value": "others"}
+                    ] 
+                },
+                "cameraIp": {
+                    "newline": true,
+                    "type": "text",
+                    "sm": 2,
+                    "md": 4,
+                    "lg": 4,
+                    "label": "IP-Adresse"
+                },
+                "cameraChannel": {
+                    "type": "number",
+                    "sm": 2,
+                    "md": 4,
+                    "lg": 4,
+                    "label": "Kanal"
+                },
+                "cameraUser": {
+                    "newline": true,
+                    "type": "text",
+                    "sm": 2,
+                    "md": 4,
+                    "lg": 4,
+                    "label": "Benutzer"
+                },
+                "cameraPassword": {
+                    "type": "password",
+                    "repeat": false,
+                    "visible": false,
+                    "sm": 2,
+                    "md": 4,
+                    "lg": 4,
+                    "label": "Passwort"
+                }
+            }
+        },
+        "_advanced": {
+            "type": "panel",
+            "label": "Erweitert",
+            "items": {
+                "apiRefreshInterval": {
+                    "type": "number",
+                    "min": 1,
+                    "max": 10000,
+                    "sm": 6,
+                    "md": 6,
+                    "lg": 6,
+                    "label": "Abfragezyklus der Kamera",
+                    "help": "in Sekunden"
+                }
+            }
+        }
+    }
+}

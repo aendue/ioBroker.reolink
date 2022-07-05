@@ -93,7 +93,18 @@
             "_id": "States",
             "type": "channel",
             "common": {
-                "name": "States"
+                "name": {
+                    "en": "States",
+                    "de": "Werte",
+                    "ru": "США",
+                    "pt": "Estados Unidos",
+                    "nl": "Verenigde Staten",
+                    "fr": "États",
+                    "it": "Stati",
+                    "es": "Estados",
+                    "pl": "Stany Zjednoczone",
+                    "zh-cn": "国家"
+                }
             },
             "native": {}
         },
@@ -102,8 +113,19 @@
             "type": "state",
             "common": {
                 "role": "value",
-                "name": "Motion Detection",
-                "type": "text",
+                "name": {
+                    "en": "Motion Detection",
+                    "de": "Bewegungserkennung",
+                    "ru": "Обнаружение движения",
+                    "pt": "Detecção de movimento",
+                    "nl": "Motion Detect",
+                    "fr": "Détection de mouvement",
+                    "it": "Rilevamento di movimento",
+                    "es": "Motion Detection",
+                    "pl": "Motion Detection",
+                    "zh-cn": "纠正"
+                },
+                "type": "number",
                 "read": true,
                 "write": true
             },
@@ -113,7 +135,18 @@
             "_id": "Network",
             "type": "channel",
             "common": {
-                "name": "Network"
+                "name": {
+                    "en": "Network",
+                    "de": "Netzwerk",
+                    "ru": "Сеть",
+                    "pt": "Rede",
+                    "nl": "Netwerk",
+                    "fr": "Network",
+                    "it": "Rete di rete",
+                    "es": "Red",
+                    "pl": "Network",
+                    "zh-cn": "网络"
+                }
             },
             "native": {}
         },
@@ -122,7 +155,18 @@
             "type": "state",
             "common": {
                 "role": "value",
-                "name": "IP address",
+                "name": { 
+                    "en": "IP address",
+                    "de": "IP-Adresse",
+                    "ru": "IP адрес",
+                    "pt": "Endereço IP",
+                    "nl": "IP adres",
+                    "fr": "Adresse IP",
+                    "it": "Indirizzo IP",
+                    "es": "Dirección IP",
+                    "pl": "Adres IP",
+                    "zh-cn": "IP地址"
+                },
                 "type": "text",
                 "read": true,
                 "write": true
@@ -134,7 +178,18 @@
             "type": "state",
             "common": {
                 "role": "value",
-                "name": "Channel",
+                "name": {
+                    "en": "Channel",
+                    "de": "Kanal",
+                    "ru": "Канал",
+                    "pt": "Canal",
+                    "nl": "Channel",
+                    "fr": "Channel",
+                    "it": "Canale",
+                    "es": "Canal",
+                    "pl": "Channel",
+                    "zh-cn": "海峡"
+                },
                 "type": "number",
                 "read": true,
                 "write": true
@@ -146,7 +201,18 @@
             "type": "state",
             "common": {
                 "role": "indicator.connected",
-                "name": "Camera connected",
+                "name": {    
+                    "en": "Camera connected",
+                    "de": "Kamera verbunden",
+                    "ru": "Камера подключена",
+                    "pt": "Câmara conectada",
+                    "nl": "Camera verbonden",
+                    "fr": "Caméra connectée",
+                    "it": "Telecamera collegata",
+                    "es": "Cámara conectada",
+                    "pl": "Camera connected",
+                    "zh-cn": "2. Camera联系"
+                },
                 "type": "boolean",
                 "read": true,
                 "write": false
@@ -157,7 +223,18 @@
             "type": "state",
             "common": {
                 "role": "value",
-                "name": "Camera mac",
+                "name": {
+                    "en": "Camera mac",
+                    "de": "Kamera mac",
+                    "ru": "Камера mac",
+                    "pt": "Mac da câmera",
+                    "nl": "Camera mac",
+                    "fr": "Caméra mac",
+                    "it": "Macchina fotografica",
+                    "es": "Cámara mac",
+                    "pl": "Camera macer",
+                    "zh-cn": "Camera mac"
+                  },
                 "type": "string",
                 "read": true,
                 "write": false
@@ -168,7 +245,18 @@
             "type": "state",
             "common": {
                 "role": "value",
-                "name": "active link",
+                "name": {
+                    "en": "active link",
+                    "de": "aktiver link",
+                    "ru": "активная ссылка",
+                    "pt": "link ativo",
+                    "nl": "active",
+                    "fr": "active link",
+                    "it": "link attivo",
+                    "es": "enlace activo",
+                    "pl": "link",
+                    "zh-cn": "积极联系"
+                  },
                 "type": "string",
                 "read": true,
                 "write": false
@@ -179,7 +267,18 @@
             "type": "state",
             "common": {
                 "role": "value",
-                "name": "DNS address",
+                "name": {
+                    "en": "DNS address",
+                    "de": "DNS-Adresse",
+                    "ru": "DNS адрес",
+                    "pt": "Endereço DNS",
+                    "nl": "DNS adres",
+                    "fr": "Adresse DNS",
+                    "it": "Indirizzo DNS",
+                    "es": "Dirección del DNS",
+                    "pl": "Adres DNS",
+                    "zh-cn": "DNS地址"
+                  },
                 "type": "string",
                 "read": true,
                 "write": false
@@ -190,7 +289,18 @@
             "type": "state",
             "common": {
                 "role": "value",
-                "name": "Gateway address",
+                "name": {
+                    "en": "Gateway address",
+                    "de": "Gateway-Adresse",
+                    "ru": "Gateway адрес",
+                    "pt": "Endereço do Gateway",
+                    "nl": "Gateway adres",
+                    "fr": "Adresse de la passerelle",
+                    "it": "Indirizzo del gateway",
+                    "es": "Dirección de puerta",
+                    "pl": "Adres Gateway",
+                    "zh-cn": "Gateway地址"
+                  },
                 "type": "string",
                 "read": true,
                 "write": false
@@ -201,7 +311,18 @@
             "type": "state",
             "common": {
                 "role": "value",
-                "name": "Subnetmask",
+                "name": {
+                    "en": "Subnetmask",
+                    "de": "Subnetmask",
+                    "ru": "Субнетмаск",
+                    "pt": "Subnetmask",
+                    "nl": "Vertaling:",
+                    "fr": "Subnetmask",
+                    "it": "Subnetmask",
+                    "es": "Subnetmask",
+                    "pl": "Subnet",
+                    "zh-cn": "Subnetmask"
+                  },
                 "type": "string",
                 "read": true,
                 "write": false
@@ -212,7 +333,18 @@
             "type": "state",
             "common": {
                 "role": "value",
-                "name": "NetworkType",
+                "name": {
+                    "en": "NetworkType",
+                    "de": "Netzwerktyp",
+                    "ru": "NetworkType",
+                    "pt": "Tipo de rede",
+                    "nl": "NetworkT",
+                    "fr": "NetworkType",
+                    "it": "Rete",
+                    "es": "NetworkType",
+                    "pl": "NetworkType",
+                    "zh-cn": "网络"
+                  },
                 "type": "string",
                 "read": true,
                 "write": false
@@ -222,7 +354,18 @@
             "_id": "Device",
             "type": "channel",
             "common": {
-                "name": "Information from Device"
+                "name": {
+                    "en": "Information from Device",
+                    "de": "Informationen vom Gerät",
+                    "ru": "Информация от устройства",
+                    "pt": "InformaÃ§Ã£o do Dispositivo",
+                    "nl": "Informatie van Device",
+                    "fr": "Information de l'appareil",
+                    "it": "Informazioni da Dispositivo",
+                    "es": "Información del dispositivo",
+                    "pl": "Informacja o Device",
+                    "zh-cn": "从Devic收到的资料"
+                  }
             },
             "native": {}
         },
@@ -231,7 +374,18 @@
             "type": "state",
             "common": {
                 "role": "value",
-                "name": "Camera model",
+                "name": {
+                    "en": "Camera model",
+                    "de": "Kameramodell",
+                    "ru": "Модель камеры",
+                    "pt": "Modelo de câmera",
+                    "nl": "Camera model",
+                    "fr": "Modèle de caméra",
+                    "it": "Modello di fotocamera",
+                    "es": "Modelo de cámara",
+                    "pl": "Model Camera",
+                    "zh-cn": "2. Camera模型"
+                  },
                 "type": "string",
                 "read": true,
                 "write": false
@@ -242,7 +396,18 @@
             "type": "state",
             "common": {
                 "role": "value",
-                "name": "Camera buildDay",
+                "name": {
+                    "en": "Camera buildDay",
+                    "de": "Kameraaufbau Tag",
+                    "ru": "Создание камеры День",
+                    "pt": "Construção de câmera Dia",
+                    "nl": "Camera bouwt Dag",
+                    "fr": "Camera build Jour",
+                    "it": "Costruzione della macchina fotografica Giorno",
+                    "es": "Cámara Día",
+                    "pl": "Kamera Dzień",
+                    "zh-cn": "Camera大楼 日 日"
+                  },
                 "type": "string",
                 "read": true,
                 "write": false
@@ -253,7 +418,18 @@
             "type": "state",
             "common": {
                 "role": "value",
-                "name": "Camera cfgVer",
+                "name": {
+                    "en": "Camera cfgVer",
+                    "de": "Kamera cfg Verwendet",
+                    "ru": "Камера cfg Вер",
+                    "pt": "Câmera cfg Ver",
+                    "nl": "Camera cfg Ver",
+                    "fr": "Caméra cfg Ver",
+                    "it": "Macchina fotografica cfg Ver",
+                    "es": "Cámara cfg Ver",
+                    "pl": "Camera cfg. Wiersze",
+                    "zh-cn": "Camera cfg 附 件"
+                  },
                 "type": "string",
                 "read": true,
                 "write": false
@@ -264,7 +440,18 @@
             "type": "state",
             "common": {
                 "role": "value",
-                "name": "Camera detail",
+                "name": {
+                    "en": "Camera detail",
+                    "de": "Kamera Detail",
+                    "ru": "Деталь камеры",
+                    "pt": "Detalhes da câmera",
+                    "nl": "Camera detail",
+                    "fr": "Détail de la caméra",
+                    "it": "Dettaglio della fotocamera",
+                    "es": "Detalles de la cámara",
+                    "pl": "Szczegół",
+                    "zh-cn": "Camera详细情况"
+                  },
                 "type": "string",
                 "read": true,
                 "write": false
@@ -275,7 +462,18 @@
             "type": "state",
             "common": {
                 "role": "value",
-                "name": "Camera diskNum",
+                "name": {
+                    "en": "Camera diskNum",
+                    "de": "Kamera HDDanz",
+                    "ru": "Диск камерыNum",
+                    "pt": "Disco da câmeraNum",
+                    "nl": "Camera DiskNum",
+                    "fr": "Disque de caméraNum",
+                    "it": "Fotocamera discoNum",
+                    "es": "Disco de cámaraNum",
+                    "pl": "Camera discNum",
+                    "zh-cn": "Camera dikNum"
+                  },
                 "type": "number",
                 "read": true,
                 "write": false
@@ -286,7 +484,18 @@
             "type": "state",
             "common": {
                 "role": "value",
-                "name": "Camera firmVer",
+                "name": {
+                    "en": "Camera firmVer",
+                    "de": "Kamera Firma Verwendet",
+                    "ru": "Камера фирма Вер",
+                    "pt": "Empresa de câmera Ver",
+                    "nl": "Camera firma Ver",
+                    "fr": "Camera firm Ver",
+                    "it": "Azienda di macchine fotografiche Ver",
+                    "es": "Firma de cámara Ver",
+                    "pl": "Firma Camera Wiersze",
+                    "zh-cn": "Camera公司 附 件"
+                  },
                 "type": "string",
                 "read": true,
                 "write": false
@@ -297,7 +506,18 @@
             "type": "state",
             "common": {
                 "role": "value",
-                "name": "Camera name",
+                "name": {
+                    "en": "Camera name",
+                    "de": "Kameraname",
+                    "ru": "Название камеры",
+                    "pt": "Nome da câmara",
+                    "nl": "Camera naam",
+                    "fr": "Nom de la caméra",
+                    "it": "Nome della macchina",
+                    "es": "Nombre de cámara",
+                    "pl": "Camera",
+                    "zh-cn": "Camera姓名"
+                  },
                 "type": "string",
                 "read": true,
                 "write": false
@@ -308,7 +528,18 @@
             "type": "state",
             "common": {
                 "role": "value",
-                "name": "Camera serial",
+                "name": {
+                    "en": "Camera serial",
+                    "de": "Kamera seriell",
+                    "ru": "Серия камеры",
+                    "pt": "Série da câmera",
+                    "nl": "Camera serie",
+                    "fr": "Caméra série",
+                    "it": "Fotocamera seriale",
+                    "es": "Cámara serie",
+                    "pl": "Seriali Camera",
+                    "zh-cn": "Cameraserial"
+                  },
                 "type": "string",
                 "read": true,
                 "write": false
@@ -319,7 +550,18 @@
             "type": "state",
             "common": {
                 "role": "value",
-                "name": "Camera wifi",
+                "name": {
+                    "en": "Camera wifi",
+                    "de": "Kamera Wifi",
+                    "ru": "Камера wifi",
+                    "pt": "Câmera wifi",
+                    "nl": "Camera Wifi",
+                    "fr": "Caméra wifi",
+                    "it": "Camera wifi",
+                    "es": "Cámara wifi",
+                    "pl": "Camera",
+                    "zh-cn": "Camerawifi"
+                  },
                 "type": "number",
                 "read": true,
                 "write": false

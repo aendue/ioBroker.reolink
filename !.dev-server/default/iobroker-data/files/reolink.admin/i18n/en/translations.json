@@ -1,0 +1,12 @@
+{
+    "Kamera Typ": "camera type",
+    "Kamera" : "Camera",
+    "Andere": "others",
+    "IP-Adresse": "IP address",
+    "Kanal": "Channel",
+    "Benutzer": "User",
+    "Passwort": "Password",
+    "Erweitert": "extended",
+    "Abfragezyklus der Kamera": "polling time",
+    "in Sekunden": "in seconds"
+}

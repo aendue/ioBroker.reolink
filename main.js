@@ -118,7 +118,7 @@ class TestProject extends utils.Adapter {
 				await this.setStateAsync("Device.Detail", {val: DevValues.value.DevInfo.detail, ack: true});
 				await this.setStateAsync("Device.DiskNum", {val: DevValues.value.DevInfo.diskNum, ack: true});
 				await this.setStateAsync("Device.FirmVer", {val: DevValues.value.DevInfo.firmVer, ack: true});
-				await this.setStateAsync("Device.Model", {val: this.cameraModel, ack: true});
+				await this.setStateAsync("Device.Model", {val: DevValues.value.DevInfo.Model, ack: true});
 				await this.setStateAsync("Device.Name", {val: DevValues.value.DevInfo.name, ack: true});
 				await this.setStateAsync("Device.Serial", {val: DevValues.value.DevInfo.serial, ack: true});
 				await this.setStateAsync("Device.Wifi", {val: DevValues.value.DevInfo.wifi, ack: true});
