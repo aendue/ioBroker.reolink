@@ -1,7 +1,7 @@
 {
     "common": {
         "name": "reolink",
-        "version": "0.0.1",
+        "version": "0.0.2",
         "news": {
             "0.0.1": {
                 "en": "initial release",
@@ -70,7 +70,7 @@
         },
         "dependencies": [
             {
-                "js-controller": ">=2.0.0"
+                "js-controller": ">=3.3.19"
             }
         ],
         "globalDependencies": [
@@ -83,7 +83,6 @@
         "options.cameraType": "",
         "cameraIp": " ",
         "cameraChannel": "0",
-
         "cameraUser": "",
         "cameraPassword": "",
         "apiRefreshInterval": "10"

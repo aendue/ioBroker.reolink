@@ -60,7 +60,12 @@ RLC-510A
 -->
 
 ### **WORK IN PROGRESS**
-* (Andy Grundt) initial release
+
+* (aendue) added languages
+
+### 0.0.1 (2022-07-05)
+
+* (aendue) initial release
 
 ## License
 MIT License

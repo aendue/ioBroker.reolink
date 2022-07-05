@@ -4,7 +4,7 @@
     "items": {
         "_options": {
             "type": "panel",
-            "label": "cameraType",
+            "label": "Kamera Typ",
             "items": {
                 "cameraType": { 
                     "type": "select",
@@ -14,7 +14,7 @@
                     "lg": 6,
                     "options": [
                         {"label": "RLC-510A", "value": "rlc510A"},
-                        {"label": "Others", "value": "others"}
+                        {"label": "Andere", "value": "others"}
                     ] 
                 },
                 "cameraIp": {
@@ -23,16 +23,14 @@
                     "sm": 2,
                     "md": 4,
                     "lg": 4,
-                    "label": "IP-Adresse",
-                    "help": "IP Adresse"
+                    "label": "IP-Adresse"
                 },
                 "cameraChannel": {
                     "type": "number",
                     "sm": 2,
                     "md": 4,
                     "lg": 4,
-                    "label": "Kanal",
-                    "help": "Kanal"
+                    "label": "Kanal"
                 },
                 "cameraUser": {
                     "newline": true,
@@ -40,8 +38,7 @@
                     "sm": 2,
                     "md": 4,
                     "lg": 4,
-                    "label": "Benutzer",
-                    "help": "Benutzer"
+                    "label": "Benutzer"
                 },
                 "cameraPassword": {
                     "type": "password",
