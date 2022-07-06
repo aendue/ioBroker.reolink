@@ -93,7 +93,7 @@ class TestProject extends utils.Adapter {
 				var MdValues = MdInfoValues.data[0];
 
 				this.log.info(MdValues.value.state);
-				await this.setStateAsync("States.Md", {val: MdValues.value.state, ack: true});
+				await this.setStateAsync("sensor.motion", {val: MdValues.value.state, ack: true});
 
 			}
 		} catch (error) {

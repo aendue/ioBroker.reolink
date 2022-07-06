@@ -90,29 +90,29 @@
     "objects": [],
     "instanceObjects": [
         {
-            "_id": "States",
+            "_id": "sensor",
             "type": "channel",
             "common": {
                 "name": {
-                    "en": "States",
-                    "de": "Werte",
-                    "ru": "США",
-                    "pt": "Estados Unidos",
-                    "nl": "Verenigde Staten",
-                    "fr": "États",
-                    "it": "Stati",
-                    "es": "Estados",
-                    "pl": "Stany Zjednoczone",
-                    "zh-cn": "国家"
+                    "en": "sensor",
+                    "de": "sensor",
+                    "ru": "датчик",
+                    "pt": "sensor de sensor",
+                    "nl": "sensor",
+                    "fr": "capteur",
+                    "it": "sensore sensore sensore sensore",
+                    "es": "sensor",
+                    "pl": "sensor",
+                    "zh-cn": "传感"
                 }
             },
             "native": {}
         },
         {
-            "_id": "States.Md",
+            "_id": "sensor.motion",
             "type": "state",
             "common": {
-                "role": "value",
+                "role": "motion",
                 "name": {
                     "en": "Motion Detection",
                     "de": "Bewegungserkennung",
