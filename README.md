@@ -1,4 +1,4 @@
-![Logo](admin/reolink.png)
+![Logo](admin/reolink_logo.png)
 # ioBroker.reolink
 
 [![NPM version](https://img.shields.io/npm/v/iobroker.reolink.svg)](https://www.npmjs.com/package/iobroker.reolink)

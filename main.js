@@ -63,7 +63,7 @@ class TestProject extends utils.Adapter {
 		await this.setStateAsync("Network.Channel",{val: this.config.cameraChannel, ack: true});
 
 		this.log.info(`Current Devicetype: ${this.config.cameraType}`);
-		
+
 		if(this.config.cameraType == "rlc510A"){
 			this.getDevinfo();
 			this.getLocalLink();
@@ -81,79 +81,85 @@ class TestProject extends utils.Adapter {
 	}
 	//function for getting motion detection
 	async getMdState(){
-		try {
-			const MdInfoValues = await this.reolinkApiClient.get(`/api.cgi?cmd=GetMdState&channel=${this.config.cameraChannel}&user=${this.config.cameraUser}&password=${this.config.cameraPassword}`);
+		if (this.reolinkApiClient) {
+			try {
+				const MdInfoValues = await this.reolinkApiClient.get(`/api.cgi?cmd=GetMdState&channel=${this.config.cameraChannel}&user=${this.config.cameraUser}&password=${this.config.cameraPassword}`);
 
-			this.log.debug(`camMdStateInfo ${JSON.stringify(MdInfoValues.status)}: ${JSON.stringify(MdInfoValues.data)}`);
+				this.log.debug(`camMdStateInfo ${JSON.stringify(MdInfoValues.status)}: ${JSON.stringify(MdInfoValues.data)}`);
 
-			if(MdInfoValues.status === 200){
-				this.apiConnected = true;
+				if(MdInfoValues.status === 200){
+					this.apiConnected = true;
+					await this.setStateAsync("Network.Connected", {val: this.apiConnected, ack: true});
+
+					const MdValues = MdInfoValues.data[0];
+
+					this.log.info(MdValues.value.state);
+					await this.setStateAsync("sensor.motion", {val: MdValues.value.state, ack: true});
+
+				}
+			} catch (error) {
+				this.apiConnected = false;
 				await this.setStateAsync("Network.Connected", {val: this.apiConnected, ack: true});
-
-				var MdValues = MdInfoValues.data[0];
-
-				this.log.info(MdValues.value.state);
-				await this.setStateAsync("sensor.motion", {val: MdValues.value.state, ack: true});
-
+				this.log.error(error);
 			}
-		} catch (error) {
-			this.apiConnected = false;
-			await this.setStateAsync("Network.Connected", {val: this.apiConnected, ack: true});
-			this.log.error(error);
 		}
 	}
 	//function for getting general information of camera device
 	async getDevinfo(){
-		try {
-			const DevInfoValues = await this.reolinkApiClient.get(`/api.cgi?cmd=GetDevInfo&channel=0&user=${this.config.cameraUser}&password=${this.config.cameraPassword}`);
-			this.log.debug(`camMdStateInfo ${JSON.stringify(DevInfoValues.status)}: ${JSON.stringify(DevInfoValues.data)}`);
+		if (this.reolinkApiClient) {
+			try {
+				const DevInfoValues = await this.reolinkApiClient.get(`/api.cgi?cmd=GetDevInfo&channel=0&user=${this.config.cameraUser}&password=${this.config.cameraPassword}`);
+				this.log.debug(`camMdStateInfo ${JSON.stringify(DevInfoValues.status)}: ${JSON.stringify(DevInfoValues.data)}`);
 
-			if(DevInfoValues.status === 200){
-				this.apiConnected = true;
+				if(DevInfoValues.status === 200){
+					this.apiConnected = true;
+					await this.setStateAsync("Network.Connected", {val: this.apiConnected, ack: true});
+					const DevValues = DevInfoValues.data[0];
+
+					await this.setStateAsync("Device.BuildDay", {val: DevValues.value.DevInfo.buildDay, ack: true});
+					await this.setStateAsync("Device.CfgVer", {val: DevValues.value.DevInfo.cfgVer, ack: true});
+					await this.setStateAsync("Device.Detail", {val: DevValues.value.DevInfo.detail, ack: true});
+					await this.setStateAsync("Device.DiskNum", {val: DevValues.value.DevInfo.diskNum, ack: true});
+					await this.setStateAsync("Device.FirmVer", {val: DevValues.value.DevInfo.firmVer, ack: true});
+					await this.setStateAsync("Device.Model", {val: DevValues.value.DevInfo.Model, ack: true});
+					await this.setStateAsync("Device.Name", {val: DevValues.value.DevInfo.name, ack: true});
+					await this.setStateAsync("Device.Serial", {val: DevValues.value.DevInfo.serial, ack: true});
+					await this.setStateAsync("Device.Wifi", {val: DevValues.value.DevInfo.wifi, ack: true});
+				}
+
+			} catch (error) {
+				this.apiConnected = false;
 				await this.setStateAsync("Network.Connected", {val: this.apiConnected, ack: true});
-				var DevValues = DevInfoValues.data[0];
 
-				await this.setStateAsync("Device.BuildDay", {val: DevValues.value.DevInfo.buildDay, ack: true});
-				await this.setStateAsync("Device.CfgVer", {val: DevValues.value.DevInfo.cfgVer, ack: true});
-				await this.setStateAsync("Device.Detail", {val: DevValues.value.DevInfo.detail, ack: true});
-				await this.setStateAsync("Device.DiskNum", {val: DevValues.value.DevInfo.diskNum, ack: true});
-				await this.setStateAsync("Device.FirmVer", {val: DevValues.value.DevInfo.firmVer, ack: true});
-				await this.setStateAsync("Device.Model", {val: DevValues.value.DevInfo.Model, ack: true});
-				await this.setStateAsync("Device.Name", {val: DevValues.value.DevInfo.name, ack: true});
-				await this.setStateAsync("Device.Serial", {val: DevValues.value.DevInfo.serial, ack: true});
-				await this.setStateAsync("Device.Wifi", {val: DevValues.value.DevInfo.wifi, ack: true});
+				this.log.error(error);
 			}
-
-		} catch (error) {
-			this.apiConnected = false;
-			await this.setStateAsync("Network.Connected", {val: this.apiConnected, ack: true});
-
-			this.log.error(error);
 		}
 	}
 
 	async getLocalLink(){
-		try {
-			const LinkInfoValues = await this.reolinkApiClient.get(`/api.cgi?cmd=GetLocalLink&channel=0&user=${this.config.cameraUser}&password=${this.config.cameraPassword}`);
-			this.log.debug(`LinkInfoValues ${JSON.stringify(LinkInfoValues.status)}: ${JSON.stringify(LinkInfoValues.data)}`);
+		if (this.reolinkApiClient) {
+			try {
+				const LinkInfoValues = await this.reolinkApiClient.get(`/api.cgi?cmd=GetLocalLink&channel=0&user=${this.config.cameraUser}&password=${this.config.cameraPassword}`);
+				this.log.debug(`LinkInfoValues ${JSON.stringify(LinkInfoValues.status)}: ${JSON.stringify(LinkInfoValues.data)}`);
 
-			if(LinkInfoValues.status === 200){
-				this.apiConnected = true;
+				if(LinkInfoValues.status === 200){
+					this.apiConnected = true;
+					await this.setStateAsync("Network.Connected", {val: this.apiConnected, ack: true});
+					const LinkValues = LinkInfoValues.data[0];
+
+					await this.setStateAsync("Network.ActiveLink", {val: LinkValues.value.LocalLink.activeLink, ack: true});
+					await this.setStateAsync("Network.Mac", {val: LinkValues.value.LocalLink.mac, ack: true});
+					await this.setStateAsync("Network.Dns", {val: LinkValues.value.LocalLink.dns.dns1, ack: true});
+					await this.setStateAsync("Network.Gateway", {val: LinkValues.value.LocalLink.static.gateway, ack: true});
+					await this.setStateAsync("Network.Mask", {val: LinkValues.value.LocalLink.static.mask, ack: true});
+					await this.setStateAsync("Network.NetworkType", {val: LinkValues.value.LocalLink.type, ack: true});
+				}
+			} catch (error) {
+				this.apiConnected = false;
 				await this.setStateAsync("Network.Connected", {val: this.apiConnected, ack: true});
-				var LinkValues = LinkInfoValues.data[0];
 
-				await this.setStateAsync("Network.ActiveLink", {val: LinkValues.value.LocalLink.activeLink, ack: true});
-				await this.setStateAsync("Network.Mac", {val: LinkValues.value.LocalLink.mac, ack: true});
-				await this.setStateAsync("Network.Dns", {val: LinkValues.value.LocalLink.dns.dns1, ack: true});
-				await this.setStateAsync("Network.Gateway", {val: LinkValues.value.LocalLink.static.gateway, ack: true});
-				await this.setStateAsync("Network.Mask", {val: LinkValues.value.LocalLink.static.mask, ack: true});
-				await this.setStateAsync("Network.NetworkType", {val: LinkValues.value.LocalLink.type, ack: true});
+				this.log.error(error);
 			}
-		} catch (error) {
-			this.apiConnected = false;
-			await this.setStateAsync("Network.Connected", {val: this.apiConnected, ack: true});
-
-			this.log.error(error);
 		}
 	}
 
@@ -182,7 +188,7 @@ class TestProject extends utils.Adapter {
 			this.refreshStateTimeout = this.setTimeout(() => {
 				this.refreshStateTimeout = null;
 				this.refreshState("timeout(default");
-			}, this.config.apiRefreshInterval * 1000);
+			}, parseInt(this.config.apiRefreshInterval) * 1000);
 			this.log.debug(`refreshStateTimeout: re-created refresh timeout (default): id ${this.refreshStateTimeout}- secounds: ${this.config.apiRefreshInterval}`);
 
 		}
