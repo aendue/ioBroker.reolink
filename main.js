@@ -8,7 +8,6 @@ const utils = require("@iobroker/adapter-core");
 const axios = require("axios").default;
 const https = require("https");
 
-
 class TestProject extends utils.Adapter {
 
 	/**
@@ -28,7 +27,7 @@ class TestProject extends utils.Adapter {
 		this.on("ready", this.onReady.bind(this));
 		this.on("stateChange", this.onStateChange.bind(this));
 		// this.on("objectChange", this.onObjectChange.bind(this));
-		// this.on("message", this.onMessage.bind(this));
+		this.on("message", this.onMessage.bind(this));
 		this.on("unload", this.onUnload.bind(this));
 
 	}
@@ -53,7 +52,7 @@ class TestProject extends utils.Adapter {
 			baseURL: `https://${this.config.cameraIp}`,
 			timeout: 4000,
 			responseType: "json",
-			responseEncoding: "utf8",
+			responseEncoding: "binary",
 			httpsAgent: new https.Agent({
 				rejectUnauthorized: false,
 			}),
@@ -83,20 +82,20 @@ class TestProject extends utils.Adapter {
 	async getMdState(){
 		if (this.reolinkApiClient) {
 			try {
-				const MdInfoValues = await this.reolinkApiClient.get(`/api.cgi?cmd=GetMdState&channel=${this.config.cameraChannel}&user=${this.config.cameraUser}&password=${this.config.cameraPassword}`);
+				// const MdInfoValues = await this.reolinkApiClient.get(`/api.cgi?cmd=GetMdState&channel=${this.config.cameraChannel}&user=${this.config.cameraUser}&password=${this.config.cameraPassword}`);
 
-				this.log.debug(`camMdStateInfo ${JSON.stringify(MdInfoValues.status)}: ${JSON.stringify(MdInfoValues.data)}`);
+				// this.log.debug(`camMdStateInfo ${JSON.stringify(MdInfoValues.status)}: ${JSON.stringify(MdInfoValues.data)}`);
 
-				if(MdInfoValues.status === 200){
-					this.apiConnected = true;
-					await this.setStateAsync("Network.Connected", {val: this.apiConnected, ack: true});
+				// if(MdInfoValues.status === 200){
+				// 	this.apiConnected = true;
+				// 	await this.setStateAsync("Network.Connected", {val: this.apiConnected, ack: true});
 
-					const MdValues = MdInfoValues.data[0];
+				// 	const MdValues = MdInfoValues.data[0];
 
-					this.log.info(MdValues.value.state);
-					await this.setStateAsync("sensor.motion", {val: MdValues.value.state, ack: true});
+				// 	this.log.info(MdValues.value.state);
+				// 	await this.setStateAsync("sensor.motion", {val: MdValues.value.state, ack: true});
 
-				}
+				// }
 			} catch (error) {
 				this.apiConnected = false;
 				await this.setStateAsync("Network.Connected", {val: this.apiConnected, ack: true});
@@ -162,7 +161,21 @@ class TestProject extends utils.Adapter {
 			}
 		}
 	}
-
+	async getSnapshot() {
+		if (this.reolinkApiClient) {
+			try {
+				const randomseed = Math.round(Math.random() * 10000000000000000000).toString(16);
+				const snapShot = await this.reolinkApiClient.get(`/api.cgi?cmd=Snap&channel=0&rs=${randomseed}&user=${this.config.cameraUser}&password=${this.config.cameraPassword}`);
+				const contentType = snapShot.headers["content-type"];
+				const base64data = Buffer.from(snapShot.data, "binary").toString("base64");
+				return {type: contentType, base64: base64data};
+			} catch (error) {
+				this.log.error(error);
+				return null;
+			}
+		}
+		return null;
+	}
 	async refreshState(source){
 		this.log.debug(`refreshState': started from "${source}"`);
 
@@ -229,6 +242,21 @@ class TestProject extends utils.Adapter {
 		} else {
 			// The state was deleted
 			this.log.info(`state ${id} deleted`);
+		}
+	}
+	async onMessage(obj) {
+		if (typeof obj === "object") {
+			//this.log.debug(JSON.stringify(obj));
+			//{"command":"send","message":{"action":"snap"},"from":"system.adapter.javascript.0","callback":{"message":{"action":"snap"},"id":13,"ack":false,"time":1660317360713},"_id":42782776}
+			if (obj.message.action === "snap") {
+				const image = await this.getSnapshot();
+				if (obj.callback) {
+					if (image){
+						this.log.info("send back the image!");
+						this.sendTo(obj.from, obj.command, image, obj.callback);
+					}
+				}
+			}
 		}
 	}
 }
