@@ -8,7 +8,6 @@ const utils = require("@iobroker/adapter-core");
 const axios = require("axios").default;
 const https = require("https");
 
-
 class TestProject extends utils.Adapter {
 
 	/**
@@ -28,7 +27,7 @@ class TestProject extends utils.Adapter {
 		this.on("ready", this.onReady.bind(this));
 		this.on("stateChange", this.onStateChange.bind(this));
 		// this.on("objectChange", this.onObjectChange.bind(this));
-		// this.on("message", this.onMessage.bind(this));
+		this.on("message", this.onMessage.bind(this));
 		this.on("unload", this.onUnload.bind(this));
 
 	}
@@ -53,7 +52,7 @@ class TestProject extends utils.Adapter {
 			baseURL: `https://${this.config.cameraIp}`,
 			timeout: 4000,
 			responseType: "json",
-			responseEncoding: "utf8",
+			responseEncoding: "binary",
 			httpsAgent: new https.Agent({
 				rejectUnauthorized: false,
 			}),
@@ -67,6 +66,7 @@ class TestProject extends utils.Adapter {
 		
 		//State abbonieren
 		this.subscribeStates("settings.ir");
+
 
 		if(this.config.cameraType == "rlc510A"){
 			//this.getDevinfo();
@@ -86,82 +86,106 @@ class TestProject extends utils.Adapter {
 	}
 	//function for getting motion detection
 	async getMdState(){
-		try {
-			const MdInfoValues = await this.reolinkApiClient.get(`/api.cgi?cmd=GetMdState&channel=${this.config.cameraChannel}&user=${this.config.cameraUser}&password=${this.config.cameraPassword}`);
+		if (this.reolinkApiClient) {
+			try {
+				// const MdInfoValues = await this.reolinkApiClient.get(`/api.cgi?cmd=GetMdState&channel=${this.config.cameraChannel}&user=${this.config.cameraUser}&password=${this.config.cameraPassword}`);
 
-			//this.log.debug(`camMdStateInfo ${JSON.stringify(MdInfoValues.status)}: ${JSON.stringify(MdInfoValues.data)}`);
+				// this.log.debug(`camMdStateInfo ${JSON.stringify(MdInfoValues.status)}: ${JSON.stringify(MdInfoValues.data)}`);
 
-			if(MdInfoValues.status === 200){
-				this.apiConnected = true;
+				// if(MdInfoValues.status === 200){
+				// 	this.apiConnected = true;
+				// 	await this.setStateAsync("Network.Connected", {val: this.apiConnected, ack: true});
+
+				// 	const MdValues = MdInfoValues.data[0];
+
+				// 	this.log.info(MdValues.value.state);
+				// 	await this.setStateAsync("sensor.motion", {val: MdValues.value.state, ack: true});
+
+				// }
+			} catch (error) {
+				this.apiConnected = false;
 				await this.setStateAsync("Network.Connected", {val: this.apiConnected, ack: true});
-
-				var MdValues = MdInfoValues.data[0];
-
-				this.log.info(MdValues.value.state);
-				await this.setStateAsync("sensor.motion", {val: MdValues.value.state, ack: true});
-
+				this.log.error(error);
 			}
-		} catch (error) {
-			this.apiConnected = false;
-			await this.setStateAsync("Network.Connected", {val: this.apiConnected, ack: true});
-			this.log.error(error);
 		}
 	}
 	//function for getting general information of camera device
 	async getDevinfo(){
-		try {
-			const DevInfoValues = await this.reolinkApiClient.get(`/api.cgi?cmd=GetDevInfo&channel=0&user=${this.config.cameraUser}&password=${this.config.cameraPassword}`);
-			//this.log.debug(`camMdStateInfo ${JSON.stringify(DevInfoValues.status)}: ${JSON.stringify(DevInfoValues.data)}`);
 
-			if(DevInfoValues.status === 200){
-				this.apiConnected = true;
+		if (this.reolinkApiClient) {
+			try {
+				const DevInfoValues = await this.reolinkApiClient.get(`/api.cgi?cmd=GetDevInfo&channel=0&user=${this.config.cameraUser}&password=${this.config.cameraPassword}`);
+				this.log.debug(`camMdStateInfo ${JSON.stringify(DevInfoValues.status)}: ${JSON.stringify(DevInfoValues.data)}`);
+
+				if(DevInfoValues.status === 200){
+					this.apiConnected = true;
+					await this.setStateAsync("Network.Connected", {val: this.apiConnected, ack: true});
+					const DevValues = DevInfoValues.data[0];
+
+					await this.setStateAsync("Device.BuildDay", {val: DevValues.value.DevInfo.buildDay, ack: true});
+					await this.setStateAsync("Device.CfgVer", {val: DevValues.value.DevInfo.cfgVer, ack: true});
+					await this.setStateAsync("Device.Detail", {val: DevValues.value.DevInfo.detail, ack: true});
+					await this.setStateAsync("Device.DiskNum", {val: DevValues.value.DevInfo.diskNum, ack: true});
+					await this.setStateAsync("Device.FirmVer", {val: DevValues.value.DevInfo.firmVer, ack: true});
+					await this.setStateAsync("Device.Model", {val: DevValues.value.DevInfo.model, ack: true});
+					await this.setStateAsync("Device.Name", {val: DevValues.value.DevInfo.name, ack: true});
+					await this.setStateAsync("Device.Serial", {val: DevValues.value.DevInfo.serial, ack: true});
+					await this.setStateAsync("Device.Wifi", {val: DevValues.value.DevInfo.wifi, ack: true});
+				}
+
+			} catch (error) {
+				this.apiConnected = false;
 				await this.setStateAsync("Network.Connected", {val: this.apiConnected, ack: true});
-				var DevValues = DevInfoValues.data[0];
 
-				await this.setStateAsync("Device.BuildDay", {val: DevValues.value.DevInfo.buildDay, ack: true});
-				await this.setStateAsync("Device.CfgVer", {val: DevValues.value.DevInfo.cfgVer, ack: true});
-				await this.setStateAsync("Device.Detail", {val: DevValues.value.DevInfo.detail, ack: true});
-				await this.setStateAsync("Device.DiskNum", {val: DevValues.value.DevInfo.diskNum, ack: true});
-				await this.setStateAsync("Device.FirmVer", {val: DevValues.value.DevInfo.firmVer, ack: true});
-				await this.setStateAsync("Device.Model", {val: DevValues.value.DevInfo.model, ack: true});
-				await this.setStateAsync("Device.Name", {val: DevValues.value.DevInfo.name, ack: true});
-				await this.setStateAsync("Device.Serial", {val: DevValues.value.DevInfo.serial, ack: true});
-				await this.setStateAsync("Device.Wifi", {val: DevValues.value.DevInfo.wifi, ack: true});
+
+				this.log.error(error);
 			}
-
-		} catch (error) {
-			this.apiConnected = false;
-			await this.setStateAsync("Network.Connected", {val: this.apiConnected, ack: true});
-
-			this.log.error(error);
 		}
 	}
 
 	async getLocalLink(){
-		try {
-			const LinkInfoValues = await this.reolinkApiClient.get(`/api.cgi?cmd=GetLocalLink&channel=0&user=${this.config.cameraUser}&password=${this.config.cameraPassword}`);
-			//this.log.debug(`LinkInfoValues ${JSON.stringify(LinkInfoValues.status)}: ${JSON.stringify(LinkInfoValues.data)}`);
 
-			if(LinkInfoValues.status === 200){
-				this.apiConnected = true;
+		if (this.reolinkApiClient) {
+			try {
+				const LinkInfoValues = await this.reolinkApiClient.get(`/api.cgi?cmd=GetLocalLink&channel=0&user=${this.config.cameraUser}&password=${this.config.cameraPassword}`);
+				this.log.debug(`LinkInfoValues ${JSON.stringify(LinkInfoValues.status)}: ${JSON.stringify(LinkInfoValues.data)}`);
+
+				if(LinkInfoValues.status === 200){
+					this.apiConnected = true;
+					await this.setStateAsync("Network.Connected", {val: this.apiConnected, ack: true});
+					const LinkValues = LinkInfoValues.data[0];
+
+					await this.setStateAsync("Network.ActiveLink", {val: LinkValues.value.LocalLink.activeLink, ack: true});
+					await this.setStateAsync("Network.Mac", {val: LinkValues.value.LocalLink.mac, ack: true});
+					await this.setStateAsync("Network.Dns", {val: LinkValues.value.LocalLink.dns.dns1, ack: true});
+					await this.setStateAsync("Network.Gateway", {val: LinkValues.value.LocalLink.static.gateway, ack: true});
+					await this.setStateAsync("Network.Mask", {val: LinkValues.value.LocalLink.static.mask, ack: true});
+					await this.setStateAsync("Network.NetworkType", {val: LinkValues.value.LocalLink.type, ack: true});
+				}
+			} catch (error) {
+				this.apiConnected = false;
+
 				await this.setStateAsync("Network.Connected", {val: this.apiConnected, ack: true});
-				var LinkValues = LinkInfoValues.data[0];
 
-				await this.setStateAsync("Network.ActiveLink", {val: LinkValues.value.LocalLink.activeLink, ack: true});
-				await this.setStateAsync("Network.Mac", {val: LinkValues.value.LocalLink.mac, ack: true});
-				await this.setStateAsync("Network.Dns", {val: LinkValues.value.LocalLink.dns.dns1, ack: true});
-				await this.setStateAsync("Network.Gateway", {val: LinkValues.value.LocalLink.static.gateway, ack: true});
-				await this.setStateAsync("Network.Mask", {val: LinkValues.value.LocalLink.static.mask, ack: true});
-				await this.setStateAsync("Network.NetworkType", {val: LinkValues.value.LocalLink.type, ack: true});
+				this.log.error(error);
 			}
-		} catch (error) {
-			this.apiConnected = false;
-			await this.setStateAsync("Network.Connected", {val: this.apiConnected, ack: true});
-
-			this.log.error(error);
 		}
 	}
-
+	async getSnapshot() {
+		if (this.reolinkApiClient) {
+			try {
+				const randomseed = Math.round(Math.random() * 10000000000000000000).toString(16);
+				const snapShot = await this.reolinkApiClient.get(`/api.cgi?cmd=Snap&channel=0&rs=${randomseed}&user=${this.config.cameraUser}&password=${this.config.cameraPassword}`);
+				const contentType = snapShot.headers["content-type"];
+				const base64data = Buffer.from(snapShot.data, "binary").toString("base64");
+				return {type: contentType, base64: base64data};
+			} catch (error) {
+				this.log.error(error);
+				return null;
+			}
+		}
+		return null;
+	}
 	async refreshState(source){
 		this.log.debug(`refreshState': started from "${source}"`);
 
@@ -187,7 +211,7 @@ class TestProject extends utils.Adapter {
 			this.refreshStateTimeout = this.setTimeout(() => {
 				this.refreshStateTimeout = null;
 				this.refreshState("timeout(default");
-			}, this.config.apiRefreshInterval * 1000);
+			}, parseInt(this.config.apiRefreshInterval) * 1000);
 			this.log.debug(`refreshStateTimeout: re-created refresh timeout (default): id ${this.refreshStateTimeout}- secounds: ${this.config.apiRefreshInterval}`);
 
 		}
@@ -263,6 +287,21 @@ class TestProject extends utils.Adapter {
 		} else {
 			// The state was deleted
 			this.log.debug(`state ${id} deleted`);
+		}
+	}
+	async onMessage(obj) {
+		if (typeof obj === "object") {
+			//this.log.debug(JSON.stringify(obj));
+			//{"command":"send","message":{"action":"snap"},"from":"system.adapter.javascript.0","callback":{"message":{"action":"snap"},"id":13,"ack":false,"time":1660317360713},"_id":42782776}
+			if (obj.message.action === "snap") {
+				const image = await this.getSnapshot();
+				if (obj.callback) {
+					if (image){
+						this.log.info("send back the image!");
+						this.sendTo(obj.from, obj.command, image, obj.callback);
+					}
+				}
+			}
 		}
 	}
 }

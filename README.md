@@ -1,4 +1,4 @@
-![Logo](admin/reolink.png)
+![Logo](admin/reolink_logo.png)
 # ioBroker.reolink
 
 [![NPM version](https://img.shields.io/npm/v/iobroker.reolink.svg)](https://www.npmjs.com/package/iobroker.reolink)
@@ -53,6 +53,22 @@ If you wish to have any specific API command included...just let me now.
 
 RLC-510A
 
+### tested Devices
+
+RLC-810A
+
+### Example Usage of get image:
+
+```
+sendTo("reolink.0",{action: "snap"}, function(result){
+    sendTo("matrix-org.0",{file:result});
+});
+```
+// content from **result** is JSON :
+```
+{type:"image/png",base64:"iVBORw....askldfj"}
+```
+
 ## Changelog
 <!--
 	Placeholder for the next version (at the beginning of the line):
@@ -62,6 +78,7 @@ RLC-510A
 ### **WORK IN PROGRESS**
 
 * (aendue) added languages
+* (oelison) added get image function (snap)
 
 ### 0.0.1 (2022-07-05)
 

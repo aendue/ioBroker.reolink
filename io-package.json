@@ -54,9 +54,9 @@
         "license": "MIT",
         "platform": "Javascript/Node.js",
         "main": "main.js",
-        "icon": "reolink.png",
+        "icon": "reolink_logo.png",
         "enabled": true,
-        "extIcon": "https://raw.githubusercontent.com/aendue/ioBroker.reolink/main/admin/reolink.png",
+        "extIcon": "https://raw.githubusercontent.com/aendue/ioBroker.reolink/main/admin/reolink_logo.png",
         "readme": "https://github.com/aendue/ioBroker.reolink/blob/main/README.md",
         "loglevel": "info",
         "mode": "daemon",
@@ -65,6 +65,7 @@
         "connectionType": "local",
         "dataSource": "poll",
         "materialize": true,
+        "messagebox": true,
         "adminUI": {
             "config": "json"
         },
@@ -80,7 +81,7 @@
         ]
     },
     "native": {
-        "options.cameraType": "",
+        "cameraType": "",
         "cameraIp": " ",
         "cameraChannel": "0",
         "cameraUser": "",
