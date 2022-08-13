@@ -58,15 +58,20 @@ class TestProject extends utils.Adapter {
 				rejectUnauthorized: false,
 			}),
 		});
+
 		this.log.info(`Current IP: ${this.config.cameraIp}`);
 		await this.setStateAsync("Network.Ip",{val: this.config.cameraIp, ack: true});
 		await this.setStateAsync("Network.Channel",{val: this.config.cameraChannel, ack: true});
 
 		this.log.info(`Current Devicetype: ${this.config.cameraType}`);
 		
+		//State abbonieren
+		this.subscribeStates("settings.ir");
+
 		if(this.config.cameraType == "rlc510A"){
-			this.getDevinfo();
-			this.getLocalLink();
+			//this.getDevinfo();
+			//this.getLocalLink();
+			this.setValue("onReady");
 			this.refreshState("onReady");
 		}else if(this.config.cameraType == "others"){
 
@@ -84,7 +89,7 @@ class TestProject extends utils.Adapter {
 		try {
 			const MdInfoValues = await this.reolinkApiClient.get(`/api.cgi?cmd=GetMdState&channel=${this.config.cameraChannel}&user=${this.config.cameraUser}&password=${this.config.cameraPassword}`);
 
-			this.log.debug(`camMdStateInfo ${JSON.stringify(MdInfoValues.status)}: ${JSON.stringify(MdInfoValues.data)}`);
+			//this.log.debug(`camMdStateInfo ${JSON.stringify(MdInfoValues.status)}: ${JSON.stringify(MdInfoValues.data)}`);
 
 			if(MdInfoValues.status === 200){
 				this.apiConnected = true;
@@ -106,7 +111,7 @@ class TestProject extends utils.Adapter {
 	async getDevinfo(){
 		try {
 			const DevInfoValues = await this.reolinkApiClient.get(`/api.cgi?cmd=GetDevInfo&channel=0&user=${this.config.cameraUser}&password=${this.config.cameraPassword}`);
-			this.log.debug(`camMdStateInfo ${JSON.stringify(DevInfoValues.status)}: ${JSON.stringify(DevInfoValues.data)}`);
+			//this.log.debug(`camMdStateInfo ${JSON.stringify(DevInfoValues.status)}: ${JSON.stringify(DevInfoValues.data)}`);
 
 			if(DevInfoValues.status === 200){
 				this.apiConnected = true;
@@ -118,7 +123,7 @@ class TestProject extends utils.Adapter {
 				await this.setStateAsync("Device.Detail", {val: DevValues.value.DevInfo.detail, ack: true});
 				await this.setStateAsync("Device.DiskNum", {val: DevValues.value.DevInfo.diskNum, ack: true});
 				await this.setStateAsync("Device.FirmVer", {val: DevValues.value.DevInfo.firmVer, ack: true});
-				await this.setStateAsync("Device.Model", {val: DevValues.value.DevInfo.Model, ack: true});
+				await this.setStateAsync("Device.Model", {val: DevValues.value.DevInfo.model, ack: true});
 				await this.setStateAsync("Device.Name", {val: DevValues.value.DevInfo.name, ack: true});
 				await this.setStateAsync("Device.Serial", {val: DevValues.value.DevInfo.serial, ack: true});
 				await this.setStateAsync("Device.Wifi", {val: DevValues.value.DevInfo.wifi, ack: true});
@@ -135,7 +140,7 @@ class TestProject extends utils.Adapter {
 	async getLocalLink(){
 		try {
 			const LinkInfoValues = await this.reolinkApiClient.get(`/api.cgi?cmd=GetLocalLink&channel=0&user=${this.config.cameraUser}&password=${this.config.cameraPassword}`);
-			this.log.debug(`LinkInfoValues ${JSON.stringify(LinkInfoValues.status)}: ${JSON.stringify(LinkInfoValues.data)}`);
+			//this.log.debug(`LinkInfoValues ${JSON.stringify(LinkInfoValues.status)}: ${JSON.stringify(LinkInfoValues.data)}`);
 
 			if(LinkInfoValues.status === 200){
 				this.apiConnected = true;
@@ -189,6 +194,31 @@ class TestProject extends utils.Adapter {
 
 
 	}
+
+	async setValue(source, irvalue){
+		this.log.debug(irvalue);
+
+		const payload = [{ "cmd": "SetIrLights", "action": 0, "param": {
+			"IrLights": {
+				"channel": 0,
+				"state": "Off"
+			}
+		}}];
+		//this.log.debug(`setValue - error': started from "${source}"`);
+		//this.log.debug(payload);
+
+		try {
+			let res = await this.reolinkApiClient.post(`/api.cgi?cmd=SetIrLights&user=${this.config.cameraUser}&password=${this.config.cameraPassword}`,payload);
+			let data = res.data;
+			this.log.debug(res.status);
+			this.log.debug(res.statusText);
+			this.log.debug(res.headers);
+			this.log.debug(res.config);
+		} catch (error) {
+			this.log.error(`Fehler: ${error}`);
+		}
+	}
+
 	/**
 	 * Is called when adapter shuts down - callback has to be called under any circumstances!
 	 * @param {() => void} callback
@@ -218,11 +248,21 @@ class TestProject extends utils.Adapter {
 	 */
 	onStateChange(id, state) {
 		if (state) {
+
 			// The state was changed
-			this.log.info(`state ${id} changed: ${state.val} (ack = ${state.ack})`);
+			this.log.debug(`state ${id} changed: ${state.val} (ack = ${state.ack})`);
+
+			const idValues= id.split(".");
+			const propName = idValues[idValues.length -1];
+			this.log.info(`Geändertes State: ${propName}`);
+			if(propName == "ir"){
+				this.setValue("onStateChange", state.val);
+
+			}
+
 		} else {
 			// The state was deleted
-			this.log.info(`state ${id} deleted`);
+			this.log.debug(`state ${id} deleted`);
 		}
 	}
 }
