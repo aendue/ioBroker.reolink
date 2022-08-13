@@ -421,15 +421,15 @@
                 "role": "value",
                 "name": {
                     "en": "Camera cfgVer",
-                    "de": "Kamera cfg Verwendet",
-                    "ru": "Камера cfg Вер",
-                    "pt": "Câmera cfg Ver",
-                    "nl": "Camera cfg Ver",
-                    "fr": "Caméra cfg Ver",
-                    "it": "Macchina fotografica cfg Ver",
-                    "es": "Cámara cfg Ver",
-                    "pl": "Camera cfg. Wiersze",
-                    "zh-cn": "Camera cfg 附 件"
+                    "de": "Kamera cfg",
+                    "ru": "Камера cfg",
+                    "pt": "Câmera cfg",
+                    "nl": "Camera cfg",
+                    "fr": "Caméra cfg",
+                    "it": "Macchina fotografica cfg",
+                    "es": "Cámara cfg",
+                    "pl": "Camera cfg.",
+                    "zh-cn": "Camera cfg"
                   },
                 "type": "string",
                 "read": true,
@@ -465,7 +465,7 @@
                 "role": "value",
                 "name": {
                     "en": "Camera diskNum",
-                    "de": "Kamera HDDanz",
+                    "de": "Kamera HDDAnz",
                     "ru": "Диск камерыNum",
                     "pt": "Disco da câmeraNum",
                     "nl": "Camera DiskNum",
@@ -487,7 +487,7 @@
                 "role": "value",
                 "name": {
                     "en": "Camera firmVer",
-                    "de": "Kamera Firma Verwendet",
+                    "de": "Kamera Firmware Version",
                     "ru": "Камера фирма Вер",
                     "pt": "Empresa de câmera Ver",
                     "nl": "Camera firma Ver",
@@ -531,7 +531,7 @@
                 "role": "value",
                 "name": {
                     "en": "Camera serial",
-                    "de": "Kamera seriell",
+                    "de": "Kamera ID",
                     "ru": "Серия камеры",
                     "pt": "Série da câmera",
                     "nl": "Camera serie",
@@ -566,6 +566,47 @@
                 "type": "number",
                 "read": true,
                 "write": false
+            }
+        },
+        {
+            "_id": "settings",
+            "type": "channel",
+            "common": {
+                "name": {
+                    "en": "settings",
+                    "de": "einstellungen",
+                    "ru": "настройки",
+                    "pt": "configurações",
+                    "nl": "instellingen",
+                    "fr": "paramètres",
+                    "it": "impostazioni",
+                    "es": "ajustes",
+                    "pl": "ustawienie",
+                    "zh-cn": "环境"
+                }
+            },
+            "native": {}
+        },
+        {
+            "_id": "settings.ir",
+            "type": "state",
+            "common": {
+                "role": "value",
+                "name": {
+                    "en": "ir",
+                    "de": "ir",
+                    "ru": "ir",
+                    "pt": "ir",
+                    "nl": "ir",
+                    "fr": "ir",
+                    "it": "ir",
+                    "es": "ir",
+                    "pl": "ir",
+                    "zh-cn": "ir"
+                  },
+                "type": "state",
+                "read": true,
+                "write": true
             }
         }
     ]
