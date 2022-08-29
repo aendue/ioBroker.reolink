@@ -1,7 +1,7 @@
 {
     "common": {
         "name": "reolink",
-        "version": "0.0.2",
+        "version": "0.0.1",
         "news": {
             "0.0.1": {
                 "en": "initial release",
@@ -45,10 +45,9 @@
             "Andy Grundt <andy.grundt@icloud.com>"
         ],
         "keywords": [
-            "ioBroker",
-            "template",
-            "Smart Home",
-            "home automation",
+            "reolink",
+            "ip-camera",
+            "image",
             "camera"
         ],
         "license": "MIT",
@@ -168,7 +167,7 @@
                     "pl": "Adres IP",
                     "zh-cn": "IP地址"
                 },
-                "type": "text",
+                "type": "string",
                 "read": true,
                 "write": true
             },
@@ -604,7 +603,7 @@
                     "pl": "ir",
                     "zh-cn": "ir"
                   },
-                "type": "state",
+                "type": "boolean",
                 "read": true,
                 "write": true
             }
