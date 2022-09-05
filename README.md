@@ -17,32 +17,6 @@ Adapter for ioBroker Plattform to get Reolink camera information.
 
 In general all newer Reolink cameras support API commands. They just differ in their supported commands.
 
-This adapter was just tested with RLC-510A. If you have tested this adapter with a different typ please let me now. I will add this bellow.
-
-At the moment following API commands are included:
-
-GetDevInfo		- General Information about camera
-GetLocalLink	- Network information
-GetMdState		- Motion Detection
-
-Further Commands (not included):
-GetAlarm
-GetHDD
-GetOsd
-GetMask
-GetNetPort
-GetWifi
-GetDdns
-GetNtp
-GetEmail
-GetPush
-GetFtp
-GetEnc
-GetRec
-GetPerformance
-GetTime
-GetOnline
-GetUser
 
 There are also Set API Commands. I plan to add them later.
 
@@ -74,6 +48,7 @@ sendTo("reolink.0",{action: "snap"}, function(result){
 	Placeholder for the next version (at the beginning of the line):
 	### **WORK IN PROGRESS**
 -->
+### **WORK IN PROGRESS**
 
 ### 0.0.2 (2022-09-05)
 
