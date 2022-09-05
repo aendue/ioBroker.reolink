@@ -45,7 +45,7 @@ sendTo("reolink.0",{action: "snap"}, function(result){
 
 ## Changelog
 	
-### **WORK IN PROGRESS**
+### 0.0.3 (2022-09-05)
 
 * (aendue) npm release prepare
 * (oelison) ptz preset (untested, missing ptz cam)

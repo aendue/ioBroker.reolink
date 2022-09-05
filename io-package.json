@@ -1,8 +1,20 @@
 {
     "common": {
         "name": "reolink",
-        "version": "0.0.2",
+        "version": "0.0.3",
         "news": {
+            "0.0.3": {
+                "en": "npm release prepare\nptz preset (untested, missing ptz cam)",
+                "de": "npm release bereiten\nptz preset (nicht getestet, fehlende ptz cam)",
+                "ru": "npm релиз подготовить\nptz preset (недавно, отсутствует ptz cam)",
+                "pt": "npm liberação preparar\nptz preset (untested, faltando ptz cam)",
+                "nl": "vertaling:\nptz preset (geest, vermiste ptz cam)",
+                "fr": "npm release prepare\nptz preset (non testé, ptz cam manquant)",
+                "it": "npm rilascio preparare\nptz preset (non testato, mancante cam ptz)",
+                "es": "npm liberación preparar\npreset de ptz (tratado, cámara de ptz desaparecida)",
+                "pl": "release\npkt z presetem (bezpośrednio)",
+                "zh-cn": "释放准备\np.tz preset (untest,缺失 ptz cam)"
+            },
             "0.0.2": {
                 "en": "added languages\nadded get image function (snap)",
                 "de": "weitere sprachen\nhinzufügen von bildfunktion (snap)",
@@ -636,7 +648,7 @@
                     "es": "PTZ preset",
                     "pl": "PTZ preset",
                     "zh-cn": "PTZset"
-                  },
+                },
                 "type": "number",
                 "read": true,
                 "write": true
