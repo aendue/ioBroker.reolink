@@ -1,7 +1,7 @@
 {
     "common": {
         "name": "reolink",
-        "version": "0.0.3",
+        "version": "0.0.2",
         "news": {
             "0.0.2": {
                 "en": "added languages\nadded get image function (snap)",
@@ -616,6 +616,28 @@
                     "zh-cn": "ir"
                 },
                 "type": "boolean",
+                "read": true,
+                "write": true
+            }
+        },
+        {
+            "_id": "settings.ptzPreset",
+            "type": "state",
+            "common": {
+                "role": "value",
+                "name": {
+                    "en": "PTZ preset",
+                    "de": "PTZ Preset",
+                    "ru": "Пресет PTZ",
+                    "pt": "Predefinição PTZ",
+                    "nl": "PTZ preset",
+                    "fr": "Présence PTZ",
+                    "it": "Preimpostazione PTZ",
+                    "es": "PTZ preset",
+                    "pl": "PTZ preset",
+                    "zh-cn": "PTZset"
+                  },
+                "type": "number",
                 "read": true,
                 "write": true
             }
