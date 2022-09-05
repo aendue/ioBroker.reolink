@@ -63,10 +63,10 @@ class TestProject extends utils.Adapter {
 		await this.setStateAsync("Network.Channel",{val: this.config.cameraChannel, ack: true});
 
 		this.log.info(`Current Devicetype: ${this.config.cameraType}`);
-		
+
 		//State abbonieren
 		this.subscribeStates("settings.ir");
-
+		this.subscribeStates("settings.ptzPreset");
 
 		if(this.config.cameraType == "rlc510A"){
 			//this.getDevinfo();
@@ -186,8 +186,28 @@ class TestProject extends utils.Adapter {
 		}
 		return null;
 	}
+	async setPTZPreset(ptzPreset) {
+		if (this.reolinkApiClient) {
+			try {
+				const ptzPresetCmd = {
+					"cmd":"PtzCtrl",
+					"action":0,
+					"param":{
+						"channel":0,
+						"id":ptzPreset,
+						"op":"ToPos",
+						"speed":32
+					}
+				};
+				const result = await this.reolinkApiClient.post(`/api.cgi?user=${this.config.cameraUser}&password=${this.config.cameraPassword}`, ptzPresetCmd);
+				this.log.debug(String(result.status));
+			} catch (error) {
+				this.log.error(error);
+			}
+		}
+	}
 	async refreshState(source){
-		this.log.debug(`refreshState': started from "${source}"`);
+		//this.log.debug(`refreshState': started from "${source}"`);
 
 		this.getMdState();
 
@@ -205,14 +225,14 @@ class TestProject extends utils.Adapter {
 				this.refreshStateTimeout = null;
 				this.refreshState("timeout (API not connected)");
 			}, notConnectedTimeout * 1000);
-			this.log.debug(`refreshStateTimeout: re-created refresh timeout (API not connected): id ${this.refreshStateTimeout}- secounds: ${notConnectedTimeout}`);
+			//this.log.debug(`refreshStateTimeout: re-created refresh timeout (API not connected): id ${this.refreshStateTimeout}- secounds: ${notConnectedTimeout}`);
 
 		} else {
 			this.refreshStateTimeout = this.setTimeout(() => {
 				this.refreshStateTimeout = null;
 				this.refreshState("timeout(default");
 			}, parseInt(this.config.apiRefreshInterval) * 1000);
-			this.log.debug(`refreshStateTimeout: re-created refresh timeout (default): id ${this.refreshStateTimeout}- secounds: ${this.config.apiRefreshInterval}`);
+			// this.log.debug(`refreshStateTimeout: re-created refresh timeout (default): id ${this.refreshStateTimeout}- secounds: ${this.config.apiRefreshInterval}`);
 
 		}
 
@@ -232,12 +252,13 @@ class TestProject extends utils.Adapter {
 		//this.log.debug(payload);
 
 		try {
-			let res = await this.reolinkApiClient.post(`/api.cgi?cmd=SetIrLights&user=${this.config.cameraUser}&password=${this.config.cameraPassword}`,payload);
-			let data = res.data;
-			this.log.debug(res.status);
-			this.log.debug(res.statusText);
-			this.log.debug(res.headers);
-			this.log.debug(res.config);
+			if (this.reolinkApiClient !== null) {
+				const res = await this.reolinkApiClient.post(`/api.cgi?cmd=SetIrLights&user=${this.config.cameraUser}&password=${this.config.cameraPassword}`,payload);
+				this.log.debug(String(res.status));
+				this.log.debug(res.statusText);
+				this.log.debug(String(res.headers));
+				this.log.debug(String(res.config));
+			}
 		} catch (error) {
 			this.log.error(`Fehler: ${error}`);
 		}
@@ -283,7 +304,10 @@ class TestProject extends utils.Adapter {
 				this.setValue("onStateChange", state.val);
 
 			}
-
+			if(propName === "ptzPreset")
+			{
+				this.setPTZPreset(state.val);
+			}
 		} else {
 			// The state was deleted
 			this.log.debug(`state ${id} deleted`);
