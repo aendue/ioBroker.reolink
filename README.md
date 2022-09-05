@@ -44,12 +44,10 @@ sendTo("reolink.0",{action: "snap"}, function(result){
 ```
 
 ## Changelog
-<!--
-	Placeholder for the next version (at the beginning of the line):
-	### **WORK IN PROGRESS**
--->
-* (aendue) npm release
+	
 ### **WORK IN PROGRESS**
+
+* (aendue) npm release prepare
 
 ### 0.0.2 (2022-09-05)
 
