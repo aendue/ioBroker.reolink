@@ -75,7 +75,7 @@ sendTo("reolink.0",{action: "snap"}, function(result){
 	### **WORK IN PROGRESS**
 -->
 
-### **WORK IN PROGRESS**
+### 0.0.2 (2022-09-05)
 
 * (aendue) added languages
 * (oelison) added get image function (snap)

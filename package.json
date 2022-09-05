@@ -1,6 +1,6 @@
 {
   "name": "iobroker.reolink",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "reolink",
   "author": {
     "name": "Andy Grundt",
@@ -64,7 +64,6 @@
     "lint": "eslint",
     "translate": "translate-adapter",
     "release": "release-script patch --yes"
-    
   },
   "bugs": {
     "url": "https://github.com/aendue/ioBroker.reolink/issues"

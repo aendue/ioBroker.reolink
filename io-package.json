@@ -1,8 +1,20 @@
 {
     "common": {
         "name": "reolink",
-        "version": "0.0.1",
+        "version": "0.0.2",
         "news": {
+            "0.0.2": {
+                "en": "added languages\nadded get image function (snap)",
+                "de": "weitere sprachen\nhinzufügen von bildfunktion (snap)",
+                "ru": "добавленные языки\nдобавлена функция изображения (snap)",
+                "pt": "línguas adicionadas\nadicionado obter função de imagem (snap)",
+                "nl": "voegde talen toe\nvoegde beeldfunctie toe",
+                "fr": "langues ajoutées\najouter la fonction image (snap)",
+                "it": "lingue aggiuntive\naggiunto ottenere funzione immagine (snap)",
+                "es": "idiomas añadidos\nañadir la función de imagen (snap)",
+                "pl": "język docelowy\ndodano funkcję obrazu (snap)",
+                "zh-cn": "增加语文\n增加图像功能(绑架)"
+            },
             "0.0.1": {
                 "en": "initial release",
                 "de": "Erstveröffentlichung",
@@ -155,7 +167,7 @@
             "type": "state",
             "common": {
                 "role": "value",
-                "name": { 
+                "name": {
                     "en": "IP address",
                     "de": "IP-Adresse",
                     "ru": "IP адрес",
@@ -201,7 +213,7 @@
             "type": "state",
             "common": {
                 "role": "indicator.connected",
-                "name": {    
+                "name": {
                     "en": "Camera connected",
                     "de": "Kamera verbunden",
                     "ru": "Камера подключена",
@@ -234,7 +246,7 @@
                     "es": "Cámara mac",
                     "pl": "Camera macer",
                     "zh-cn": "Camera mac"
-                  },
+                },
                 "type": "string",
                 "read": true,
                 "write": false
@@ -256,7 +268,7 @@
                     "es": "enlace activo",
                     "pl": "link",
                     "zh-cn": "积极联系"
-                  },
+                },
                 "type": "string",
                 "read": true,
                 "write": false
@@ -278,7 +290,7 @@
                     "es": "Dirección del DNS",
                     "pl": "Adres DNS",
                     "zh-cn": "DNS地址"
-                  },
+                },
                 "type": "string",
                 "read": true,
                 "write": false
@@ -300,7 +312,7 @@
                     "es": "Dirección de puerta",
                     "pl": "Adres Gateway",
                     "zh-cn": "Gateway地址"
-                  },
+                },
                 "type": "string",
                 "read": true,
                 "write": false
@@ -322,7 +334,7 @@
                     "es": "Subnetmask",
                     "pl": "Subnet",
                     "zh-cn": "Subnetmask"
-                  },
+                },
                 "type": "string",
                 "read": true,
                 "write": false
@@ -344,7 +356,7 @@
                     "es": "NetworkType",
                     "pl": "NetworkType",
                     "zh-cn": "网络"
-                  },
+                },
                 "type": "string",
                 "read": true,
                 "write": false
@@ -365,7 +377,7 @@
                     "es": "Información del dispositivo",
                     "pl": "Informacja o Device",
                     "zh-cn": "从Devic收到的资料"
-                  }
+                }
             },
             "native": {}
         },
@@ -385,7 +397,7 @@
                     "es": "Modelo de cámara",
                     "pl": "Model Camera",
                     "zh-cn": "2. Camera模型"
-                  },
+                },
                 "type": "string",
                 "read": true,
                 "write": false
@@ -407,7 +419,7 @@
                     "es": "Cámara Día",
                     "pl": "Kamera Dzień",
                     "zh-cn": "Camera大楼 日 日"
-                  },
+                },
                 "type": "string",
                 "read": true,
                 "write": false
@@ -429,7 +441,7 @@
                     "es": "Cámara cfg",
                     "pl": "Camera cfg.",
                     "zh-cn": "Camera cfg"
-                  },
+                },
                 "type": "string",
                 "read": true,
                 "write": false
@@ -451,7 +463,7 @@
                     "es": "Detalles de la cámara",
                     "pl": "Szczegół",
                     "zh-cn": "Camera详细情况"
-                  },
+                },
                 "type": "string",
                 "read": true,
                 "write": false
@@ -473,7 +485,7 @@
                     "es": "Disco de cámaraNum",
                     "pl": "Camera discNum",
                     "zh-cn": "Camera dikNum"
-                  },
+                },
                 "type": "number",
                 "read": true,
                 "write": false
@@ -495,7 +507,7 @@
                     "es": "Firma de cámara Ver",
                     "pl": "Firma Camera Wiersze",
                     "zh-cn": "Camera公司 附 件"
-                  },
+                },
                 "type": "string",
                 "read": true,
                 "write": false
@@ -517,7 +529,7 @@
                     "es": "Nombre de cámara",
                     "pl": "Camera",
                     "zh-cn": "Camera姓名"
-                  },
+                },
                 "type": "string",
                 "read": true,
                 "write": false
@@ -539,7 +551,7 @@
                     "es": "Cámara serie",
                     "pl": "Seriali Camera",
                     "zh-cn": "Cameraserial"
-                  },
+                },
                 "type": "string",
                 "read": true,
                 "write": false
@@ -561,7 +573,7 @@
                     "es": "Cámara wifi",
                     "pl": "Camera",
                     "zh-cn": "Camerawifi"
-                  },
+                },
                 "type": "number",
                 "read": true,
                 "write": false
@@ -602,7 +614,7 @@
                     "es": "ir",
                     "pl": "ir",
                     "zh-cn": "ir"
-                  },
+                },
                 "type": "boolean",
                 "read": true,
                 "write": true
