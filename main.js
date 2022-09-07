@@ -189,7 +189,7 @@ class TestProject extends utils.Adapter {
 	async setPTZPreset(ptzPreset) {
 		if (this.reolinkApiClient) {
 			try {
-				const ptzPresetCmd = {
+				const ptzPresetCmd = [{
 					"cmd":"PtzCtrl",
 					"action":0,
 					"param":{
@@ -198,9 +198,8 @@ class TestProject extends utils.Adapter {
 						"op":"ToPos",
 						"speed":32
 					}
-				};
-				const result = await this.reolinkApiClient.post(`/api.cgi?user=${this.config.cameraUser}&password=${this.config.cameraPassword}`, ptzPresetCmd);
-				this.log.debug(String(result.status));
+				}];
+				await this.reolinkApiClient.post(`/api.cgi?cmd=PtzCtrl&&user=${this.config.cameraUser}&password=${this.config.cameraPassword}`, ptzPresetCmd);
 			} catch (error) {
 				this.log.error(error);
 			}

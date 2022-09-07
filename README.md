@@ -44,7 +44,15 @@ sendTo("reolink.0",{action: "snap"}, function(result){
 ```
 
 ## Changelog
-	
+<!--
+    Placeholder for the next version (at the beginning of the line):
+    ### **WORK IN PROGRESS**
+-->
+
+### **WORK IN PROGRESS**
+
+* (oelison) ptz preset tested
+
 ### 0.0.3 (2022-09-05)
 
 * (aendue) npm release prepare
