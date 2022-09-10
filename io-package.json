@@ -106,6 +106,7 @@
     "native": {
         "cameraType": "",
         "cameraIp": " ",
+        "cameraProtocol": "https",
         "cameraChannel": "0",
         "cameraUser": "",
         "cameraPassword": "",
