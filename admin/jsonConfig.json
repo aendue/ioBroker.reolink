@@ -18,12 +18,23 @@
                     ] 
                 },
                 "cameraIp": {
-                    "newline": true,
                     "type": "text",
                     "sm": 2,
                     "md": 4,
                     "lg": 4,
                     "label": "IP-Adresse"
+                },
+                "cameraProtocol": {
+                    "newline": true,
+                    "type": "select",
+                    "label": "Protocol",
+                    "sm": 6,
+                    "md": 6,
+                    "lg": 6,
+                    "options": [
+                        {"label": "https", "value": "https"},
+                        {"label": "http", "value": "http"}
+                    ] 
                 },
                 "cameraChannel": {
                     "type": "number",

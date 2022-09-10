@@ -47,9 +47,12 @@ class TestProject extends utils.Adapter {
 			this.log.error("Username and/or password not set properly - please check instance!");
 			return;
 		}
-
+		if(!this.config.cameraProtocol){
+			this.log.error("no protocol (http/https) set!");
+			return;
+		}
 		this.reolinkApiClient = axios.create({
-			baseURL: `https://${this.config.cameraIp}`,
+			baseURL: `${this.config.cameraProtocol}://${this.config.cameraIp}`,
 			timeout: 4000,
 			responseType: "json",
 			responseEncoding: "binary",
