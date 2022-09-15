@@ -69,7 +69,13 @@ class TestProject extends utils.Adapter {
 
 		//State abbonieren
 		this.subscribeStates("settings.ir");
+		this.subscribeStates("settings.switchLed");
+		this.subscribeStates("settings.ledBrightness");
 		this.subscribeStates("settings.ptzPreset");
+		this.subscribeStates("settings.autoFocus");
+		this.subscribeStates("settings.setZoomFocus");
+		this.subscribeStates("settings.push");
+		this.subscribeStates("settings.playAlarm");
 
 		if(this.config.cameraType == "rlc510A"){
 			//this.getDevinfo();
@@ -189,24 +195,140 @@ class TestProject extends utils.Adapter {
 		}
 		return null;
 	}
-	async setPTZPreset(ptzPreset) {
-		if (this.reolinkApiClient) {
-			try {
-				const ptzPresetCmd = [{
-					"cmd":"PtzCtrl",
-					"action":0,
-					"param":{
-						"channel":0,
-						"id":ptzPreset,
-						"op":"ToPos",
-						"speed":32
-					}
-				}];
-				await this.reolinkApiClient.post(`/api.cgi?cmd=PtzCtrl&&user=${this.config.cameraUser}&password=${this.config.cameraPassword}`, ptzPresetCmd);
-			} catch (error) {
-				this.log.error(error);
+	async sendCmd(cmdObject, cmdName) {
+		try	{
+			if (this.reolinkApiClient) {
+				const result = await this.reolinkApiClient.post(`/api.cgi?user=${this.config.cameraUser}&password=${this.config.cameraPassword}`, cmdObject);
+				if ("error" in result.data[0])
+				{
+					this.log.error("sendCmd " + cmdName + ": " + JSON.stringify(result.data[0].error.detail));
+				}
 			}
+		} catch(error) {
+			this.log.error(error);
+			this.log.error("sendCmd " + cmdName + "connection error");
 		}
+	}
+	async ptzCtrl(ptzPreset) {
+		const ptzPresetCmd = [{
+			"cmd":"PtzCtrl",
+			"action":0,
+			"param":{
+				"channel":0,
+				"id":ptzPreset,
+				"op":"ToPos",
+				"speed":32
+			}
+		}];
+		this.sendCmd(ptzPresetCmd, "PtzCtrl");
+	}
+	async setPush(state) {
+		let pushOn = 1;
+		if(state == false) {
+			pushOn = 0;
+		}
+		const pushOnCmd = [{
+			"cmd": "SetPushV20",
+			"param": {
+				"Push": {
+					"enable": pushOn
+				}
+			}
+		}];
+		this.sendCmd(pushOnCmd,"SetPush");
+	}
+	async setAutoFocus(state) {
+		let autoFocusDisable = 1;
+		if(state == true){
+			autoFocusDisable = 0;
+		}
+		const autoFocusCmd = [{
+			"cmd": "SetAutoFocus",
+			"action": 0,
+			"param": {
+				"AutoFocus": {
+					"channel": 0,
+					"disable": autoFocusDisable
+				}
+			}
+		}];
+		this.sendCmd(autoFocusCmd, "SetAutoFocus");
+	}
+	async startZoomFocus(pos) {
+		const ptzCheckCmd = [{
+			"cmd":"StartZoomFocus",
+			"action": 0,
+			"param": {
+				"ZoomFocus": {
+					"channel": 0,
+					"pos": pos,
+					"op": "ZoomPos"
+				}
+			}
+		}];
+		this.sendCmd(ptzCheckCmd,"StartZoomFocus");
+	}
+	async audioAlarmPlay(count) {
+		const audioAlarmPlayCmd = [{
+			"cmd":"AudioAlarmPlay",
+			"action": 0,
+			"param": {
+				"alarm_mode": "times",
+				"manual_switch": 0,
+				"times": count,
+				"channel": 0
+			}
+		}];
+		this.sendCmd(audioAlarmPlayCmd, "AudioAlarmPlay");
+	}
+	async setIrLights(irValue) {
+		let irState = "Off";
+		if (irValue === true)
+		{
+			irState = "Auto";
+		}
+		const irCmd = [{
+			"cmd":"SetIrLights",
+			"action": 0,
+			"param": {
+				"IrLights": {
+					"channel": 0,
+					"state": irState
+				}
+			}
+		}];
+		this.sendCmd(irCmd, "SetIrLights");
+	}
+	async switchWhiteLed(state) {
+		let ledState = 0;
+		if (state === true)
+		{
+			ledState = 1;
+		}
+		const setWhiteLedCmd = [{
+			"cmd": "SetWhiteLed",
+			"param": {
+				"WhiteLed": {
+					"state": ledState,
+					"channel": 0,
+					"mode": 1,
+				}
+			}
+		}];
+		this.sendCmd(setWhiteLedCmd, "SetWhiteLed");
+	}
+	async setWhiteLed(state) {
+		const setWhiteLedCmd = [{
+			"cmd": "SetWhiteLed",
+			"param": {
+				"WhiteLed": {
+					"channel": 0,
+					"mode": 1,
+					"bright": state
+				}
+			}
+		}];
+		this.sendCmd(setWhiteLedCmd, "SetWhiteLed");
 	}
 	async refreshState(source){
 		//this.log.debug(`refreshState': started from "${source}"`);
@@ -239,31 +361,6 @@ class TestProject extends utils.Adapter {
 		}
 
 
-	}
-
-	async setValue(source, irvalue){
-		this.log.debug(irvalue);
-
-		const payload = [{ "cmd": "SetIrLights", "action": 0, "param": {
-			"IrLights": {
-				"channel": 0,
-				"state": "Off"
-			}
-		}}];
-		//this.log.debug(`setValue - error': started from "${source}"`);
-		//this.log.debug(payload);
-
-		try {
-			if (this.reolinkApiClient !== null) {
-				const res = await this.reolinkApiClient.post(`/api.cgi?cmd=SetIrLights&user=${this.config.cameraUser}&password=${this.config.cameraPassword}`,payload);
-				this.log.debug(String(res.status));
-				this.log.debug(res.statusText);
-				this.log.debug(String(res.headers));
-				this.log.debug(String(res.config));
-			}
-		} catch (error) {
-			this.log.error(`Fehler: ${error}`);
-		}
 	}
 
 	/**
@@ -301,14 +398,30 @@ class TestProject extends utils.Adapter {
 
 			const idValues= id.split(".");
 			const propName = idValues[idValues.length -1];
-			this.log.info(`Geändertes State: ${propName}`);
-			if(propName == "ir"){
-				this.setValue("onStateChange", state.val);
-
+			this.log.info(`Changed state: ${propName}`);
+			if(propName == "ir") {
+				this.setIrLights(state.val);
 			}
-			if(propName === "ptzPreset")
-			{
-				this.setPTZPreset(state.val);
+			if(propName === "ptzPreset") {
+				this.ptzCtrl(state.val);
+			}
+			if(propName === "autoFocus") {
+				this.setAutoFocus(state.val);
+			}
+			if(propName === "setZoomFocus") {
+				this.startZoomFocus(state.val);
+			}
+			if(propName === "push") {
+				this.setPush(state.val);
+			}
+			if(propName === "playAlarm") {
+				this.audioAlarmPlay(state.val);
+			}
+			if(propName === "switchLed") {
+				this.switchWhiteLed(state.val);
+			}
+			if(propName === "ledBrightness") {
+				this.setWhiteLed(state.val);
 			}
 		} else {
 			// The state was deleted
