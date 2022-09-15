@@ -616,19 +616,41 @@
             "type": "state",
             "common": {
                 "role": "value",
-                "name": {
-                    "en": "ir",
-                    "de": "ir",
-                    "ru": "ir",
-                    "pt": "ir",
-                    "nl": "ir",
-                    "fr": "ir",
-                    "it": "ir",
-                    "es": "ir",
-                    "pl": "ir",
-                    "zh-cn": "ir"
-                },
+                "name": "ir",
                 "type": "boolean",
+                "read": true,
+                "write": true
+            }
+        },
+        {
+            "_id": "settings.switchLed",
+            "type": "state",
+            "common": {
+                "role": "value",
+                "name": "led",
+                "type": "boolean",
+                "read": true,
+                "write": true
+            }
+        },
+        {
+            "_id": "settings.ledBrightness",
+            "type": "state",
+            "common": {
+                "role": "value",
+                "name": {
+                    "en": "LED Brightness",
+                    "de": "LED Helligkeit",
+                    "ru": "LED Яркость",
+                    "pt": "LED Brilho",
+                    "nl": "LED Brightness",
+                    "fr": "LED Luminosité",
+                    "it": "LED Luminosità",
+                    "es": "LED Brillo",
+                    "pl": "LED Brightness",
+                    "zh-cn": "附录 B. 权利"
+                  },
+                "type": "number",
                 "read": true,
                 "write": true
             }
@@ -650,6 +672,94 @@
                     "pl": "PTZ preset",
                     "zh-cn": "PTZset"
                 },
+                "type": "number",
+                "read": true,
+                "write": true
+            }
+        },
+        {
+            "_id": "settings.push",
+            "type": "state",
+            "common": {
+                "role": "value",
+                "name":  {
+                    "en": "enable push",
+                    "de": "push einschalten",
+                    "ru": "включить push",
+                    "pt": "habilitar o push",
+                    "nl": "push",
+                    "fr": "activer push",
+                    "it": "abilitare push",
+                    "es": "push",
+                    "pl": "umożliwiać",
+                    "zh-cn": "推动"
+                  },
+                "type": "boolean",
+                "read": true,
+                "write": true
+            }
+        },
+        {
+            "_id": "settings.autoFocus",
+            "type": "state",
+            "common": {
+                "role": "value",
+                "name":  {
+                    "en": "auto focus",
+                    "de": "autofokus",
+                    "ru": "авто фокус",
+                    "pt": "foco auto",
+                    "nl": "automatisch",
+                    "fr": "auto focus",
+                    "it": "auto messa a fuoco",
+                    "es": "enfoque automático",
+                    "pl": "autofocus",
+                    "zh-cn": "汽车重点"
+                  },
+                "type": "boolean",
+                "read": true,
+                "write": true
+            }
+        },
+        {
+            "_id": "settings.setZoomFocus",
+            "type": "state",
+            "common": {
+                "role": "value",
+                "name":  {
+                    "en": "set zoom position",
+                    "de": "zoom position",
+                    "ru": "установите позицию zoom",
+                    "pt": "set zoom position",
+                    "nl": "zoompositie",
+                    "fr": "position de zoom",
+                    "it": "impostare la posizione zoom",
+                    "es": "posición zoom",
+                    "pl": "uporządkować",
+                    "zh-cn": "2. 动物状况"
+                  },
+                "type": "number",
+                "read": true,
+                "write": true
+            }
+        },
+        {
+            "_id": "settings.playAlarm",
+            "type": "state",
+            "common": {
+                "role": "value",
+                "name":  {
+                    "en": "play alarm",
+                    "de": "spielalarm",
+                    "ru": "играть тревогу",
+                    "pt": "alarme de jogo",
+                    "nl": "speel alarm",
+                    "fr": "jouer l'alarme",
+                    "it": "allarme di gioco",
+                    "es": "toca alarma",
+                    "pl": "alarm",
+                    "zh-cn": "震惊"
+                  },
                 "type": "number",
                 "read": true,
                 "write": true

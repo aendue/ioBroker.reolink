@@ -30,6 +30,7 @@ RLC-510A
 ### tested Devices
 
 RLC-810A
+RLC-823A
 
 ### Example Usage of get image:
 
@@ -52,7 +53,12 @@ sendTo("reolink.0",{action: "snap"}, function(result){
 ### **WORK IN PROGRESS**
 
 * (oelison) ptz preset tested
-* (oelison) change protocol (http/https) possible 
+* (oelison) change protocol (http/https) possible
+* (oelison) led on/off and brightness
+* (oelison) push on/off
+* (oelison) auto focus on/off
+* (oelison) set zoom
+* (oelison) play alarm (n times)
 
 ### 0.0.3 (2022-09-05)
 
