@@ -80,7 +80,7 @@ class TestProject extends utils.Adapter {
 		if(this.config.cameraType == "rlc510A"){
 			//this.getDevinfo();
 			//this.getLocalLink();
-			this.setValue("onReady");
+			//this.setValue("onReady");
 			this.refreshState("onReady");
 		}else if(this.config.cameraType == "others"){
 
