@@ -134,6 +134,18 @@
             "native": {}
         },
         {
+            "_id": "info.connection",
+            "type": "state",
+            "common": {
+                "role": "indicator.connected",
+                "name": "Device or service connected",
+                "type": "boolean",
+                "read": true,
+                "write": false,
+                "def": false
+            },
+            "native": {}
+        },{
             "_id": "sensor.motion",
             "type": "state",
             "common": {
@@ -157,7 +169,118 @@
             "native": {}
         },
         {
-            "_id": "Network",
+            "_id": "disc",
+            "type": "channel",
+            "common": {
+                "name": {
+                    "en": "harddisk",
+                    "de": "harddisk",
+                    "ru": "харддиск",
+                    "pt": "disco rígido",
+                    "nl": "harddisk",
+                    "fr": "harddisk",
+                    "it": "dischio duro",
+                    "es": "harddisk",
+                    "pl": "harddisk",
+                    "zh-cn": "硬盘"
+                }
+            },
+            "native": {}
+        },
+        {
+            "_id": "disc.capacity",
+            "type": "state",
+            "common": {
+                "role": "value",
+                "name":  {
+                    "en": "capacity [MB]",
+                    "de": "kapazität [MB]",
+                    "ru": "вместимость [MB]",
+                    "pt": "capacidade [MB]",
+                    "nl": "capaciteit [MB]",
+                    "fr": "capacité [MB]",
+                    "it": "capacità [MB]",
+                    "es": "capacidad [MB]",
+                    "pl": "pojemność [MB]",
+                    "zh-cn": "能力 [MB]"
+                },
+                "type": "number",
+                "read": true,
+                "write": false
+            },
+            "native": {}
+        },
+        {
+            "_id": "disc.formatted",
+            "type": "state",
+            "common": {
+                "role": "indicator",
+                "name": {
+                    "en": "formatted",
+                    "de": "formatiert",
+                    "ru": "форматирование",
+                    "pt": "formatado",
+                    "nl": "gevormd",
+                    "fr": "formaté",
+                    "it": "formattato",
+                    "es": "formateado",
+                    "pl": "formatować",
+                    "zh-cn": "格式"
+                },
+                "type": "boolean",
+                "read": true,
+                "write": false
+            },
+            "native": {}
+        },
+        {
+            "_id": "disc.mounted",
+            "type": "state",
+            "common": {
+                "role": "indicator",
+                "name": {
+                    "en": "loaded",
+                    "de": "geladen",
+                    "ru": "загружено",
+                    "pt": "carregado",
+                    "nl": "geladen",
+                    "fr": "chargé",
+                    "it": "caricato",
+                    "es": "cargado",
+                    "pl": "loaded",
+                    "zh-cn": "装载"
+                },
+                "type": "boolean",
+                "read": true,
+                "write": false
+            },
+            "native": {}
+        },
+        {
+            "_id": "disc.free",
+            "type": "state",
+            "common": {
+                "role": "value",
+                "name": {
+                    "en": "free memory [MB]",
+                    "de": "freier speicher [MB]",
+                    "ru": "бесплатная память [MB]",
+                    "pt": "memória livre [MB]",
+                    "nl": "gratis geheugen [MB]",
+                    "fr": "mémoire libre [MB]",
+                    "it": "memoria libera [MB]",
+                    "es": "memoria libre [MB]",
+                    "pl": "free memory [MB]",
+                    "zh-cn": "免费记忆 [MB]"
+                  },
+                "type": "boolean",
+                "read": true,
+                "write": false
+            },
+            "native": {}
+        },
+        {
+            "_id": "network",
             "type": "channel",
             "common": {
                 "name": {
@@ -176,7 +299,7 @@
             "native": {}
         },
         {
-            "_id": "Network.Ip",
+            "_id": "network.ip",
             "type": "state",
             "common": {
                 "role": "value",
@@ -199,7 +322,7 @@
             "native": {}
         },
         {
-            "_id": "Network.Channel",
+            "_id": "network.channel",
             "type": "state",
             "common": {
                 "role": "value",
@@ -222,7 +345,7 @@
             "native": {}
         },
         {
-            "_id": "Network.Connected",
+            "_id": "network.connected",
             "type": "state",
             "common": {
                 "role": "indicator.connected",
@@ -244,7 +367,7 @@
             }
         },
         {
-            "_id": "Network.Mac",
+            "_id": "network.mac",
             "type": "state",
             "common": {
                 "role": "value",
@@ -266,7 +389,7 @@
             }
         },
         {
-            "_id": "Network.ActiveLink",
+            "_id": "network.activeLink",
             "type": "state",
             "common": {
                 "role": "value",
@@ -288,7 +411,7 @@
             }
         },
         {
-            "_id": "Network.Dns",
+            "_id": "network.dns",
             "type": "state",
             "common": {
                 "role": "value",
@@ -310,7 +433,7 @@
             }
         },
         {
-            "_id": "Network.Gateway",
+            "_id": "network.gateway",
             "type": "state",
             "common": {
                 "role": "value",
@@ -332,7 +455,7 @@
             }
         },
         {
-            "_id": "Network.Mask",
+            "_id": "network.mask",
             "type": "state",
             "common": {
                 "role": "value",
@@ -354,7 +477,7 @@
             }
         },
         {
-            "_id": "Network.NetworkType",
+            "_id": "network.networkType",
             "type": "state",
             "common": {
                 "role": "value",
@@ -376,7 +499,7 @@
             }
         },
         {
-            "_id": "Device",
+            "_id": "device",
             "type": "channel",
             "common": {
                 "name": {
@@ -395,7 +518,7 @@
             "native": {}
         },
         {
-            "_id": "Device.Model",
+            "_id": "device.model",
             "type": "state",
             "common": {
                 "role": "value",
@@ -417,7 +540,7 @@
             }
         },
         {
-            "_id": "Device.BuildDay",
+            "_id": "device.buildDay",
             "type": "state",
             "common": {
                 "role": "value",
@@ -439,7 +562,7 @@
             }
         },
         {
-            "_id": "Device.CfgVer",
+            "_id": "device.cfgVer",
             "type": "state",
             "common": {
                 "role": "value",
@@ -461,7 +584,7 @@
             }
         },
         {
-            "_id": "Device.Detail",
+            "_id": "device.detail",
             "type": "state",
             "common": {
                 "role": "value",
@@ -483,7 +606,7 @@
             }
         },
         {
-            "_id": "Device.DiskNum",
+            "_id": "device.diskNum",
             "type": "state",
             "common": {
                 "role": "value",
@@ -505,7 +628,7 @@
             }
         },
         {
-            "_id": "Device.FirmVer",
+            "_id": "device.firmVer",
             "type": "state",
             "common": {
                 "role": "value",
@@ -527,7 +650,7 @@
             }
         },
         {
-            "_id": "Device.Name",
+            "_id": "device.name",
             "type": "state",
             "common": {
                 "role": "value",
@@ -549,7 +672,7 @@
             }
         },
         {
-            "_id": "Device.Serial",
+            "_id": "device.serial",
             "type": "state",
             "common": {
                 "role": "value",
@@ -571,7 +694,7 @@
             }
         },
         {
-            "_id": "Device.Wifi",
+            "_id": "device.wifi",
             "type": "state",
             "common": {
                 "role": "value",
@@ -759,6 +882,72 @@
                     "es": "toca alarma",
                     "pl": "alarm",
                     "zh-cn": "震惊"
+                  },
+                "type": "number",
+                "read": true,
+                "write": true
+            }
+        },
+        {
+            "_id": "settings.getDiscData",
+            "type": "state",
+            "common": {
+                "role": "value",
+                "name":  {
+                    "en": "get drive data",
+                    "de": "laufwerksdaten",
+                    "ru": "получить данные о приводе",
+                    "pt": "obter dados de unidade",
+                    "nl": "drake gegevens",
+                    "fr": "obtenir des données d'entraînement",
+                    "it": "ottenere dati di unità",
+                    "es": "obtener datos de la unidad",
+                    "pl": "dać dane",
+                    "zh-cn": "数据流动"
+                  },
+                "type": "boolean",
+                "read": true,
+                "write": true
+            }
+        },
+        {
+            "_id": "settings.ptzEnableGuard",
+            "type": "state",
+            "common": {
+                "role": "value",
+                "name":   {
+                    "en": "enable PTZguard",
+                    "de": "PTZguard ermöglichen",
+                    "ru": "включить PTZguard",
+                    "pt": "habilitar PTZguard",
+                    "nl": "in staat PTZguard",
+                    "fr": "activer PTZguard",
+                    "it": "abilita PTZguard",
+                    "es": "habilitación PTZguard",
+                    "pl": "umożliwić PTZguard",
+                    "zh-cn": "a. 能够促进 PTZguard"
+                  },
+                "type": "boolean",
+                "read": true,
+                "write": true
+            }
+        },
+        {
+            "_id": "settings.ptzGuardTimeout",
+            "type": "state",
+            "common": {
+                "role": "value",
+                "name":   {
+                    "en": "timeout ptzGuard",
+                    "de": "zeit ptzGuard",
+                    "ru": "timeout ptzGuard",
+                    "pt": "timeout ptzGuard",
+                    "nl": "time-out ptzGuard",
+                    "fr": "timeout ptzGuard",
+                    "it": "timeout ptzGuard",
+                    "es": "tiempo fuera ptzGuard",
+                    "pl": "czasoprzestrzeni ptzGuard",
+                    "zh-cn": "时间 ptzGuard"
                   },
                 "type": "number",
                 "read": true,
