@@ -8,7 +8,7 @@ const utils = require("@iobroker/adapter-core");
 const axios = require("axios").default;
 const https = require("https");
 
-class TestProject extends utils.Adapter {
+class ReoLinkCam extends utils.Adapter {
 
 	/**
 	 * @param {Partial<utils.AdapterOptions>} [options={}]
@@ -33,7 +33,7 @@ class TestProject extends utils.Adapter {
 	}
 
 	async onReady() {
-
+		this.setState("info.connection", false, true);
 		this.log.info("Reolink adapter has started");
 		if (!this.config.cameraIp){
 			this.log.error("Camera Ip not set - please check instance!");
@@ -62,8 +62,8 @@ class TestProject extends utils.Adapter {
 		});
 
 		this.log.info(`Current IP: ${this.config.cameraIp}`);
-		await this.setStateAsync("Network.Ip",{val: this.config.cameraIp, ack: true});
-		await this.setStateAsync("Network.Channel",{val: this.config.cameraChannel, ack: true});
+		await this.setStateAsync("network.ip",{val: this.config.cameraIp, ack: true});
+		await this.setStateAsync("network.channel",{val: this.config.cameraChannel, ack: true});
 
 		this.log.info(`Current Devicetype: ${this.config.cameraType}`);
 
@@ -76,18 +76,24 @@ class TestProject extends utils.Adapter {
 		this.subscribeStates("settings.setZoomFocus");
 		this.subscribeStates("settings.push");
 		this.subscribeStates("settings.playAlarm");
+		this.subscribeStates("settings.getDiscData");
+		this.subscribeStates("settings.ptzEnableGuard");
+		this.subscribeStates("settings.ptzGuardTimeout");
 
 		if(this.config.cameraType == "rlc510A"){
-			//this.getDevinfo();
-			//this.getLocalLink();
-			//this.setValue("onReady");
+			this.getDevinfo();
+			this.getLocalLink();
 			this.refreshState("onReady");
+			this.getDriveInfo();
+			this.getPtzGuardInfo();
 		}else if(this.config.cameraType == "others"){
 
 			this.log.info("camera type set to others...API functions not testet!");
 			this.getDevinfo();
 			this.getLocalLink();
 			this.refreshState("onReady");
+			this.getDriveInfo();
+			this.getPtzGuardInfo();
 		}else {
 			this.log.error("Cameratyp undefined...");
 		}
@@ -113,7 +119,7 @@ class TestProject extends utils.Adapter {
 				// }
 			} catch (error) {
 				this.apiConnected = false;
-				await this.setStateAsync("Network.Connected", {val: this.apiConnected, ack: true});
+				await this.setStateAsync("network.connected", {val: this.apiConnected, ack: true});
 				this.log.error(error);
 			}
 		}
@@ -127,31 +133,80 @@ class TestProject extends utils.Adapter {
 				this.log.debug(`camMdStateInfo ${JSON.stringify(DevInfoValues.status)}: ${JSON.stringify(DevInfoValues.data)}`);
 
 				if(DevInfoValues.status === 200){
+					this.setState("info.connection", true, true);
 					this.apiConnected = true;
-					await this.setStateAsync("Network.Connected", {val: this.apiConnected, ack: true});
+					await this.setStateAsync("network.connected", {val: this.apiConnected, ack: true});
 					const DevValues = DevInfoValues.data[0];
 
-					await this.setStateAsync("Device.BuildDay", {val: DevValues.value.DevInfo.buildDay, ack: true});
-					await this.setStateAsync("Device.CfgVer", {val: DevValues.value.DevInfo.cfgVer, ack: true});
-					await this.setStateAsync("Device.Detail", {val: DevValues.value.DevInfo.detail, ack: true});
-					await this.setStateAsync("Device.DiskNum", {val: DevValues.value.DevInfo.diskNum, ack: true});
-					await this.setStateAsync("Device.FirmVer", {val: DevValues.value.DevInfo.firmVer, ack: true});
-					await this.setStateAsync("Device.Model", {val: DevValues.value.DevInfo.model, ack: true});
-					await this.setStateAsync("Device.Name", {val: DevValues.value.DevInfo.name, ack: true});
-					await this.setStateAsync("Device.Serial", {val: DevValues.value.DevInfo.serial, ack: true});
-					await this.setStateAsync("Device.Wifi", {val: DevValues.value.DevInfo.wifi, ack: true});
+					await this.setStateAsync("device.buildDay", {val: DevValues.value.DevInfo.buildDay, ack: true});
+					await this.setStateAsync("device.cfgVer", {val: DevValues.value.DevInfo.cfgVer, ack: true});
+					await this.setStateAsync("device.detail", {val: DevValues.value.DevInfo.detail, ack: true});
+					await this.setStateAsync("device.diskNum", {val: DevValues.value.DevInfo.diskNum, ack: true});
+					await this.setStateAsync("device.firmVer", {val: DevValues.value.DevInfo.firmVer, ack: true});
+					await this.setStateAsync("device.model", {val: DevValues.value.DevInfo.model, ack: true});
+					await this.setStateAsync("device.name", {val: DevValues.value.DevInfo.name, ack: true});
+					await this.setStateAsync("device.serial", {val: DevValues.value.DevInfo.serial, ack: true});
+					await this.setStateAsync("device.wifi", {val: DevValues.value.DevInfo.wifi, ack: true});
 				}
 
 			} catch (error) {
+				this.setState("info.connection", false, true);
 				this.apiConnected = false;
-				await this.setStateAsync("Network.Connected", {val: this.apiConnected, ack: true});
+				await this.setStateAsync("network.connected", {val: this.apiConnected, ack: true});
 
 
 				this.log.error(error);
 			}
 		}
 	}
+	async getPtzGuardInfo() {
+		if (this.reolinkApiClient) {
+			try {
+				const driveInfoData = await this.reolinkApiClient.get(`/api.cgi?cmd=GetPtzGuard&user=${this.config.cameraUser}&password=${this.config.cameraPassword}`);
+				this.log.debug(`ptz guard info ${JSON.stringify(driveInfoData.status)}: ${JSON.stringify(driveInfoData.data)}`);
 
+			} catch (error) {
+				this.log.error(error);
+			}
+		}
+	}
+	async getDriveInfo() {
+		if (this.reolinkApiClient) {
+			try {
+				const driveInfoData = await this.reolinkApiClient.get(`/api.cgi?cmd=GetHddInfo&user=${this.config.cameraUser}&password=${this.config.cameraPassword}`);
+				this.log.debug(`getDriveInfo ${JSON.stringify(driveInfoData.status)}: ${JSON.stringify(driveInfoData.data)}`);
+
+				if(driveInfoData.status === 200){
+					const driveInfoValues = driveInfoData.data[0];
+					const numberOfDiscs = Object.keys(driveInfoValues.value.HddInfo).length;
+					if (numberOfDiscs > 0) {
+						if (numberOfDiscs > 1) {
+							this.log.warn("Only the first disc is read. You have " + numberOfDiscs.toString() + " Discs!");
+						}
+						await this.setStateAsync("disc.capacity", {val: driveInfoValues.value.HddInfo[0].capacity, ack: true});
+						let discFormatted = false;
+						if (driveInfoValues.value.HddInfo[0].format === 1) {
+							discFormatted = true;
+						}
+						await this.setStateAsync("disc.formatted", {val: discFormatted, ack: true});
+						await this.setStateAsync("disc.free", {val: driveInfoValues.value.HddInfo[0].size, ack: true});
+						let discMounted = false;
+						if (driveInfoValues.value.HddInfo[0].mount === 1) {
+							discMounted = true;
+						}
+						await this.setStateAsync("disc.mounted", {val: discMounted, ack: true});
+					} else {
+						await this.setStateAsync("disc.capacity", {val: 0, ack: false});
+						await this.setStateAsync("disc.formatted", {val: false, ack: false});
+						await this.setStateAsync("disc.free", {val: 0, ack: false});
+						await this.setStateAsync("disc.mounted", {val: false, ack: false});
+					}
+				}
+			} catch (error) {
+				this.log.error(error);
+			}
+		}
+	}
 	async getLocalLink(){
 
 		if (this.reolinkApiClient) {
@@ -161,20 +216,20 @@ class TestProject extends utils.Adapter {
 
 				if(LinkInfoValues.status === 200){
 					this.apiConnected = true;
-					await this.setStateAsync("Network.Connected", {val: this.apiConnected, ack: true});
+					await this.setStateAsync("network.connected", {val: this.apiConnected, ack: true});
 					const LinkValues = LinkInfoValues.data[0];
 
-					await this.setStateAsync("Network.ActiveLink", {val: LinkValues.value.LocalLink.activeLink, ack: true});
-					await this.setStateAsync("Network.Mac", {val: LinkValues.value.LocalLink.mac, ack: true});
-					await this.setStateAsync("Network.Dns", {val: LinkValues.value.LocalLink.dns.dns1, ack: true});
-					await this.setStateAsync("Network.Gateway", {val: LinkValues.value.LocalLink.static.gateway, ack: true});
-					await this.setStateAsync("Network.Mask", {val: LinkValues.value.LocalLink.static.mask, ack: true});
-					await this.setStateAsync("Network.NetworkType", {val: LinkValues.value.LocalLink.type, ack: true});
+					await this.setStateAsync("network.activeLink", {val: LinkValues.value.LocalLink.activeLink, ack: true});
+					await this.setStateAsync("network.mac", {val: LinkValues.value.LocalLink.mac, ack: true});
+					await this.setStateAsync("network.dns", {val: LinkValues.value.LocalLink.dns.dns1, ack: true});
+					await this.setStateAsync("network.gateway", {val: LinkValues.value.LocalLink.static.gateway, ack: true});
+					await this.setStateAsync("network.mask", {val: LinkValues.value.LocalLink.static.mask, ack: true});
+					await this.setStateAsync("network.networkType", {val: LinkValues.value.LocalLink.type, ack: true});
 				}
 			} catch (error) {
 				this.apiConnected = false;
 
-				await this.setStateAsync("Network.Connected", {val: this.apiConnected, ack: true});
+				await this.setStateAsync("network.connected", {val: this.apiConnected, ack: true});
 
 				this.log.error(error);
 			}
@@ -196,9 +251,12 @@ class TestProject extends utils.Adapter {
 		return null;
 	}
 	async sendCmd(cmdObject, cmdName) {
+		this.log.debug("sendCmd: " + cmdName);
 		try	{
 			if (this.reolinkApiClient) {
 				const result = await this.reolinkApiClient.post(`/api.cgi?user=${this.config.cameraUser}&password=${this.config.cameraPassword}`, cmdObject);
+				this.log.debug(JSON.stringify(result.status));
+				this.log.debug(JSON.stringify(result.data));
 				if ("error" in result.data[0])
 				{
 					this.log.error("sendCmd " + cmdName + ": " + JSON.stringify(result.data[0].error.detail));
@@ -330,6 +388,38 @@ class TestProject extends utils.Adapter {
 		}];
 		this.sendCmd(setWhiteLedCmd, "SetWhiteLed");
 	}
+	async setPtzGuard(state) {
+		let enable = 0;
+		if (state === true) {
+			enable = 1;
+		}
+		const setPtzGuardCmd = [{
+			"cmd": "SetPtzGuard",
+			"action": 0,
+			"param": {
+				"PtzGuard": {
+					"channel": 0,
+					"cmdStr": "",
+					"benable": enable
+				}
+			}
+		}];
+		await this.sendCmd(setPtzGuardCmd, "setPtzGuard");
+		this.getPtzGuardInfo();
+	}
+	async setPtzGuardTimeout(timeout) {
+		const setPtzGuardCmd = [{
+			"cmd": "SetPtzGuard",
+			"action": 0,
+			"param": {
+				"PtzGuard": {
+					"channel": 0,
+					"timeout": timeout
+				}
+			}
+		}];
+		this.sendCmd(setPtzGuardCmd, "setPtzGuardTimeout");
+	}
 	async refreshState(source){
 		//this.log.debug(`refreshState': started from "${source}"`);
 
@@ -423,6 +513,15 @@ class TestProject extends utils.Adapter {
 			if(propName === "ledBrightness") {
 				this.setWhiteLed(state.val);
 			}
+			if(propName === "getDiscData") {
+				this.getDriveInfo();
+			}
+			if(propName === "ptzEnableGuard") {
+				this.setPtzGuard(state.val);
+			}
+			if(propName === "ptzGuardTimeout") {
+				this.setPtzGuardTimeout(state.val);
+			}
 		} else {
 			// The state was deleted
 			this.log.debug(`state ${id} deleted`);
@@ -450,8 +549,8 @@ if (require.main !== module) {
 	/**
 	 * @param {Partial<utils.AdapterOptions>} [options={}]
 	 */
-	module.exports = (options) => new TestProject(options);
+	module.exports = (options) => new ReoLinkCam(options);
 } else {
 	// otherwise start the instance directly
-	new TestProject();
+	new ReoLinkCam();
 }
