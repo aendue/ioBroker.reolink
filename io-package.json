@@ -1,8 +1,20 @@
 {
     "common": {
         "name": "reolink",
-        "version": "0.0.3",
+        "version": "0.0.4",
         "news": {
+            "0.0.4": {
+                "en": "ptz preset tested\nchange protocol (http/https) possible\nled on/off and brightness\npush on/off\nauto focus on/off\nset zoom\nplay alarm (n times)\nmotion detection enabled again",
+                "de": "ptz preset getestet\nänderungsprotokoll (http/https) möglich\nführte ein/aus und helligkeit\nein- und ausschalten\nautofokus auf/ab\nset zoom\nspielalarm (n mal)\nbewegungserkennung wieder aktiviert",
+                "ru": "ptz пресет тестирован\nизменение протокола (http/https) возможно\nпривели/выключение и яркость\nнажмите на/выключение\nавто фокус на/офф\nустановить zoom\nиграть тревогу (n раз)\nобнаружение движения включено снова",
+                "pt": "ptz preset testado\nprotocolo de mudança (http/http) possível\nled on/off e brilho\nempurrar / desligar\nauto foco em / off\nset zoom\njogar alarme (n vezes)\ndetecção de movimento habilitada novamente",
+                "nl": "ptz preset getest\nverander protocol (htp/htps) mogelijk\ngeleid op/off and brightness\nduwen\nauto focus op\nzoom\nspeel alarm\nmotie detectie is weer ingeschakeld",
+                "fr": "ptz preset tested\nprotocole de changement (http/https) possible\nled on/off and brightness\npush on/off\nauto focus on/off\nzoom\nplay alarm (n times)\ndétection de mouvement activé à nouveau",
+                "it": "preimpostazione ptz testato\nmodificare il protocollo (https) possibile\nled on/off e luminosità\npush on/off\nauto messa a fuoco su / off\nset zoom\nallarme gioco (n volte)\nrilevamento del movimento abilitato di nuovo",
+                "es": "ptz preset probado\nprotocolo de cambio (http/https) posible\nencendido / apagado y brillo\nempuje/apagar\nenfoque automático en/off\nzoom\ntocar alarma (en ocasiones)\ndetección de movimiento activada de nuevo",
+                "pl": "pkt\nprotokół zmiany (http/https)\ndoprowadziło to do czystości i jasności\nproszę\nauto koncentruje się na/off\nzoom\nczas gry (pol.)\nwykrycie to pozwoliło ponownie na wykrycie ruchu",
+                "zh-cn": "p.tz preset经试验\n修改议定书(http://s.pdf)\na. 成果和光明\n动议/动议\n汽车焦点\n古 巴\n震惊(有时)\n探 证"
+            },
             "0.0.3": {
                 "en": "npm release prepare\nptz preset (untested, missing ptz cam)",
                 "de": "npm release bereiten\nptz preset (nicht getestet, fehlende ptz cam)",
@@ -145,7 +157,8 @@
                 "def": false
             },
             "native": {}
-        },{
+        },
+        {
             "_id": "sensor.motion",
             "type": "state",
             "common": {
@@ -192,7 +205,7 @@
             "type": "state",
             "common": {
                 "role": "value",
-                "name":  {
+                "name": {
                     "en": "capacity [MB]",
                     "de": "kapazität [MB]",
                     "ru": "вместимость [MB]",
@@ -272,7 +285,7 @@
                     "es": "memoria libre [MB]",
                     "pl": "free memory [MB]",
                     "zh-cn": "免费记忆 [MB]"
-                  },
+                },
                 "type": "boolean",
                 "read": true,
                 "write": false
@@ -772,7 +785,7 @@
                     "es": "LED Brillo",
                     "pl": "LED Brightness",
                     "zh-cn": "附录 B. 权利"
-                  },
+                },
                 "type": "number",
                 "read": true,
                 "write": true
@@ -805,7 +818,7 @@
             "type": "state",
             "common": {
                 "role": "value",
-                "name":  {
+                "name": {
                     "en": "enable push",
                     "de": "push einschalten",
                     "ru": "включить push",
@@ -816,7 +829,7 @@
                     "es": "push",
                     "pl": "umożliwiać",
                     "zh-cn": "推动"
-                  },
+                },
                 "type": "boolean",
                 "read": true,
                 "write": true
@@ -827,7 +840,7 @@
             "type": "state",
             "common": {
                 "role": "value",
-                "name":  {
+                "name": {
                     "en": "auto focus",
                     "de": "autofokus",
                     "ru": "авто фокус",
@@ -838,7 +851,7 @@
                     "es": "enfoque automático",
                     "pl": "autofocus",
                     "zh-cn": "汽车重点"
-                  },
+                },
                 "type": "boolean",
                 "read": true,
                 "write": true
@@ -849,7 +862,7 @@
             "type": "state",
             "common": {
                 "role": "value",
-                "name":  {
+                "name": {
                     "en": "set zoom position",
                     "de": "zoom position",
                     "ru": "установите позицию zoom",
@@ -860,7 +873,7 @@
                     "es": "posición zoom",
                     "pl": "uporządkować",
                     "zh-cn": "2. 动物状况"
-                  },
+                },
                 "type": "number",
                 "read": true,
                 "write": true
@@ -871,7 +884,7 @@
             "type": "state",
             "common": {
                 "role": "value",
-                "name":  {
+                "name": {
                     "en": "play alarm",
                     "de": "spielalarm",
                     "ru": "играть тревогу",
@@ -882,7 +895,7 @@
                     "es": "toca alarma",
                     "pl": "alarm",
                     "zh-cn": "震惊"
-                  },
+                },
                 "type": "number",
                 "read": true,
                 "write": true
@@ -893,7 +906,7 @@
             "type": "state",
             "common": {
                 "role": "value",
-                "name":  {
+                "name": {
                     "en": "get drive data",
                     "de": "laufwerksdaten",
                     "ru": "получить данные о приводе",
@@ -904,7 +917,7 @@
                     "es": "obtener datos de la unidad",
                     "pl": "dać dane",
                     "zh-cn": "数据流动"
-                  },
+                },
                 "type": "boolean",
                 "read": true,
                 "write": true
@@ -915,7 +928,7 @@
             "type": "state",
             "common": {
                 "role": "value",
-                "name":   {
+                "name": {
                     "en": "enable PTZguard",
                     "de": "PTZguard ermöglichen",
                     "ru": "включить PTZguard",
@@ -926,7 +939,7 @@
                     "es": "habilitación PTZguard",
                     "pl": "umożliwić PTZguard",
                     "zh-cn": "a. 能够促进 PTZguard"
-                  },
+                },
                 "type": "boolean",
                 "read": true,
                 "write": true
@@ -937,7 +950,7 @@
             "type": "state",
             "common": {
                 "role": "value",
-                "name":   {
+                "name": {
                     "en": "timeout ptzGuard",
                     "de": "zeit ptzGuard",
                     "ru": "timeout ptzGuard",
@@ -948,7 +961,7 @@
                     "es": "tiempo fuera ptzGuard",
                     "pl": "czasoprzestrzeni ptzGuard",
                     "zh-cn": "时间 ptzGuard"
-                  },
+                },
                 "type": "number",
                 "read": true,
                 "write": true

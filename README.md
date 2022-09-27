@@ -50,7 +50,7 @@ sendTo("reolink.0",{action: "snap"}, function(result){
     ### **WORK IN PROGRESS**
 -->
 
-### **WORK IN PROGRESS**
+### 0.0.4 (2022-09-27)
 
 * (oelison) ptz preset tested
 * (oelison) change protocol (http/https) possible
