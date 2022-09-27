@@ -103,20 +103,20 @@ class ReoLinkCam extends utils.Adapter {
 	async getMdState(){
 		if (this.reolinkApiClient) {
 			try {
-				// const MdInfoValues = await this.reolinkApiClient.get(`/api.cgi?cmd=GetMdState&channel=${this.config.cameraChannel}&user=${this.config.cameraUser}&password=${this.config.cameraPassword}`);
+				const MdInfoValues = await this.reolinkApiClient.get(`/api.cgi?cmd=GetMdState&channel=${this.config.cameraChannel}&user=${this.config.cameraUser}&password=${this.config.cameraPassword}`);
 
 				// this.log.debug(`camMdStateInfo ${JSON.stringify(MdInfoValues.status)}: ${JSON.stringify(MdInfoValues.data)}`);
 
-				// if(MdInfoValues.status === 200){
-				// 	this.apiConnected = true;
-				// 	await this.setStateAsync("Network.Connected", {val: this.apiConnected, ack: true});
+				if(MdInfoValues.status === 200) {
+					this.apiConnected = true;
+					await this.setStateAsync("Network.Connected", {val: this.apiConnected, ack: true});
 
-				// 	const MdValues = MdInfoValues.data[0];
+					const MdValues = MdInfoValues.data[0];
 
-				// 	this.log.info(MdValues.value.state);
-				// 	await this.setStateAsync("sensor.motion", {val: MdValues.value.state, ack: true});
+					// 	this.log.info(MdValues.value.state);
+					await this.setStateAsync("sensor.motion", {val: MdValues.value.state, ack: true});
 
-				// }
+				}
 			} catch (error) {
 				this.apiConnected = false;
 				await this.setStateAsync("network.connected", {val: this.apiConnected, ack: true});
@@ -421,7 +421,7 @@ class ReoLinkCam extends utils.Adapter {
 		this.sendCmd(setPtzGuardCmd, "setPtzGuardTimeout");
 	}
 	async refreshState(source){
-		//this.log.debug(`refreshState': started from "${source}"`);
+		this.log.debug(`refreshState': started from "${source}"`);
 
 		this.getMdState();
 
@@ -439,18 +439,15 @@ class ReoLinkCam extends utils.Adapter {
 				this.refreshStateTimeout = null;
 				this.refreshState("timeout (API not connected)");
 			}, notConnectedTimeout * 1000);
-			//this.log.debug(`refreshStateTimeout: re-created refresh timeout (API not connected): id ${this.refreshStateTimeout}- secounds: ${notConnectedTimeout}`);
+			this.log.debug(`refreshStateTimeout: re-created refresh timeout (API not connected): id ${this.refreshStateTimeout}- secounds: ${notConnectedTimeout}`);
 
 		} else {
 			this.refreshStateTimeout = this.setTimeout(() => {
 				this.refreshStateTimeout = null;
 				this.refreshState("timeout(default");
 			}, parseInt(this.config.apiRefreshInterval) * 1000);
-			// this.log.debug(`refreshStateTimeout: re-created refresh timeout (default): id ${this.refreshStateTimeout}- secounds: ${this.config.apiRefreshInterval}`);
-
+			this.log.debug(`refreshStateTimeout: re-created refresh timeout (default): id ${this.refreshStateTimeout}- secounds: ${this.config.apiRefreshInterval}`);
 		}
-
-
 	}
 
 	/**

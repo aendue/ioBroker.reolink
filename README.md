@@ -59,6 +59,7 @@ sendTo("reolink.0",{action: "snap"}, function(result){
 * (oelison) auto focus on/off
 * (oelison) set zoom
 * (oelison) play alarm (n times)
+* (oelison) motion detection enabled again
 
 ### 0.0.3 (2022-09-05)
 
