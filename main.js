@@ -109,7 +109,7 @@ class ReoLinkCam extends utils.Adapter {
 
 				if(MdInfoValues.status === 200) {
 					this.apiConnected = true;
-					await this.setStateAsync("Network.Connected", {val: this.apiConnected, ack: true});
+					await this.setStateAsync("network.connected", {val: this.apiConnected, ack: true});
 
 					const MdValues = MdInfoValues.data[0];
 
@@ -399,8 +399,9 @@ class ReoLinkCam extends utils.Adapter {
 			"param": {
 				"PtzGuard": {
 					"channel": 0,
-					"cmdStr": "",
-					"benable": enable
+					"cmdStr": "setPos",
+					"benable": enable,
+					"bSaveCurrentPos": 0
 				}
 			}
 		}];
@@ -414,14 +415,17 @@ class ReoLinkCam extends utils.Adapter {
 			"param": {
 				"PtzGuard": {
 					"channel": 0,
-					"timeout": timeout
+					"cmdStr": "setPos",
+					"timeout": timeout,
+					"bSaveCurrentPos": 0
 				}
 			}
 		}];
-		this.sendCmd(setPtzGuardCmd, "setPtzGuardTimeout");
+		await this.sendCmd(setPtzGuardCmd, "setPtzGuardTimeout");
+		this.getPtzGuardInfo();
 	}
 	async refreshState(source){
-		this.log.debug(`refreshState': started from "${source}"`);
+		//this.log.debug(`refreshState': started from "${source}"`);
 
 		this.getMdState();
 
@@ -439,14 +443,14 @@ class ReoLinkCam extends utils.Adapter {
 				this.refreshStateTimeout = null;
 				this.refreshState("timeout (API not connected)");
 			}, notConnectedTimeout * 1000);
-			this.log.debug(`refreshStateTimeout: re-created refresh timeout (API not connected): id ${this.refreshStateTimeout}- secounds: ${notConnectedTimeout}`);
+			//this.log.debug(`refreshStateTimeout: re-created refresh timeout (API not connected): id ${this.refreshStateTimeout}- secounds: ${notConnectedTimeout}`);
 
 		} else {
 			this.refreshStateTimeout = this.setTimeout(() => {
 				this.refreshStateTimeout = null;
 				this.refreshState("timeout(default");
 			}, parseInt(this.config.apiRefreshInterval) * 1000);
-			this.log.debug(`refreshStateTimeout: re-created refresh timeout (default): id ${this.refreshStateTimeout}- secounds: ${this.config.apiRefreshInterval}`);
+			//this.log.debug(`refreshStateTimeout: re-created refresh timeout (default): id ${this.refreshStateTimeout}- secounds: ${this.config.apiRefreshInterval}`);
 		}
 	}
 
