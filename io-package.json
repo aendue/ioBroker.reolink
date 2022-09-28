@@ -1,8 +1,20 @@
 {
     "common": {
         "name": "reolink",
-        "version": "0.0.4",
+        "version": "0.0.5",
         "news": {
+            "0.0.5": {
+                "en": "guard point (new info)",
+                "de": "wachpunkt (neue infos)",
+                "ru": "точка охраны (новая информация)",
+                "pt": "guard point (novas informações)",
+                "nl": "beveiligingspunt (nieuwe info)",
+                "fr": "point de garde (nouvelles informations)",
+                "it": "punto di guardia (nuove informazioni)",
+                "es": "punto de guardia (nueva información)",
+                "pl": "strona strażnicza (new info)",
+                "zh-cn": "警卫点(新生)"
+            },
             "0.0.4": {
                 "en": "ptz preset tested\nchange protocol (http/https) possible\nled on/off and brightness\npush on/off\nauto focus on/off\nset zoom\nplay alarm (n times)\nmotion detection enabled again",
                 "de": "ptz preset getestet\nänderungsprotokoll (http/https) möglich\nführte ein/aus und helligkeit\nein- und ausschalten\nautofokus auf/ab\nset zoom\nspielalarm (n mal)\nbewegungserkennung wieder aktiviert",
