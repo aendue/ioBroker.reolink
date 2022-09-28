@@ -49,6 +49,9 @@ sendTo("reolink.0",{action: "snap"}, function(result){
     Placeholder for the next version (at the beginning of the line):
     ### **WORK IN PROGRESS**
 -->
+### **WORK IN PROGRESS**
+
+* (oelison) guard point (new info)
 
 ### 0.0.4 (2022-09-27)
 
