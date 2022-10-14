@@ -312,6 +312,30 @@ class ReoLinkCam extends utils.Adapter {
 		}];
 		this.sendCmd(autoFocusCmd, "SetAutoFocus");
 	}
+	async getAutoFocus(){
+		if (this.reolinkApiClient) {
+			try {
+				const AutoFocusValue = await this.reolinkApiClient.get(`/api.cgi?cmd=GetAutoFocus&channel=${this.config.cameraChannel}&user=${this.config.cameraUser}&password=${this.config.cameraPassword}`);
+
+				// this.log.debug(`camMdStateInfo ${JSON.stringify(MdInfoValues.status)}: ${JSON.stringify(MdInfoValues.data)}`);
+
+				if(AutoFocusValue.status === 200) {
+					this.apiConnected = true;
+					await this.setStateAsync("network.connected", {val: this.apiConnected, ack: true});
+
+					const AutoFocus = AutoFocusValue.data[0];
+
+					// 	this.log.info(MdValues.value.state);
+					await this.setStateAsync("settings.autoFocus", {val: AutoFocus.value.AutoFocus.disable, ack: true});
+
+				}
+			} catch (error) {
+				this.apiConnected = false;
+				await this.setStateAsync("network.connected", {val: this.apiConnected, ack: true});
+				this.log.error(error);
+			}
+		}
+	}
 	async startZoomFocus(pos) {
 		const ptzCheckCmd = [{
 			"cmd":"StartZoomFocus",
@@ -357,6 +381,30 @@ class ReoLinkCam extends utils.Adapter {
 		}];
 		this.sendCmd(irCmd, "SetIrLights");
 	}
+	async getIrLights(){
+		if (this.reolinkApiClient) {
+			try {
+				const IrLightValue = await this.reolinkApiClient.get(`/api.cgi?cmd=GetIrLights&channel=${this.config.cameraChannel}&user=${this.config.cameraUser}&password=${this.config.cameraPassword}`);
+
+				// this.log.debug(`camMdStateInfo ${JSON.stringify(MdInfoValues.status)}: ${JSON.stringify(MdInfoValues.data)}`);
+
+				if(IrLightValue.status === 200) {
+					this.apiConnected = true;
+					await this.setStateAsync("network.connected", {val: this.apiConnected, ack: true});
+
+					const IrLights = IrLightValue.data[0];
+
+					// 	this.log.info(MdValues.value.state);
+					await this.setStateAsync("settings.ir", {val: IrLights.value.IrLights.state, ack: true});
+
+				}
+			} catch (error) {
+				this.apiConnected = false;
+				await this.setStateAsync("network.connected", {val: this.apiConnected, ack: true});
+				this.log.error(error);
+			}
+		}
+	}
 	async switchWhiteLed(state) {
 		let ledState = 0;
 		if (state === true)
@@ -388,6 +436,31 @@ class ReoLinkCam extends utils.Adapter {
 		}];
 		this.sendCmd(setWhiteLedCmd, "SetWhiteLed");
 	}
+	async getWhiteLed(){
+		if (this.reolinkApiClient) {
+			try {
+				const whiteLedValue = await this.reolinkApiClient.get(`/api.cgi?cmd=GetWhiteLeds&channel=${this.config.cameraChannel}&user=${this.config.cameraUser}&password=${this.config.cameraPassword}`);
+
+				// this.log.debug(`camMdStateInfo ${JSON.stringify(MdInfoValues.status)}: ${JSON.stringify(MdInfoValues.data)}`);
+
+				if(whiteLedValue.status === 200) {
+					this.apiConnected = true;
+					await this.setStateAsync("network.connected", {val: this.apiConnected, ack: true});
+
+					const whiteLed = whiteLedValue.data[0];
+
+					// 	this.log.info(MdValues.value.state);
+					await this.setStateAsync("settings.ledBrightness", {val: whiteLed.value.WhiteLed.bright, ack: true});
+
+				}
+			} catch (error) {
+				this.apiConnected = false;
+				await this.setStateAsync("network.connected", {val: this.apiConnected, ack: true});
+				this.log.error(error);
+			}
+		}
+	}
+
 	async setPtzGuard(state) {
 		let enable = 0;
 		if (state === true) {
