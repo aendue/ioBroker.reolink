@@ -67,25 +67,19 @@ class ReoLinkCam extends utils.Adapter {
 
 		this.log.info(`Current Devicetype: ${this.config.cameraType}`);
 
-		//State abbonieren
-		this.subscribeStates("settings.ir");
-		this.subscribeStates("settings.switchLed");
-		this.subscribeStates("settings.ledBrightness");
-		this.subscribeStates("settings.ptzPreset");
-		this.subscribeStates("settings.autoFocus");
-		this.subscribeStates("settings.setZoomFocus");
-		this.subscribeStates("settings.push");
-		this.subscribeStates("settings.playAlarm");
-		this.subscribeStates("settings.getDiscData");
-		this.subscribeStates("settings.ptzEnableGuard");
-		this.subscribeStates("settings.ptzGuardTimeout");
-
 		if(this.config.cameraType == "rlc510A"){
 			this.getDevinfo();
 			this.getLocalLink();
 			this.refreshState("onReady");
 			this.getDriveInfo();
 			this.getPtzGuardInfo();
+
+
+			//this.getIrLights();
+
+			//noch zu testen
+			//this.getWhiteLed();
+			//this.getAutoFocus();
 		}else if(this.config.cameraType == "others"){
 
 			this.log.info("camera type set to others...API functions not testet!");
@@ -97,6 +91,21 @@ class ReoLinkCam extends utils.Adapter {
 		}else {
 			this.log.error("Cameratyp undefined...");
 		}
+
+		//State abbonieren
+		//FEHLER - Stats werden zu früh abboniert...dadurch wird beim Startprozess set Funktion getriggert
+		this.log.debug("Stats abbonieren");
+		this.subscribeStates("settings.ir");
+		this.subscribeStates("settings.switchLed");
+		this.subscribeStates("settings.ledBrightness");
+		this.subscribeStates("settings.ptzPreset");
+		this.subscribeStates("settings.autoFocus");
+		this.subscribeStates("settings.setZoomFocus");
+		this.subscribeStates("settings.push");
+		this.subscribeStates("settings.playAlarm");
+		this.subscribeStates("settings.getDiscData");
+		this.subscribeStates("settings.ptzEnableGuard");
+		this.subscribeStates("settings.ptzGuardTimeout");
 
 	}
 	//function for getting motion detection
@@ -317,13 +326,18 @@ class ReoLinkCam extends utils.Adapter {
 			try {
 				const AutoFocusValue = await this.reolinkApiClient.get(`/api.cgi?cmd=GetAutoFocus&channel=${this.config.cameraChannel}&user=${this.config.cameraUser}&password=${this.config.cameraPassword}`);
 
-				// this.log.debug(`camMdStateInfo ${JSON.stringify(MdInfoValues.status)}: ${JSON.stringify(MdInfoValues.data)}`);
+				this.log.debug(`AutoFocusValue ${JSON.stringify(AutoFocusValue.status)}: ${JSON.stringify(AutoFocusValue.data)}`);
 
 				if(AutoFocusValue.status === 200) {
 					this.apiConnected = true;
 					await this.setStateAsync("network.connected", {val: this.apiConnected, ack: true});
 
 					const AutoFocus = AutoFocusValue.data[0];
+
+					const errorcode = AutoFocus.code;
+					if(errorcode == 1){
+						this.log.debug("Error or not supported");
+					}
 
 					// 	this.log.info(MdValues.value.state);
 					await this.setStateAsync("settings.autoFocus", {val: AutoFocus.value.AutoFocus.disable, ack: true});
@@ -364,18 +378,20 @@ class ReoLinkCam extends utils.Adapter {
 		this.sendCmd(audioAlarmPlayCmd, "AudioAlarmPlay");
 	}
 	async setIrLights(irValue) {
-		let irState = "Off";
+		/*let irState = "Off";
 		if (irValue === true)
 		{
 			irState = "Auto";
-		}
+		}*/
+		//TODO: Eingabe prüfen ob in Range
+
 		const irCmd = [{
 			"cmd":"SetIrLights",
 			"action": 0,
 			"param": {
 				"IrLights": {
 					"channel": 0,
-					"state": irState
+					"state": irValue
 				}
 			}
 		}];
@@ -394,7 +410,7 @@ class ReoLinkCam extends utils.Adapter {
 
 					const IrLights = IrLightValue.data[0];
 
-					// 	this.log.info(MdValues.value.state);
+					this.log.info(IrLights.value.IrLights.state);
 					await this.setStateAsync("settings.ir", {val: IrLights.value.IrLights.state, ack: true});
 
 				}
@@ -441,7 +457,7 @@ class ReoLinkCam extends utils.Adapter {
 			try {
 				const whiteLedValue = await this.reolinkApiClient.get(`/api.cgi?cmd=GetWhiteLeds&channel=${this.config.cameraChannel}&user=${this.config.cameraUser}&password=${this.config.cameraPassword}`);
 
-				// this.log.debug(`camMdStateInfo ${JSON.stringify(MdInfoValues.status)}: ${JSON.stringify(MdInfoValues.data)}`);
+				this.log.debug(`whiteLedValue ${JSON.stringify(whiteLedValue.status)}: ${JSON.stringify(whiteLedValue.data)}`);
 
 				if(whiteLedValue.status === 200) {
 					this.apiConnected = true;
