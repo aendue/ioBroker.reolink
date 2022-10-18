@@ -765,7 +765,7 @@
             "common": {
                 "role": "value",
                 "name": "ir",
-                "type": "boolean",
+                "type": "string",
                 "read": true,
                 "write": true
             }
