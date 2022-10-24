@@ -39,10 +39,6 @@ class ReoLinkCam extends utils.Adapter {
 			this.log.error("Camera Ip not set - please check instance!");
 			return;
 		}
-		if (!this.config.cameraType){
-			this.log.error("Camera type not set - please check instance!");
-			return;
-		}
 		if(!this.config.cameraUser || !this.config.cameraPassword){
 			this.log.error("Username and/or password not set properly - please check instance!");
 			return;
@@ -67,45 +63,30 @@ class ReoLinkCam extends utils.Adapter {
 
 		this.log.info(`Current Devicetype: ${this.config.cameraType}`);
 
-		if(this.config.cameraType == "rlc510A"){
-			this.getDevinfo();
-			this.getLocalLink();
-			this.refreshState("onReady");
-			this.getDriveInfo();
-			this.getPtzGuardInfo();
+		await this.getDevinfo();
+		await this.getLocalLink();
+		await this.refreshState("onReady");
+		await this.getDriveInfo();
+		await this.getPtzGuardInfo();
+		await this.getAutoFocus();
+		await this.getIrLights();
 
-
-			//this.getIrLights();
-
-			//noch zu testen
-			//this.getWhiteLed();
-			//this.getAutoFocus();
-		}else if(this.config.cameraType == "others"){
-
-			this.log.info("camera type set to others...API functions not testet!");
-			this.getDevinfo();
-			this.getLocalLink();
-			this.refreshState("onReady");
-			this.getDriveInfo();
-			this.getPtzGuardInfo();
-		}else {
-			this.log.error("Cameratyp undefined...");
-		}
+		//noch zu testen
+		//this.getWhiteLed();
+		//
 
 		//State abbonieren
-		//FEHLER - Stats werden zu früh abboniert...dadurch wird beim Startprozess set Funktion getriggert
-		this.log.debug("Stats abbonieren");
-		this.subscribeStates("settings.ir");
-		this.subscribeStates("settings.switchLed");
-		this.subscribeStates("settings.ledBrightness");
-		this.subscribeStates("settings.ptzPreset");
-		this.subscribeStates("settings.autoFocus");
-		this.subscribeStates("settings.setZoomFocus");
-		this.subscribeStates("settings.push");
-		this.subscribeStates("settings.playAlarm");
-		this.subscribeStates("settings.getDiscData");
-		this.subscribeStates("settings.ptzEnableGuard");
-		this.subscribeStates("settings.ptzGuardTimeout");
+		await this.subscribeStatesAsync("settings.ir");
+		await this.subscribeStates("settings.switchLed");
+		await this.subscribeStates("settings.ledBrightness");
+		await this.subscribeStates("settings.ptzPreset");
+		await this.subscribeStates("settings.autoFocus");
+		await this.subscribeStates("settings.setZoomFocus");
+		await this.subscribeStates("settings.push");
+		await this.subscribeStates("settings.playAlarm");
+		await this.subscribeStates("settings.getDiscData");
+		await this.subscribeStates("settings.ptzEnableGuard");
+		await this.subscribeStates("settings.ptzGuardTimeout");
 
 	}
 	//function for getting motion detection
@@ -135,7 +116,7 @@ class ReoLinkCam extends utils.Adapter {
 	}
 	//function for getting general information of camera device
 	async getDevinfo(){
-
+		this.log.info("call devinfo");
 		if (this.reolinkApiClient) {
 			try {
 				const DevInfoValues = await this.reolinkApiClient.get(`/api.cgi?cmd=GetDevInfo&channel=0&user=${this.config.cameraUser}&password=${this.config.cameraPassword}`);
@@ -167,6 +148,7 @@ class ReoLinkCam extends utils.Adapter {
 				this.log.error(error);
 			}
 		}
+		this.log.info("finish devinfo");
 	}
 	async getPtzGuardInfo() {
 		if (this.reolinkApiClient) {
@@ -269,6 +251,14 @@ class ReoLinkCam extends utils.Adapter {
 				if ("error" in result.data[0])
 				{
 					this.log.error("sendCmd " + cmdName + ": " + JSON.stringify(result.data[0].error.detail));
+
+					switch(cmdName){
+						case "SetAutoFocus":
+							await this.setStateAsync("settings.autoFocus", {val: "Error or not supported", ack: true});
+							break;
+						default:
+							this.log.error("not defined");
+					}
 				}
 			}
 		} catch(error) {
@@ -305,21 +295,25 @@ class ReoLinkCam extends utils.Adapter {
 		this.sendCmd(pushOnCmd,"SetPush");
 	}
 	async setAutoFocus(state) {
-		let autoFocusDisable = 1;
-		if(state == true){
-			autoFocusDisable = 0;
+		if (state == "Error or not supported"){
+			return;
 		}
-		const autoFocusCmd = [{
-			"cmd": "SetAutoFocus",
-			"action": 0,
-			"param": {
-				"AutoFocus": {
-					"channel": 0,
-					"disable": autoFocusDisable
+		if(state == "0" || state == "1"){
+			const autoFocusCmd = [{
+				"cmd": "SetAutoFocus",
+				"action": 0,
+				"param": {
+					"AutoFocus": {
+						"channel": 0,
+						"disable": state
+					}
 				}
-			}
-		}];
-		this.sendCmd(autoFocusCmd, "SetAutoFocus");
+			}];
+			this.sendCmd(autoFocusCmd, "SetAutoFocus");
+		}else{
+			this.log.error("Value not supported!");
+			this.getAutoFocus();
+		}
 	}
 	async getAutoFocus(){
 		if (this.reolinkApiClient) {
@@ -331,17 +325,14 @@ class ReoLinkCam extends utils.Adapter {
 				if(AutoFocusValue.status === 200) {
 					this.apiConnected = true;
 					await this.setStateAsync("network.connected", {val: this.apiConnected, ack: true});
-
 					const AutoFocus = AutoFocusValue.data[0];
 
-					const errorcode = AutoFocus.code;
-					if(errorcode == 1){
-						this.log.debug("Error or not supported");
+					if ("error" in AutoFocus){
+						this.log.debug("Error or not supported " + this.getAutoFocus.name);
+						await this.setStateAsync("settings.autoFocus", {val: "Error or not supported", ack: true});
+					}else{
+						await this.setStateAsync("settings.autoFocus", {val: AutoFocus.value.AutoFocus.disable, ack: true});
 					}
-
-					// 	this.log.info(MdValues.value.state);
-					await this.setStateAsync("settings.autoFocus", {val: AutoFocus.value.AutoFocus.disable, ack: true});
-
 				}
 			} catch (error) {
 				this.apiConnected = false;
@@ -378,31 +369,31 @@ class ReoLinkCam extends utils.Adapter {
 		this.sendCmd(audioAlarmPlayCmd, "AudioAlarmPlay");
 	}
 	async setIrLights(irValue) {
-		/*let irState = "Off";
-		if (irValue === true)
-		{
-			irState = "Auto";
-		}*/
-		//TODO: Eingabe prüfen ob in Range
-
-		const irCmd = [{
-			"cmd":"SetIrLights",
-			"action": 0,
-			"param": {
-				"IrLights": {
-					"channel": 0,
-					"state": irValue
+		if (irValue == "Error or not supported"){
+			return;
+		}
+		if(irValue == "Auto" || irValue == "Off"){
+			const irCmd = [{
+				"cmd":"SetIrLights",
+				"action": 0,
+				"param": {
+					"IrLights": {
+						"channel": 0,
+						"state": irValue
+					}
 				}
-			}
-		}];
-		this.sendCmd(irCmd, "SetIrLights");
+			}];
+			this.sendCmd(irCmd, "SetIrLights");
+		}else{
+			this.log.error("Value not supported!");
+			this.getIrLights();
+		}
 	}
 	async getIrLights(){
 		if (this.reolinkApiClient) {
 			try {
 				const IrLightValue = await this.reolinkApiClient.get(`/api.cgi?cmd=GetIrLights&channel=${this.config.cameraChannel}&user=${this.config.cameraUser}&password=${this.config.cameraPassword}`);
-
-				// this.log.debug(`camMdStateInfo ${JSON.stringify(MdInfoValues.status)}: ${JSON.stringify(MdInfoValues.data)}`);
+				this.log.debug(`IrLightValue ${JSON.stringify(IrLightValue.status)}: ${JSON.stringify(IrLightValue.data)}`);
 
 				if(IrLightValue.status === 200) {
 					this.apiConnected = true;
@@ -410,14 +401,19 @@ class ReoLinkCam extends utils.Adapter {
 
 					const IrLights = IrLightValue.data[0];
 
-					this.log.info(IrLights.value.IrLights.state);
-					await this.setStateAsync("settings.ir", {val: IrLights.value.IrLights.state, ack: true});
-
+					//Antwort pruefen
+					if ("error" in IrLights){
+						this.log.debug("Error or not supported " + this.getIrLights.name);
+						await this.setStateAsync("settings.autoFocus", {val: "Error or not supported", ack: true});
+					}else{
+						await this.setStateAsync("settings.ir", {val: IrLights.value.IrLights.state, ack: true});
+					}
 				}
 			} catch (error) {
 				this.apiConnected = false;
 				await this.setStateAsync("network.connected", {val: this.apiConnected, ack: true});
 				this.log.error(error);
+				this.log.info("error irlights");
 			}
 		}
 	}

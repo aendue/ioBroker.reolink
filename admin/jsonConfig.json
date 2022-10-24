@@ -6,17 +6,6 @@
             "type": "panel",
             "label": "Kamera Typ",
             "items": {
-                "cameraType": { 
-                    "type": "select",
-                    "label": "Kamera",
-                    "sm": 6,
-                    "md": 6,
-                    "lg": 6,
-                    "options": [
-                        {"label": "RLC-510A", "value": "rlc510A"},
-                        {"label": "Andere", "value": "others"}
-                    ] 
-                },
                 "cameraIp": {
                     "type": "text",
                     "sm": 2,

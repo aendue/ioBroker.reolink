@@ -864,7 +864,7 @@
                     "pl": "autofocus",
                     "zh-cn": "汽车重点"
                 },
-                "type": "boolean",
+                "type": "string",
                 "read": true,
                 "write": true
             }
