@@ -79,20 +79,19 @@ class ReoLinkCam extends utils.Adapter {
 		await this.getIrLights();
 		await this.getMailNotification();
 
-		
 		//State abbonieren
 		await this.subscribeStatesAsync("settings.ir");
-		await this.subscribeStates("settings.switchLed");
-		await this.subscribeStates("settings.ledBrightness");
-		await this.subscribeStates("settings.ptzPreset");
-		await this.subscribeStates("settings.autoFocus");
-		await this.subscribeStates("settings.setZoomFocus");
-		await this.subscribeStates("settings.push");
-		await this.subscribeStates("settings.playAlarm");
-		await this.subscribeStates("settings.getDiscData");
-		await this.subscribeStates("settings.ptzEnableGuard");
-		await this.subscribeStates("settings.ptzGuardTimeout");
-		await this.subscribeStates("settings.emailnotification");
+		await this.subscribeStatesAsync("settings.switchLed");
+		await this.subscribeStatesAsync("settings.ledBrightness");
+		await this.subscribeStatesAsync("settings.ptzPreset");
+		await this.subscribeStatesAsync("settings.autoFocus");
+		await this.subscribeStatesAsync("settings.setZoomFocus");
+		await this.subscribeStatesAsync("settings.push");
+		await this.subscribeStatesAsync("settings.playAlarm");
+		await this.subscribeStatesAsync("settings.getDiscData");
+		await this.subscribeStatesAsync("settings.ptzEnableGuard");
+		await this.subscribeStatesAsync("settings.ptzGuardTimeout");
+		await this.subscribeStatesAsync("settings.emailnotification");
 
 	}
 	//function for getting motion detection
@@ -305,7 +304,7 @@ class ReoLinkCam extends utils.Adapter {
 			return;
 		}
 		if(state == "0" || state == "1"){
-			val = parseInt(state);
+			const val = parseInt(state);
 			const autoFocusCmd = [{
 				"cmd": "SetAutoFocus",
 				"action": 0,
