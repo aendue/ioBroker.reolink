@@ -17,21 +17,38 @@ Adapter for ioBroker Plattform to get Reolink camera information.
 
 In general all newer Reolink cameras support API commands. They just differ in their supported commands.
 
-
-There are also Set API Commands. I plan to add them later.
-
 If you wish to have any specific API command included...just let me now.
 
+## Implemented functions
 
-### Supported Devices
+### SET
+ - PTZ Control / PTZ Guard
+ - Push Notification
+ - Set Autofocus
+        values: 0,1
+ - Set IR light
+        values: Auto, Off
+ - Set LED light
+ - Set Mail Notification
+        values: 0, 1
+ - Play Audio Alarm
+ - Zoom Focus
 
-RLC-510A
+ Functions can be triggert by changing reolink.<Instanze>.settings states.
 
-### tested Devices
+ ### GET
 
-RLC-810A
-RLC-823A
-
+ - Device Info
+ - PTZ Info
+ - Drive Info
+ - Network Info
+ - Motion Detection
+ - Auto Focus
+ - Snapshot
+ - IR Light
+ - LED Light
+ - Mail Notification
+ 
 ### Example Usage of get image:
 
 ```
@@ -49,6 +66,15 @@ sendTo("reolink.0",{action: "snap"}, function(result){
     Placeholder for the next version (at the beginning of the line):
     ### **WORK IN PROGRESS**
 -->
+### **WORK IN PROGRESS**
+* (aendue) fixed asynchron functions (Axios Errors)
+* (aendue) added getAutoFocus funktion
+* (aendue) added getIrLight funktion
+* (aendue) added getWhiteLED function
+* (aendue) added getMailNotification function
+* (aendue) added setMailNotification function
+* (aendue) cleanup code
+
 ### 0.0.5 (2022-09-28)
 
 * (oelison) guard point (new info)

@@ -61,7 +61,14 @@ class ReoLinkCam extends utils.Adapter {
 		await this.setStateAsync("network.ip",{val: this.config.cameraIp, ack: true});
 		await this.setStateAsync("network.channel",{val: this.config.cameraChannel, ack: true});
 
-		this.log.info(`Current Devicetype: ${this.config.cameraType}`);
+
+		const mailobject = await this.getStateAsync("RAW.Email");
+		this.log.debug(typeof mailobject);
+		const mailobjectval = mailobject.val.value.Email.addr1;
+		this.log.debug(typeof mailobjectval);
+		this.log.debug(mailobjectval);
+		const mailstring = await JSON.stringify(mailobjectval);
+		this.log.debug(typeof mailstring);
 
 		await this.getDevinfo();
 		await this.getLocalLink();
@@ -70,11 +77,9 @@ class ReoLinkCam extends utils.Adapter {
 		await this.getPtzGuardInfo();
 		await this.getAutoFocus();
 		await this.getIrLights();
+		await this.getMailNotification();
 
-		//noch zu testen
-		//this.getWhiteLed();
-		//
-
+		
 		//State abbonieren
 		await this.subscribeStatesAsync("settings.ir");
 		await this.subscribeStates("settings.switchLed");
@@ -87,6 +92,7 @@ class ReoLinkCam extends utils.Adapter {
 		await this.subscribeStates("settings.getDiscData");
 		await this.subscribeStates("settings.ptzEnableGuard");
 		await this.subscribeStates("settings.ptzGuardTimeout");
+		await this.subscribeStates("settings.emailnotification");
 
 	}
 	//function for getting motion detection
@@ -299,13 +305,14 @@ class ReoLinkCam extends utils.Adapter {
 			return;
 		}
 		if(state == "0" || state == "1"){
+			val = parseInt(state);
 			const autoFocusCmd = [{
 				"cmd": "SetAutoFocus",
 				"action": 0,
 				"param": {
 					"AutoFocus": {
 						"channel": 0,
-						"disable": state
+						"disable": val
 					}
 				}
 			}];
@@ -383,6 +390,7 @@ class ReoLinkCam extends utils.Adapter {
 					}
 				}
 			}];
+			this.log.debug(irCmd);
 			this.sendCmd(irCmd, "SetIrLights");
 		}else{
 			this.log.error("Value not supported!");
@@ -413,7 +421,6 @@ class ReoLinkCam extends utils.Adapter {
 				this.apiConnected = false;
 				await this.setStateAsync("network.connected", {val: this.apiConnected, ack: true});
 				this.log.error(error);
-				this.log.info("error irlights");
 			}
 		}
 	}
@@ -538,6 +545,64 @@ class ReoLinkCam extends utils.Adapter {
 			//this.log.debug(`refreshStateTimeout: re-created refresh timeout (default): id ${this.refreshStateTimeout}- secounds: ${this.config.apiRefreshInterval}`);
 		}
 	}
+	async getMailNotification(){
+		if (this.reolinkApiClient) {
+			try {
+				const mailValue = await this.reolinkApiClient.get(`/api.cgi?cmd=GetEmailV20&user=${this.config.cameraUser}&password=${this.config.cameraPassword}`);
+				this.log.debug(`mailValue ${JSON.stringify(mailValue.status)}: ${JSON.stringify(mailValue.data)}`);
+
+				if(mailValue.status === 200) {
+					this.apiConnected = true;
+					await this.setStateAsync("network.connected", {val: this.apiConnected, ack: true});
+
+					const mail = mailValue.data[0];
+
+					//Antwort pruefen
+					if ("error" in mail){
+						this.log.debug("Error or not supported " + this.getMailNotification.name);
+						await this.setStateAsync("settings.emailnotification", {val: "Error or not supported", ack: true});
+					}else{
+						await this.setStateAsync("RAW.Email", {val: mail, ack: true});
+						await this.setStateAsync("settings.emailnotification", {val: mail.value.Email.enable, ack: true});
+					}
+				}
+			} catch (error) {
+				this.apiConnected = false;
+				await this.setStateAsync("network.connected", {val: this.apiConnected, ack: true});
+				this.log.error(error);
+			}
+		}
+	}
+	async setMailNotification(state){
+
+		if(state == 0 || state == 1){
+
+			const mail = await this.getStateAsync("RAW.Email");
+			let val = mail.val.value.Email;
+
+			const mailCmd = [{
+				"cmd": "SetEmailV20",
+				"param": { "Email": {
+					"ssl": val.ssl,
+					"enable" : state,
+					"smtpPort": val.smtpPort,
+					"smtpServer": val.smtpServer,
+					"userName": val.userName,
+					"nickName": val.nickName,
+					"addr1": val.addr1,
+					"addr2": val.addr2,
+					"addr3": val.addr3,
+					"interval": val.interval
+				}}
+			}];
+			//this.log.debug(JSON.stringify(mailCmd));
+			this.sendCmd(mailCmd, "SetEmailV20");
+
+		}else{
+			this.log.error("Value not supported!");
+			this.getMailNotification();
+		}
+	}
 
 	/**
 	 * Is called when adapter shuts down - callback has to be called under any circumstances!
@@ -607,6 +672,9 @@ class ReoLinkCam extends utils.Adapter {
 			}
 			if(propName === "ptzGuardTimeout") {
 				this.setPtzGuardTimeout(state.val);
+			}
+			if(propName === "emailnotification") {
+				this.setMailNotification(state.val);
 			}
 		} else {
 			// The state was deleted

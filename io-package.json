@@ -978,6 +978,72 @@
                 "read": true,
                 "write": true
             }
+        },
+        {
+            "_id": "settings.emailnotification",
+            "type": "state",
+            "common": {
+                "role": "value",
+                "name": {
+                    "en": "Email notification",
+                    "de": "E-Mail Benachrichtigung",
+                    "ru": "Email уведомление",
+                    "pt": "Notificação por e-mail",
+                    "nl": "E-mail bericht",
+                    "fr": "Notification par courriel",
+                    "it": "Notifica e-mail",
+                    "es": "Notificaciones por correo electrónico",
+                    "pl": "Powiadomienie Email",
+                    "uk": "Повідомлення електронної пошти",
+                    "zh-cn": "邮件通知"
+                },
+                "type": "number",
+                "read": true,
+                "write": true
+            }
+        },
+        {
+        "_id": "RAW",
+        "type": "channel",
+        "common": {
+            "name": {
+                "en": "RAW",
+                "de": "RAW",
+                "ru": "РАВ",
+                "pt": "RAW",
+                "nl": "RAW",
+                "fr": "RAW",
+                "it": "RAW",
+                "es": "RAW",
+                "pl": "RAW",
+                "uk": "КУРСИ",
+                "zh-cn": "RAW"
+            }
+        },
+        "native": {}
+        },
+        {
+            "_id": "RAW.Email",
+            "type": "state",
+            "common": {
+                "role": "value",
+                "name": {
+                    "en": "Email",
+                    "de": "Email",
+                    "ru": "Электронная почта",
+                    "pt": "Email",
+                    "nl": "E-mail",
+                    "fr": "Email",
+                    "it": "Email",
+                    "es": "Email",
+                    "pl": "Email",
+                    "uk": "Електронна пошта",
+                    "zh-cn": "电子邮件"
+                },
+                "type": "string",
+                "read": true,
+                "write": true
+            }
         }
     ]
 }
