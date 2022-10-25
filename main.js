@@ -75,7 +75,7 @@ class ReoLinkCam extends utils.Adapter {
 		await this.refreshState("onReady");
 		await this.getDriveInfo();
 		await this.getPtzGuardInfo();
-		await this.getAutoFocus();
+		//await this.getAutoFocus();
 		await this.getIrLights();
 		await this.getMailNotification();
 
@@ -84,7 +84,7 @@ class ReoLinkCam extends utils.Adapter {
 		await this.subscribeStatesAsync("settings.switchLed");
 		await this.subscribeStatesAsync("settings.ledBrightness");
 		await this.subscribeStatesAsync("settings.ptzPreset");
-		await this.subscribeStatesAsync("settings.autoFocus");
+		//await this.subscribeStatesAsync("settings.autoFocus");
 		await this.subscribeStatesAsync("settings.setZoomFocus");
 		await this.subscribeStatesAsync("settings.push");
 		await this.subscribeStatesAsync("settings.playAlarm");
