@@ -304,14 +304,14 @@ class ReoLinkCam extends utils.Adapter {
 			return;
 		}
 		if(state == "0" || state == "1"){
-			const val = parseInt(state);
+			const AutoFocusval = parseInt(state);
 			const autoFocusCmd = [{
 				"cmd": "SetAutoFocus",
 				"action": 0,
 				"param": {
 					"AutoFocus": {
 						"channel": 0,
-						"disable": val
+						"disable": AutoFocusval
 					}
 				}
 			}];
