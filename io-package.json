@@ -1,8 +1,21 @@
 {
     "common": {
         "name": "reolink",
-        "version": "0.0.5",
+        "version": "0.1.0",
         "news": {
+            "0.1.0": {
+                "en": "fixed asynchron functions (Axios Errors)\nadded getAutoFocus funktion\nadded getIrLight funktion\nadded getWhiteLED function\nadded getMailNotification function\nadded setMailNotification function\ncleanup code",
+                "de": "feste asynchrone Funktionen (Axios Errors)\nhinzufügen von AutoFocus Funktion\n! IrLight Funktion\n! WeißLED-Funktion\npasswort vergessen\nsetMailNotification Funktion\nreinigungscode",
+                "ru": "фиксированные функции асинхрона (Axios Errors)\nдобавлено getAutoFocus funktion\nдобавлено ИрЛайт funktion\nдобавлено Функция WhiteLED\nдобавлена функция getMailNotification\nдобавлена функция setMailNotification\nкод очистки",
+                "pt": "funções de assíncrono fixo (Erros de Axios)\nadicionado getAutoFocus funktion\nadicionado get IrLight funktion\nadicionado get Função WhiteLED\nadicionado getMail Função de notificação\nadicionado setMail Função de notificação\ncódigo de limpeza",
+                "nl": "quality over Quantity (QoQ) Releases Vertaling:\nvertaling:\nwordt toegevoegd IrLight funktion\nwordt toegevoegd WhiteLED functie\nvermeldingsfunctie\nvoegde setMailNotificatie functie toe\nopruimen",
+                "fr": "fonctions asynchron fixes (erreurs axios)\najouté getAutoFocus funktion\najouté obtenir IrLight funktion\najouté obtenir Fonction WhiteLED\nfonction getMailNotification\nfonction setMailNotification\ncode de nettoyage",
+                "it": "funzioni di asincrono fisso (Axios Errors)\naggiunto ottenereAutoFocus funktion\naggiunto IrLight funktion\naggiunto Funzione WhiteLED\naggiunto getMailNotification funzione\nset aggiunto Funzione di notifica\ncodice di pulizia",
+                "es": "funciones de asincronización fija ( Errores de eje)\nañadido getAutoFocus funktion\nañadido Función de IrLight\nañadido Función WhiteLED\nfunción de notificación\nsetMailNotificación función\ncódigo de limpieza",
+                "pl": "funkcje asynchroniczne (Axios Errors)\ndodał do niej funkcje\ndodać IrLight funkcja\ndodać funkcja WhiteLED\nfunkcja dopasowania\nfunkcja seta\nkod",
+                "uk": "фіксовані функції асинхрону (Axios помилки)\nдодано getAutoFocus фрішення\nдодано ІРЛайт Funktion\nдодано Функція WhiteLED\nдодано функцію getMailNotification\nдодано setMailNotification функція\nкод очищення",
+                "zh-cn": "固定兼职职能(Axios Errors)\n增 编\n增 编 IrLight葬\n增 编 白色传播功能\n附加的Mailthation职能\n增添了一套禁止歧视职能\n清洁守则"
+            },
             "0.0.5": {
                 "en": "guard point (new info)",
                 "de": "wachpunkt (neue infos)",
@@ -1003,24 +1016,24 @@
             }
         },
         {
-        "_id": "RAW",
-        "type": "channel",
-        "common": {
-            "name": {
-                "en": "RAW",
-                "de": "RAW",
-                "ru": "РАВ",
-                "pt": "RAW",
-                "nl": "RAW",
-                "fr": "RAW",
-                "it": "RAW",
-                "es": "RAW",
-                "pl": "RAW",
-                "uk": "КУРСИ",
-                "zh-cn": "RAW"
-            }
-        },
-        "native": {}
+            "_id": "RAW",
+            "type": "channel",
+            "common": {
+                "name": {
+                    "en": "RAW",
+                    "de": "RAW",
+                    "ru": "РАВ",
+                    "pt": "RAW",
+                    "nl": "RAW",
+                    "fr": "RAW",
+                    "it": "RAW",
+                    "es": "RAW",
+                    "pl": "RAW",
+                    "uk": "КУРСИ",
+                    "zh-cn": "RAW"
+                }
+            },
+            "native": {}
         },
         {
             "_id": "RAW.Email",
