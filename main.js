@@ -61,15 +61,6 @@ class ReoLinkCam extends utils.Adapter {
 		await this.setStateAsync("network.ip",{val: this.config.cameraIp, ack: true});
 		await this.setStateAsync("network.channel",{val: this.config.cameraChannel, ack: true});
 
-
-		const mailobject = await this.getStateAsync("RAW.Email");
-		this.log.debug(typeof mailobject);
-		const mailobjectval = mailobject.val.value.Email.addr1;
-		this.log.debug(typeof mailobjectval);
-		this.log.debug(mailobjectval);
-		const mailstring = await JSON.stringify(mailobjectval);
-		this.log.debug(typeof mailstring);
-
 		await this.getDevinfo();
 		await this.getLocalLink();
 		await this.refreshState("onReady");
