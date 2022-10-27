@@ -17,13 +17,20 @@
                     "newline": true,
                     "type": "select",
                     "label": "Protocol",
-                    "sm": 6,
-                    "md": 6,
-                    "lg": 6,
+                    "sm": 2,
+                    "md": 2,
+                    "lg": 4,
                     "options": [
                         {"label": "https", "value": "https"},
                         {"label": "http", "value": "http"}
                     ] 
+                },
+                "sslvalid":{
+                    "type": "checkbox",
+                    "sm": 4,
+                    "md": 4,
+                    "lg": 4,
+                    "label": "SSL-Zertifikat validieren"
                 },
                 "cameraChannel": {
                     "type": "number",

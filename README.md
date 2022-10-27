@@ -66,6 +66,12 @@ sendTo("reolink.0",{action: "snap"}, function(result){
     Placeholder for the next version (at the beginning of the line):
     ### **WORK IN PROGRESS**
 -->
+**WORK IN PROGRESS**
+* (aendue) ssl validation included
+* (aendue) fixed issue with ack-flag not set
+* (aendue) changed datatypes of disk.free and RAW.Email
+* (aendue) enabled getAutoFocus again
+
 ### 0.1.0 (2022-10-25)
 * (aendue) fixed asynchron functions (Axios Errors)
 * (aendue) added getAutoFocus funktion

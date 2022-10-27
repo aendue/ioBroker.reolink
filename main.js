@@ -7,6 +7,7 @@
 const utils = require("@iobroker/adapter-core");
 const axios = require("axios").default;
 const https = require("https");
+let sslvalidation = false;
 
 class ReoLinkCam extends utils.Adapter {
 
@@ -47,14 +48,17 @@ class ReoLinkCam extends utils.Adapter {
 			this.log.error("no protocol (http/https) set!");
 			return;
 		}
+		//check Checkbos of ssl validation is set
+		sslvalidation = this.config.sslvalid;
+
 		this.reolinkApiClient = axios.create({
 			baseURL: `${this.config.cameraProtocol}://${this.config.cameraIp}`,
 			timeout: 4000,
 			responseType: "json",
 			responseEncoding: "binary",
 			httpsAgent: new https.Agent({
-				rejectUnauthorized: false,
-			}),
+				rejectUnauthorized: sslvalidation,
+			})
 		});
 
 		this.log.info(`Current IP: ${this.config.cameraIp}`);
@@ -66,7 +70,7 @@ class ReoLinkCam extends utils.Adapter {
 		await this.refreshState("onReady");
 		await this.getDriveInfo();
 		await this.getPtzGuardInfo();
-		//await this.getAutoFocus();
+		await this.getAutoFocus();
 		await this.getIrLights();
 		await this.getMailNotification();
 
@@ -75,7 +79,7 @@ class ReoLinkCam extends utils.Adapter {
 		await this.subscribeStatesAsync("settings.switchLed");
 		await this.subscribeStatesAsync("settings.ledBrightness");
 		await this.subscribeStatesAsync("settings.ptzPreset");
-		//await this.subscribeStatesAsync("settings.autoFocus");
+		await this.subscribeStatesAsync("settings.autoFocus");
 		await this.subscribeStatesAsync("settings.setZoomFocus");
 		await this.subscribeStatesAsync("settings.push");
 		await this.subscribeStatesAsync("settings.playAlarm");
@@ -183,10 +187,11 @@ class ReoLinkCam extends utils.Adapter {
 						}
 						await this.setStateAsync("disc.mounted", {val: discMounted, ack: true});
 					} else {
-						await this.setStateAsync("disc.capacity", {val: 0, ack: false});
-						await this.setStateAsync("disc.formatted", {val: false, ack: false});
-						await this.setStateAsync("disc.free", {val: 0, ack: false});
-						await this.setStateAsync("disc.mounted", {val: false, ack: false});
+						//no sd card inserted
+						await this.setStateAsync("disc.capacity", {val: 0, ack: true});
+						await this.setStateAsync("disc.formatted", {val: false, ack: true});
+						await this.setStateAsync("disc.free", {val: 0, ack: true});
+						await this.setStateAsync("disc.mounted", {val: false, ack: true});
 					}
 				}
 			} catch (error) {

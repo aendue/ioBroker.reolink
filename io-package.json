@@ -311,7 +311,7 @@
                     "pl": "free memory [MB]",
                     "zh-cn": "免费记忆 [MB]"
                 },
-                "type": "boolean",
+                "type": "number",
                 "read": true,
                 "write": false
             },
@@ -1053,7 +1053,7 @@
                     "uk": "Електронна пошта",
                     "zh-cn": "电子邮件"
                 },
-                "type": "string",
+                "type": "object",
                 "read": true,
                 "write": true
             }
