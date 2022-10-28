@@ -71,6 +71,7 @@ sendTo("reolink.0",{action: "snap"}, function(result){
 * (aendue) fixed issue with ack-flag not set
 * (aendue) changed datatypes of disk.free and RAW.Email
 * (aendue) enabled getAutoFocus again
+* (aendue) name change on state EmailNotification (state gets created dynamically now)
 
 ### 0.1.0 (2022-10-25)
 * (aendue) fixed asynchron functions (Axios Errors)

@@ -993,29 +993,6 @@
             }
         },
         {
-            "_id": "settings.emailnotification",
-            "type": "state",
-            "common": {
-                "role": "value",
-                "name": {
-                    "en": "Email notification",
-                    "de": "E-Mail Benachrichtigung",
-                    "ru": "Email уведомление",
-                    "pt": "Notificação por e-mail",
-                    "nl": "E-mail bericht",
-                    "fr": "Notification par courriel",
-                    "it": "Notifica e-mail",
-                    "es": "Notificaciones por correo electrónico",
-                    "pl": "Powiadomienie Email",
-                    "uk": "Повідомлення електронної пошти",
-                    "zh-cn": "邮件通知"
-                },
-                "type": "number",
-                "read": true,
-                "write": true
-            }
-        },
-        {
             "_id": "RAW",
             "type": "channel",
             "common": {
