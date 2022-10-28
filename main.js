@@ -48,8 +48,12 @@ class ReoLinkCam extends utils.Adapter {
 			this.log.error("no protocol (http/https) set!");
 			return;
 		}
-		//check Checkbos of ssl validation is set
-		sslvalidation = this.config.sslvalid;
+		//check Checkbox of ssl validation is set
+		if(this.config.sslvalid == undefined){
+			sslvalidation = false;
+		}else{
+			sslvalidation = this.config.sslvalid;
+		}
 
 		this.reolinkApiClient = axios.create({
 			baseURL: `${this.config.cameraProtocol}://${this.config.cameraIp}`,
@@ -65,6 +69,11 @@ class ReoLinkCam extends utils.Adapter {
 		await this.setStateAsync("network.ip",{val: this.config.cameraIp, ack: true});
 		await this.setStateAsync("network.channel",{val: this.config.cameraChannel, ack: true});
 
+
+
+		//this.createState("myVariable", {name: "My own variable", unit: "°C"});
+		//(method) createState(parentDevice: string, parentChannel: string, stateName: string, callback?: ioBroker.SetObjectCallback | undefined): void (+3 overloads)
+
 		await this.getDevinfo();
 		await this.getLocalLink();
 		await this.refreshState("onReady");
@@ -72,7 +81,19 @@ class ReoLinkCam extends utils.Adapter {
 		await this.getPtzGuardInfo();
 		await this.getAutoFocus();
 		await this.getIrLights();
-		await this.getMailNotification();
+
+		//create state dynamically
+		await this.getStateAsync("device.name", (err, state) => {
+			this.createState("", "settings", "EmailNotification", {
+				name: this.namespace + "." + state.val + "_EmailNotify",
+				type: "number",
+				role: "value",
+				read: true,
+				write: true
+			});
+			this.getMailNotification();
+			this.subscribeStatesAsync("settings.EmailNotification");
+		});
 
 		//State abbonieren
 		await this.subscribeStatesAsync("settings.ir");
@@ -86,7 +107,6 @@ class ReoLinkCam extends utils.Adapter {
 		await this.subscribeStatesAsync("settings.getDiscData");
 		await this.subscribeStatesAsync("settings.ptzEnableGuard");
 		await this.subscribeStatesAsync("settings.ptzGuardTimeout");
-		await this.subscribeStatesAsync("settings.emailnotification");
 
 	}
 	//function for getting motion detection
@@ -116,7 +136,6 @@ class ReoLinkCam extends utils.Adapter {
 	}
 	//function for getting general information of camera device
 	async getDevinfo(){
-		this.log.info("call devinfo");
 		if (this.reolinkApiClient) {
 			try {
 				const DevInfoValues = await this.reolinkApiClient.get(`/api.cgi?cmd=GetDevInfo&channel=0&user=${this.config.cameraUser}&password=${this.config.cameraPassword}`);
@@ -148,7 +167,6 @@ class ReoLinkCam extends utils.Adapter {
 				this.log.error(error);
 			}
 		}
-		this.log.info("finish devinfo");
 	}
 	async getPtzGuardInfo() {
 		if (this.reolinkApiClient) {
@@ -555,10 +573,10 @@ class ReoLinkCam extends utils.Adapter {
 					//Antwort pruefen
 					if ("error" in mail){
 						this.log.debug("Error or not supported " + this.getMailNotification.name);
-						await this.setStateAsync("settings.emailnotification", {val: "Error or not supported", ack: true});
+						await this.setStateAsync("settings.EmailNotification", {val: "Error or not supported", ack: true});
 					}else{
 						await this.setStateAsync("RAW.Email", {val: mail, ack: true});
-						await this.setStateAsync("settings.emailnotification", {val: mail.value.Email.enable, ack: true});
+						await this.setStateAsync("settings.EmailNotification", {val: mail.value.Email.enable, ack: true});
 					}
 				}
 			} catch (error) {
@@ -668,7 +686,7 @@ class ReoLinkCam extends utils.Adapter {
 			if(propName === "ptzGuardTimeout") {
 				this.setPtzGuardTimeout(state.val);
 			}
-			if(propName === "emailnotification") {
+			if(propName === "EmailNotification") {
 				this.setMailNotification(state.val);
 			}
 		} else {
