@@ -5,6 +5,7 @@
  */
 
 const utils = require("@iobroker/adapter-core");
+const { rejects } = require("assert");
 const axios = require("axios").default;
 const https = require("https");
 let sslvalidation = false;
@@ -69,12 +70,15 @@ class ReoLinkCam extends utils.Adapter {
 		await this.setStateAsync("network.ip",{val: this.config.cameraIp, ack: true});
 		await this.setStateAsync("network.channel",{val: this.config.cameraChannel, ack: true});
 
+		//first API Call...if something isnt working stop Adapter
+		await this.getDevinfo().catch(error => {
+			this.log.error(error + ": " + error.code);
+		});
 
+		if(!this.apiConnected){
+			return;
+		}
 
-		//this.createState("myVariable", {name: "My own variable", unit: "°C"});
-		//(method) createState(parentDevice: string, parentChannel: string, stateName: string, callback?: ioBroker.SetObjectCallback | undefined): void (+3 overloads)
-
-		await this.getDevinfo();
 		await this.getLocalLink();
 		await this.refreshState("onReady");
 		await this.getDriveInfo();
@@ -130,7 +134,6 @@ class ReoLinkCam extends utils.Adapter {
 			} catch (error) {
 				this.apiConnected = false;
 				await this.setStateAsync("network.connected", {val: this.apiConnected, ack: true});
-				this.log.error(error);
 			}
 		}
 	}
@@ -162,9 +165,8 @@ class ReoLinkCam extends utils.Adapter {
 				this.setState("info.connection", false, true);
 				this.apiConnected = false;
 				await this.setStateAsync("network.connected", {val: this.apiConnected, ack: true});
-
-
-				this.log.error(error);
+				//this.log.error(error + ": " + error.code);
+				throw error;
 			}
 		}
 	}
