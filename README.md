@@ -66,7 +66,7 @@ sendTo("reolink.0",{action: "snap"}, function(result){
     Placeholder for the next version (at the beginning of the line):
     ### **WORK IN PROGRESS**
 -->
-### **WORK IN PROGRESS**
+### 0.1.1 (2022-11-03)
 * (aendue) ssl validation included
 * (aendue) fixed issue with ack-flag not set
 * (aendue) changed datatypes of disk.free and RAW.Email
