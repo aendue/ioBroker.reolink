@@ -95,9 +95,9 @@ class ReoLinkCam extends utils.Adapter {
 				read: true,
 				write: true
 			});
-			this.getMailNotification();
-			this.subscribeStatesAsync("settings.EmailNotification");
 		});
+
+		await this.getMailNotification();
 
 		//State abbonieren
 		await this.subscribeStatesAsync("settings.ir");
@@ -111,6 +111,7 @@ class ReoLinkCam extends utils.Adapter {
 		await this.subscribeStatesAsync("settings.getDiscData");
 		await this.subscribeStatesAsync("settings.ptzEnableGuard");
 		await this.subscribeStatesAsync("settings.ptzGuardTimeout");
+		await this.subscribeStatesAsync("settings.EmailNotification");
 
 	}
 	//function for getting motion detection
