@@ -618,7 +618,24 @@ class ReoLinkCam extends utils.Adapter {
 			this.getMailNotification();
 		}
 	}
+	async rebootCam(){
+		if (this.reolinkApiClient) {
+			try {
+				const mailValue = await this.reolinkApiClient.get(`/api.cgi?cmd=Reboot&user=${this.config.cameraUser}&password=${this.config.cameraPassword}`);
+				this.log.debug(`mailValue ${JSON.stringify(mailValue.status)}: ${JSON.stringify(mailValue.data)}`);
 
+				if(mailValue.status === 200) {
+					this.apiConnected = true;
+					await this.setStateAsync("network.connected", {val: this.apiConnected, ack: true});
+					this.log.info(this.config.cameraIp + " reboot triggered!");
+				}
+			} catch (error) {
+				this.apiConnected = false;
+				await this.setStateAsync("network.connected", {val: this.apiConnected, ack: true});
+				this.log.error(error);
+			}
+		}
+	}
 	/**
 	 * Is called when adapter shuts down - callback has to be called under any circumstances!
 	 * @param {() => void} callback

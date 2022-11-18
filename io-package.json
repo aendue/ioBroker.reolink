@@ -1006,6 +1006,50 @@
       }
     },
     {
+      "_id": "Command",
+      "type": "channel",
+      "common": {
+        "name": {
+          "en": "Command",
+          "de": "Befehl",
+          "ru": "Команда",
+          "pt": "Comando",
+          "nl": "Commando",
+          "fr": "Commandant",
+          "it": "Comando",
+          "es": "Comando",
+          "pl": "Dowództwo",
+          "uk": "Про компанію",
+          "zh-cn": "指挥"
+        }
+      },
+      "native": {}
+    },
+    {
+      "_id": "Command.Reboot",
+      "type": "state",
+      "common": {
+        "role": "button",
+        "name": {
+          "en": "Reboot",
+          "de": "Neustart",
+          "ru": "Перезагрузка",
+          "pt": "Reiniciar",
+          "nl": "Reboot",
+          "fr": "Reboot",
+          "it": "Reboot",
+          "es": "Reboot",
+          "pl": "Reboot",
+          "uk": "Перезавантаження",
+          "zh-cn": "Reboot"
+        },
+        "type": "boolean",
+        "read": false,
+        "write": true
+      },
+      "native": {}
+    },
+    {
       "_id": "RAW",
       "type": "channel",
       "common": {
