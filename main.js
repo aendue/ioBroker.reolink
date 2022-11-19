@@ -86,8 +86,9 @@ class ReoLinkCam extends utils.Adapter {
 		await this.getAutoFocus();
 		await this.getIrLights();
 
+		this.log.debug("getStateAsync start Email notification");
 		//create state dynamically
-		await this.getStateAsync("device.name", (err, state) => {
+		this.getStateAsync("device.name", (err, state) => {
 			this.createState("", "settings", "EmailNotification", {
 				name: this.namespace + "." + state.val + "_EmailNotify",
 				type: "number",
@@ -96,22 +97,22 @@ class ReoLinkCam extends utils.Adapter {
 				write: true
 			});
 			this.getMailNotification();
-			this.subscribeStatesAsync("settings.EmailNotification");
+			this.subscribeStates("settings.EmailNotification");
+			this.log.debug("Email notification subscribed");
 		});
-
+		this.log.debug("start subscribtions");
 		//State abbonieren
-		await this.subscribeStatesAsync("settings.ir");
-		await this.subscribeStatesAsync("settings.switchLed");
-		await this.subscribeStatesAsync("settings.ledBrightness");
-		await this.subscribeStatesAsync("settings.ptzPreset");
-		await this.subscribeStatesAsync("settings.autoFocus");
-		await this.subscribeStatesAsync("settings.setZoomFocus");
-		await this.subscribeStatesAsync("settings.push");
-		await this.subscribeStatesAsync("settings.playAlarm");
-		await this.subscribeStatesAsync("settings.getDiscData");
-		await this.subscribeStatesAsync("settings.ptzEnableGuard");
-		await this.subscribeStatesAsync("settings.ptzGuardTimeout");
-
+		this.subscribeStates("settings.ir");
+		this.subscribeStates("settings.switchLed");
+		this.subscribeStates("settings.ledBrightness");
+		this.subscribeStates("settings.ptzPreset");
+		this.subscribeStates("settings.autoFocus");
+		this.subscribeStates("settings.setZoomFocus");
+		this.subscribeStates("settings.push");
+		this.subscribeStates("settings.playAlarm");
+		this.subscribeStates("settings.getDiscData");
+		this.subscribeStates("settings.ptzEnableGuard");
+		this.subscribeStates("settings.ptzGuardTimeout");
 	}
 	//function for getting motion detection
 	async getMdState(){
@@ -665,48 +666,49 @@ class ReoLinkCam extends utils.Adapter {
 	 */
 	onStateChange(id, state) {
 		if (state) {
-
-			// The state was changed
-			this.log.debug(`state ${id} changed: ${state.val} (ack = ${state.ack})`);
-
-			const idValues= id.split(".");
-			const propName = idValues[idValues.length -1];
-			this.log.info(`Changed state: ${propName}`);
-			if(propName == "ir") {
-				this.setIrLights(state.val);
-			}
-			if(propName === "ptzPreset") {
-				this.ptzCtrl(state.val);
-			}
-			if(propName === "autoFocus") {
-				this.setAutoFocus(state.val);
-			}
-			if(propName === "setZoomFocus") {
-				this.startZoomFocus(state.val);
-			}
-			if(propName === "push") {
-				this.setPush(state.val);
-			}
-			if(propName === "playAlarm") {
-				this.audioAlarmPlay(state.val);
-			}
-			if(propName === "switchLed") {
-				this.switchWhiteLed(state.val);
-			}
-			if(propName === "ledBrightness") {
-				this.setWhiteLed(state.val);
-			}
-			if(propName === "getDiscData") {
-				this.getDriveInfo();
-			}
-			if(propName === "ptzEnableGuard") {
-				this.setPtzGuard(state.val);
-			}
-			if(propName === "ptzGuardTimeout") {
-				this.setPtzGuardTimeout(state.val);
-			}
-			if(propName === "EmailNotification") {
-				this.setMailNotification(state.val);
+			if (state.ack === false)
+			{
+				// The state was changed
+				this.log.debug(`state ${id} changed: ${state.val} (ack = ${state.ack})`);
+				const idValues= id.split(".");
+				const propName = idValues[idValues.length -1];
+				this.log.info(`Changed state: ${propName}`);
+				if(propName == "ir") {
+					this.setIrLights(state.val);
+				}
+				if(propName === "ptzPreset") {
+					this.ptzCtrl(state.val);
+				}
+				if(propName === "autoFocus") {
+					this.setAutoFocus(state.val);
+				}
+				if(propName === "setZoomFocus") {
+					this.startZoomFocus(state.val);
+				}
+				if(propName === "push") {
+					this.setPush(state.val);
+				}
+				if(propName === "playAlarm") {
+					this.audioAlarmPlay(state.val);
+				}
+				if(propName === "switchLed") {
+					this.switchWhiteLed(state.val);
+				}
+				if(propName === "ledBrightness") {
+					this.setWhiteLed(state.val);
+				}
+				if(propName === "getDiscData") {
+					this.getDriveInfo();
+				}
+				if(propName === "ptzEnableGuard") {
+					this.setPtzGuard(state.val);
+				}
+				if(propName === "ptzGuardTimeout") {
+					this.setPtzGuardTimeout(state.val);
+				}
+				if(propName === "EmailNotification") {
+					this.setMailNotification(state.val);
+				}
 			}
 		} else {
 			// The state was deleted
