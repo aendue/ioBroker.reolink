@@ -120,7 +120,7 @@ class ReoLinkCam extends utils.Adapter {
 			try {
 				const MdInfoValues = await this.reolinkApiClient.get(`/api.cgi?cmd=GetMdState&channel=${this.config.cameraChannel}&user=${this.config.cameraUser}&password=${this.config.cameraPassword}`);
 
-				// this.log.debug(`camMdStateInfo ${JSON.stringify(MdInfoValues.status)}: ${JSON.stringify(MdInfoValues.data)}`);
+				this.log.debug(`camMdStateInfo ${JSON.stringify(MdInfoValues.status)}: ${JSON.stringify(MdInfoValues.data)}`);
 
 				if(MdInfoValues.status === 200) {
 					this.apiConnected = true;
@@ -128,7 +128,7 @@ class ReoLinkCam extends utils.Adapter {
 
 					const MdValues = MdInfoValues.data[0];
 
-					// 	this.log.info(MdValues.value.state);
+					this.log.debug("Motion Detection value: " + MdValues.value.state);
 					await this.setStateAsync("sensor.motion", {val: MdValues.value.state, ack: true});
 
 				}
