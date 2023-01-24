@@ -157,7 +157,7 @@
     "cameraType": "",
     "cameraIp": " ",
     "cameraProtocol": "https",
-    "cameraChannel": "0",
+    "cameraChannel": 0,
     "cameraUser": "",
     "cameraPassword": "",
     "apiRefreshInterval": "10"
@@ -845,6 +845,28 @@
           "es": "PTZ preset",
           "pl": "PTZ preset",
           "zh-cn": "PTZset"
+        },
+        "type": "number",
+        "read": true,
+        "write": true
+      }
+    },
+    {
+      "_id": "settings.ptzPatrol",
+      "type": "state",
+      "common": {
+        "role": "value",
+        "name": {
+          "en": "PTZ patrol",
+          "de": "PTZ Patrol",
+          "ru": "patrol PTZ",
+          "pt": "patrol PTZ",
+          "nl": "PTZ patrol",
+          "fr": "patrol PTZ",
+          "it": "patrol PTZ",
+          "es": "PTZ patrol",
+          "pl": "PTZ patrol",
+          "zh-cn": "PTZpatrol"
         },
         "type": "number",
         "read": true,

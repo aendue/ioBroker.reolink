@@ -106,6 +106,7 @@ class ReoLinkCam extends utils.Adapter {
 		this.subscribeStates("settings.switchLed");
 		this.subscribeStates("settings.ledBrightness");
 		this.subscribeStates("settings.ptzPreset");
+		this.subscribeStates("settings.ptzPatrol");
 		this.subscribeStates("settings.autoFocus");
 		this.subscribeStates("settings.setZoomFocus");
 		this.subscribeStates("settings.push");
@@ -300,6 +301,29 @@ class ReoLinkCam extends utils.Adapter {
 			}
 		}];
 		this.sendCmd(ptzPresetCmd, "PtzCtrl");
+	}
+	async ptzCtrl2(ptzPatrolPos) {
+		if (ptzPatrolPos === 0) {
+			const ptzPresetCmd = [{
+				"cmd":"PtzCtrl",
+				"param":{
+					"channel":0,
+					"op":"StopPatrol"
+				}
+			}];
+			this.sendCmd(ptzPresetCmd, "PtzCtrl");
+		}
+		else {
+			const ptzPresetCmd = [{
+				"cmd":"PtzCtrl",
+				"param":{
+					"channel":0,
+					"op":"StartPatrol",
+					"id":ptzPatrolPos
+				}
+			}];
+			this.sendCmd(ptzPresetCmd, "PtzCtrl");
+		}
 	}
 	async setPush(state) {
 		let pushOn = 1;
@@ -678,6 +702,9 @@ class ReoLinkCam extends utils.Adapter {
 				}
 				if(propName === "ptzPreset") {
 					this.ptzCtrl(state.val);
+				}
+				if(propName === "ptzPatrol") {
+					this.ptzCtrl2(state.val);
 				}
 				if(propName === "autoFocus") {
 					this.setAutoFocus(state.val);
