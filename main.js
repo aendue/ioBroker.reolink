@@ -139,6 +139,41 @@ class ReoLinkCam extends utils.Adapter {
 			}
 		}
 	}
+
+	async getAiState(){
+		if (this.reolinkApiClient){
+			try{
+				const AiInfoValues = await this.reolinkApiClient.get(`/api.cgi?cmd=GetAiState&channel=${this.config.cameraChannel}&user=${this.config.cameraUser}&password=${this.config.cameraPassword}`);
+
+				this.log.debug(`camAiStateInfo ${JSON.stringify(AiInfoValues.status)}: ${JSON.stringify(AiInfoValues.data)}`);
+				
+
+				if(AiInfoValues.status === 200){
+					this.apiConnected = true;
+					await this.setStateAsync("network.connected", {val: this.apiConnected, ack: true});
+
+					const AiValues = AiInfoValues.data[0];
+
+					await this.setStateAsync("sensor.dog_cat.state", {val: AiValues.value.dog_cat.alarm_state, ack: true});
+					await this.setStateAsync("sensor.dog_cat.support", {val: AiValues.value.dog_cat.support, ack: true});
+					await this.setStateAsync("sensor.face.state", {val: AiValues.value.face.alarm_state, ack: true});
+					await this.setStateAsync("sensor.face.support", {val: AiValues.value.face.support, ack: true});
+					await this.setStateAsync("sensor.people.state", {val: AiValues.value.people.alarm_state, ack: true});
+					await this.setStateAsync("sensor.people.support", {val: AiValues.value.people.support, ack: true});
+					await this.setStateAsync("sensor.vehicle.state", {val: AiValues.value.vehicle.alarm_state, ack: true});
+					await this.setStateAsync("sensor.vehicle.support", {val: AiValues.value.vehicle.support, ack: true});
+
+					this.log.debug("dog_cat_state detection:" + AiValues.value.dog_cat.alarm_state);
+					this.log.debug("face_state detection:" + AiValues.value.face.alarm_state);
+					this.log.debug("people_state detection:" + AiValues.value.people.alarm_state);
+					this.log.debug("vehicle_state detection:" + AiValues.value.vehicle.alarm_state);
+				}
+			}catch (error){
+				this.apiConnected = false;
+				await this.setStateAsync("network.connected", {val: this.apiConnected, ack: true});
+			}
+		}
+	}
 	//function for getting general information of camera device
 	async getDevinfo(){
 		if (this.reolinkApiClient) {
@@ -560,6 +595,7 @@ class ReoLinkCam extends utils.Adapter {
 		//this.log.debug(`refreshState': started from "${source}"`);
 
 		this.getMdState();
+		this.getAiState();
 
 		//Delete Timer
 		if(this.refreshStateTimeout){

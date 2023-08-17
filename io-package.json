@@ -184,6 +184,278 @@
       "native": {}
     },
     {
+      "_id": "sensor.dog_cat",
+      "type": "channel",
+      "common": {
+        "name": {
+          "en": "dog cat",
+          "de": "hund katze",
+          "ru": "собака кот",
+          "pt": "cão gato",
+          "nl": "hond",
+          "fr": "chien chat",
+          "it": "cane gatto",
+          "es": "perro",
+          "pl": "kot",
+          "uk": "собака кішка",
+          "zh-cn": "导 言"
+        }
+      },
+      "native": {}
+    },
+    {
+      "_id": "sensor.dog_cat.state",
+      "type": "state",
+      "common": {
+        "role": "motion",
+        "name": {
+          "en": "dog cat detection",
+          "de": "hund katze erkennung",
+          "ru": "обнаружение собаки кота",
+          "pt": "detecção de gato cão",
+          "nl": "hondenpolitie",
+          "fr": "détection de chiens",
+          "it": "rilevamento del gatto del cane",
+          "es": "detección de gatos",
+          "pl": "psy",
+          "uk": "виявлення собак",
+          "zh-cn": "目 录"
+        },
+        "type": "number",
+        "read": true,
+        "write": true
+      },
+      "native": {}
+    },
+    {
+      "_id": "sensor.dog_cat.support",
+      "type": "state",
+      "common": {
+        "role": "motion",
+        "name": {
+          "en": "dog cat support",
+          "de": "hund katze unterstützung",
+          "ru": "собака кошка поддержка",
+          "pt": "cão gato apoio",
+          "nl": "honden",
+          "fr": "soutien aux chats",
+          "it": "cane gatto supporto",
+          "es": "gato apoyo",
+          "pl": "koty",
+          "uk": "підтримка собак",
+          "zh-cn": "b. 导向"
+        },
+        "type": "number",
+        "read": true,
+        "write": true
+      },
+      "native": {}
+    },
+    {
+      "_id": "sensor.face",
+      "type": "channel",
+      "common": {
+        "name": {
+          "en": "face",
+          "de": "gesicht",
+          "ru": "лицо",
+          "pt": "rosto",
+          "nl": "gezicht",
+          "fr": "face",
+          "it": "faccia",
+          "es": "cara",
+          "pl": "face",
+          "uk": "обличчя",
+          "zh-cn": "面对面"
+        }
+      },
+      "native": {}
+    },
+    {
+      "_id": "sensor.face.state",
+      "type": "state",
+      "common": {
+        "role": "motion",
+        "name": {
+          "en": "face detection",
+          "de": "gesichtserkennung",
+          "ru": "обнаружение лица",
+          "pt": "detecção de face",
+          "nl": "gezichtsdetector",
+          "fr": "détection du visage",
+          "it": "rilevamento del viso",
+          "es": "detección facial",
+          "pl": "wykrywanie twarzy",
+          "uk": "виявлення обличчя",
+          "zh-cn": "探 视"
+        },
+        "type": "number",
+        "read": true,
+        "write": true
+      },
+      "native": {}
+    },
+    {
+      "_id": "sensor.face.support",
+      "type": "state",
+      "common": {
+        "role": "motion",
+        "name": {
+          "en": "face support",
+          "de": "gesichtsstütze",
+          "ru": "поддержка лица",
+          "pt": "suporte de face",
+          "nl": "ondersteuning",
+          "fr": "face support",
+          "it": "supporto viso",
+          "es": "soporte facial",
+          "pl": "wsparcie",
+          "uk": "підтримка обличчя",
+          "zh-cn": "面对的支助"
+        },
+        "type": "number",
+        "read": true,
+        "write": true
+      },
+      "native": {}
+    },
+    {
+      "_id": "sensor.people",
+      "type": "channel",
+      "common": {
+        "name": {
+          "en": "people",
+          "de": "menschen",
+          "ru": "люди",
+          "pt": "pessoas",
+          "nl": "mensen",
+          "fr": "gens",
+          "it": "persone",
+          "es": "gente",
+          "pl": "ludzie",
+          "uk": "люди",
+          "zh-cn": "人民"
+        }
+      },
+      "native": {}
+    },
+    {
+      "_id": "sensor.people.state",
+      "type": "state",
+      "common": {
+        "role": "motion",
+        "name": {
+          "en": "people detection",
+          "de": "menschen entdecken",
+          "ru": "обнаружение людей",
+          "pt": "detecção de pessoas",
+          "nl": "mensen detecteren",
+          "fr": "détection des personnes",
+          "it": "rilevamento persone",
+          "es": "detección de personas",
+          "pl": "wykrywanie",
+          "uk": "виявлення людей",
+          "zh-cn": "目 录"
+        },
+        "type": "number",
+        "read": true,
+        "write": true
+      },
+      "native": {}
+    },
+    {
+      "_id": "sensor.people.support",
+      "type": "state",
+      "common": {
+        "role": "motion",
+        "name": {
+          "en": "people support",
+          "de": "menschen unterstützen",
+          "ru": "люди поддерживают",
+          "pt": "apoio de pessoas",
+          "nl": "mensen steunen mensen",
+          "fr": "soutien aux personnes",
+          "it": "persone sostengono",
+          "es": "apoyo a las personas",
+          "pl": "wspieranie",
+          "uk": "підтримка людей",
+          "zh-cn": "人民支持"
+        },
+        "type": "number",
+        "read": true,
+        "write": true
+      },
+      "native": {}
+    },
+    {
+      "_id": "sensor.vehicle",
+      "type": "channel",
+      "common": {
+        "name": {
+          "en": "vehicle",
+          "de": "fahrzeug",
+          "ru": "автомобиль",
+          "pt": "veículo",
+          "nl": "voertuig",
+          "fr": "véhicule",
+          "it": "veicolo",
+          "es": "vehículo",
+          "pl": "pojazd",
+          "uk": "автомобіль",
+          "zh-cn": "车辆"
+        }
+      },
+      "native": {}
+    },
+    {
+      "_id": "sensor.vehicle.state",
+      "type": "state",
+      "common": {
+        "role": "motion",
+        "name": {
+          "en": "vehicle detection",
+          "de": "fahrzeugerkennung",
+          "ru": "обнаружение автомобиля",
+          "pt": "detecção de veículos",
+          "nl": "voertuig detectie",
+          "fr": "détection du véhicule",
+          "it": "rilevamento del veicolo",
+          "es": "detección de vehículos",
+          "pl": "detektor",
+          "uk": "виявлення транспортного засобу",
+          "zh-cn": "车辆检查"
+        },
+        "type": "number",
+        "read": true,
+        "write": true
+      },
+      "native": {}
+    },
+    {
+      "_id": "sensor.vehicle.support",
+      "type": "state",
+      "common": {
+        "role": "motion",
+        "name": {
+          "en": "vehicle support",
+          "de": "fahrzeugunterstützung",
+          "ru": "поддержка автомобиля",
+          "pt": "suporte do veículo",
+          "nl": "voertuig ondersteuning",
+          "fr": "support du véhicule",
+          "it": "supporto veicolo",
+          "es": "soporte para vehículos",
+          "pl": "wsparcie",
+          "uk": "підтримка автомобіля",
+          "zh-cn": "车辆支助"
+        },
+        "type": "number",
+        "read": true,
+        "write": true
+      },
+      "native": {}
+    },
+    {
       "_id": "info.connection",
       "type": "state",
       "common": {
