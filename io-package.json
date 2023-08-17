@@ -39,7 +39,8 @@
         "it": "punto di guardia (nuove informazioni)",
         "es": "punto de guardia (nueva información)",
         "pl": "strona strażnicza (new info)",
-        "zh-cn": "警卫点(新生)"
+        "zh-cn": "警卫点(新生)",
+        "uk": "пункт охорони (нова інформація)"
       },
       "0.0.4": {
         "en": "ptz preset tested\nchange protocol (http/https) possible\nled on/off and brightness\npush on/off\nauto focus on/off\nset zoom\nplay alarm (n times)\nmotion detection enabled again",
@@ -51,7 +52,8 @@
         "it": "preimpostazione ptz testato\nmodificare il protocollo (https) possibile\nled on/off e luminosità\npush on/off\nauto messa a fuoco su / off\nset zoom\nallarme gioco (n volte)\nrilevamento del movimento abilitato di nuovo",
         "es": "ptz preset probado\nprotocolo de cambio (http/https) posible\nencendido / apagado y brillo\nempuje/apagar\nenfoque automático en/off\nzoom\ntocar alarma (en ocasiones)\ndetección de movimiento activada de nuevo",
         "pl": "pkt\nprotokół zmiany (http/https)\ndoprowadziło to do czystości i jasności\nproszę\nauto koncentruje się na/off\nzoom\nczas gry (pol.)\nwykrycie to pozwoliło ponownie na wykrycie ruchu",
-        "zh-cn": "p.tz preset经试验\n修改议定书(http://s.pdf)\na. 成果和光明\n动议/动议\n汽车焦点\n古 巴\n震惊(有时)\n探 证"
+        "zh-cn": "p.tz preset经试验\n修改议定书(http://s.pdf)\na. 成果和光明\n动议/动议\n汽车焦点\n古 巴\n震惊(有时)\n探 证",
+        "uk": "перевірено попередні налаштування ptz\nможлива зміна протоколу (http/https).\nсвітлодіод ввімкнення/вимкнення та яскравості\nнатисніть увімкнути/вимкнути\nавтофокус увімкнення/вимкнення\nвстановити масштаб\nвідтворити будильник (n разів)\nвиявлення руху знову ввімкнено"
       },
       "0.0.3": {
         "en": "npm release prepare\nptz preset (untested, missing ptz cam)",
@@ -63,7 +65,8 @@
         "it": "npm rilascio preparare\nptz preset (non testato, mancante cam ptz)",
         "es": "npm liberación preparar\npreset de ptz (tratado, cámara de ptz desaparecida)",
         "pl": "release\npkt z presetem (bezpośrednio)",
-        "zh-cn": "释放准备\np.tz preset (untest,缺失 ptz cam)"
+        "zh-cn": "释放准备\np.tz preset (untest,缺失 ptz cam)",
+        "uk": "підготувати випуск npm\nпопереднє налаштування ptz (неперевірено, відсутня камера ptz)"
       },
       "0.0.2": {
         "en": "added languages\nadded get image function (snap)",
@@ -75,7 +78,8 @@
         "it": "lingue aggiuntive\naggiunto ottenere funzione immagine (snap)",
         "es": "idiomas añadidos\nañadir la función de imagen (snap)",
         "pl": "język docelowy\ndodano funkcję obrazu (snap)",
-        "zh-cn": "增加语文\n增加图像功能(绑架)"
+        "zh-cn": "增加语文\n增加图像功能(绑架)",
+        "uk": "додані мови\nдодана функція отримання зображення (прив'язка)"
       },
       "0.0.1": {
         "en": "initial release",
@@ -87,10 +91,10 @@
         "it": "Versione iniziale",
         "es": "Versión inicial",
         "pl": "Pierwsze wydanie",
-        "zh-cn": "首次出版"
+        "zh-cn": "首次出版",
+        "uk": "початковий випуск"
       }
     },
-    "title": "reolink",
     "titleLang": {
       "en": "reolink",
       "de": "reolink",
@@ -101,7 +105,8 @@
       "it": "reolink",
       "es": "reolink",
       "pl": "reolinka",
-      "zh-cn": "重新联系"
+      "zh-cn": "重新联系",
+      "uk": "reolink"
     },
     "desc": {
       "en": "reolink",
@@ -113,17 +118,11 @@
       "it": "reolink",
       "es": "reolink",
       "pl": "reolinka",
-      "zh-cn": "重新联系"
+      "zh-cn": "重新联系",
+      "uk": "reolink"
     },
-    "authors": [
-      "Andy Grundt <andy.grundt@icloud.com>"
-    ],
-    "keywords": [
-      "reolink",
-      "ip-camera",
-      "image",
-      "camera"
-    ],
+    "authors": ["Andy Grundt <andy.grundt@icloud.com>"],
+    "keywords": ["reolink", "ip-camera", "image", "camera"],
     "license": "MIT",
     "platform": "Javascript/Node.js",
     "main": "main.js",
