@@ -139,7 +139,7 @@ class ReoLinkCam extends utils.Adapter {
 			}
 		}
 	}
-
+	
 	async getAiState(){
 		if (this.reolinkApiClient){
 			try{
