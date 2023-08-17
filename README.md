@@ -69,6 +69,7 @@ sendTo("reolink.0",{action: "snap"}, function(result){
 ### **WORK IN PROGRESS**
 * (oelison) ptz patrol added
 * (oelison) node 12 tests removed
+* (aendue) added getAiState
 
 ### 0.1.1 (2022-11-03)
 * (aendue) ssl validation included
