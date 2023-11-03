@@ -66,7 +66,7 @@ sendTo("reolink.0",{action: "snap"}, function(result){
     Placeholder for the next version (at the beginning of the line):
     ### **WORK IN PROGRESS**
 -->
-### **WORK IN PROGRESS**
+### 0.1.2 (2023-11-03)
 * (oelison) ptz patrol added
 * (oelison) node 12 tests removed
 * (aendue) added getAiState

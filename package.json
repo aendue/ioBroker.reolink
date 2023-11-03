@@ -1,6 +1,6 @@
 {
   "name": "iobroker.reolink",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "reolink",
   "author": {
     "name": "Andy Grundt",

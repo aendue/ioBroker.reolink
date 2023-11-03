@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "reolink",
-    "version": "0.1.1",
+    "version": "0.1.2",
     "news": {
+      "0.1.2": {
+        "en": "ptz patrol added\nnode 12 tests removed\nadded getAiState",
+        "de": "ptz patrol hinzugefügt\nknoten 12 tests entfernt\njetzt kaufen",
+        "ru": "ptz патруль добавлен\nnode 12 тестов удалено\nдобавлено getAiState",
+        "pt": "ptz patrulha adicionado\nnode 12 testes removidos\nadicionado getAiState",
+        "nl": "ptz patrouille toegevoegd\n12 testen verwijderd\nvertaling:",
+        "fr": "ptz patrouille ajouté\nnode 12 tests enlevés\najouté getAiState",
+        "it": "ptz pattuglia aggiunto\nnodo 12 test rimossi\naggiunto getAiState",
+        "es": "patrulla de ptz\nnodo 12 pruebas eliminadas\nadd getAiState",
+        "pl": "patrol\n12 testów\ndodać",
+        "uk": "ptz патруль додано\nвузол 12 тестів вилучено\nдодано getAiState",
+        "zh-cn": "ptz巡逻员\n拆除的12次试验\n增 编"
+      },
       "0.1.1": {
         "en": "ssl validation included\nfixed issue with ack-flag not set\nchanged datatypes of disk.free and RAW.Email\nenabled getAutoFocus again\nname change on state EmailNotification (state gets created dynamically now)",
         "de": "ssl validierung inklusive\nfestes problem mit ack-flag nicht gesetzt\ngeänderte Datentypen von disk.free und RAW. Email\nautoFocus erneut aktivieren\nname ändern auf Zustand E-MailAnmerkung ( Zustand wird dynamisch jetzt erstellt)",
@@ -80,19 +93,6 @@
         "pl": "język docelowy\ndodano funkcję obrazu (snap)",
         "zh-cn": "增加语文\n增加图像功能(绑架)",
         "uk": "додані мови\nдодана функція отримання зображення (прив'язка)"
-      },
-      "0.0.1": {
-        "en": "initial release",
-        "de": "Erstveröffentlichung",
-        "ru": "Начальная версия",
-        "pt": "lançamento inicial",
-        "nl": "Eerste uitgave",
-        "fr": "Première version",
-        "it": "Versione iniziale",
-        "es": "Versión inicial",
-        "pl": "Pierwsze wydanie",
-        "zh-cn": "首次出版",
-        "uk": "початковий випуск"
       }
     },
     "titleLang": {
@@ -121,8 +121,15 @@
       "zh-cn": "重新联系",
       "uk": "reolink"
     },
-    "authors": ["Andy Grundt <andy.grundt@icloud.com>"],
-    "keywords": ["reolink", "ip-camera", "image", "camera"],
+    "authors": [
+      "Andy Grundt <andy.grundt@icloud.com>"
+    ],
+    "keywords": [
+      "reolink",
+      "ip-camera",
+      "image",
+      "camera"
+    ],
     "license": "MIT",
     "platform": "Javascript/Node.js",
     "main": "main.js",
