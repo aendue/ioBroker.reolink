@@ -301,6 +301,7 @@ class ReoLinkCam extends utils.Adapter {
 	}
 	async sendCmd(cmdObject, cmdName) {
 		this.log.debug("sendCmd: " + cmdName);
+		this.log.debug("sendCmdObj: " + JSON.stringify(cmdObject));
 		try	{
 			if (this.reolinkApiClient) {
 				const result = await this.reolinkApiClient.post(`/api.cgi?user=${this.config.cameraUser}&password=${this.config.cameraPassword}`, cmdObject);
