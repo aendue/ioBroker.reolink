@@ -159,6 +159,12 @@
       }
     ]
   },
+  "encryptedNative": [
+    "cameraPassword"
+  ],
+  "protectedNative": [
+      "cameraPassword"
+  ],
   "native": {
     "cameraType": "",
     "cameraIp": " ",
@@ -213,7 +219,7 @@
       "_id": "sensor.dog_cat.state",
       "type": "state",
       "common": {
-        "role": "motion",
+        "role": "value",
         "name": {
           "en": "dog cat detection",
           "de": "hund katze erkennung",
@@ -227,9 +233,9 @@
           "uk": "виявлення собак",
           "zh-cn": "目 录"
         },
-        "type": "number",
+        "type": "boolean",
         "read": true,
-        "write": true
+        "write": false
       },
       "native": {}
     },
@@ -237,7 +243,7 @@
       "_id": "sensor.dog_cat.support",
       "type": "state",
       "common": {
-        "role": "motion",
+        "role": "value",
         "name": {
           "en": "dog cat support",
           "de": "hund katze unterstützung",
@@ -251,9 +257,9 @@
           "uk": "підтримка собак",
           "zh-cn": "b. 导向"
         },
-        "type": "number",
+        "type": "boolean",
         "read": true,
-        "write": true
+        "write": false
       },
       "native": {}
     },
@@ -281,7 +287,7 @@
       "_id": "sensor.face.state",
       "type": "state",
       "common": {
-        "role": "motion",
+        "role": "value",
         "name": {
           "en": "face detection",
           "de": "gesichtserkennung",
@@ -295,9 +301,9 @@
           "uk": "виявлення обличчя",
           "zh-cn": "探 视"
         },
-        "type": "number",
+        "type": "boolean",
         "read": true,
-        "write": true
+        "write": false
       },
       "native": {}
     },
@@ -305,10 +311,10 @@
       "_id": "sensor.face.support",
       "type": "state",
       "common": {
-        "role": "motion",
+        "role": "value",
         "name": {
           "en": "face support",
-          "de": "gesichtsstütze",
+          "de": "gesichts erkennung möglich",
           "ru": "поддержка лица",
           "pt": "suporte de face",
           "nl": "ondersteuning",
@@ -319,9 +325,9 @@
           "uk": "підтримка обличчя",
           "zh-cn": "面对的支助"
         },
-        "type": "number",
+        "type": "boolean",
         "read": true,
-        "write": true
+        "write": false
       },
       "native": {}
     },
@@ -349,7 +355,7 @@
       "_id": "sensor.people.state",
       "type": "state",
       "common": {
-        "role": "motion",
+        "role": "value",
         "name": {
           "en": "people detection",
           "de": "menschen entdecken",
@@ -363,9 +369,9 @@
           "uk": "виявлення людей",
           "zh-cn": "目 录"
         },
-        "type": "number",
+        "type": "boolean",
         "read": true,
-        "write": true
+        "write": false
       },
       "native": {}
     },
@@ -373,7 +379,7 @@
       "_id": "sensor.people.support",
       "type": "state",
       "common": {
-        "role": "motion",
+        "role": "value",
         "name": {
           "en": "people support",
           "de": "menschen unterstützen",
@@ -387,9 +393,9 @@
           "uk": "підтримка людей",
           "zh-cn": "人民支持"
         },
-        "type": "number",
+        "type": "boolean",
         "read": true,
-        "write": true
+        "write": false
       },
       "native": {}
     },
@@ -417,7 +423,7 @@
       "_id": "sensor.vehicle.state",
       "type": "state",
       "common": {
-        "role": "motion",
+        "role": "value",
         "name": {
           "en": "vehicle detection",
           "de": "fahrzeugerkennung",
@@ -431,9 +437,9 @@
           "uk": "виявлення транспортного засобу",
           "zh-cn": "车辆检查"
         },
-        "type": "number",
+        "type": "boolean",
         "read": true,
-        "write": true
+        "write": false
       },
       "native": {}
     },
@@ -441,7 +447,7 @@
       "_id": "sensor.vehicle.support",
       "type": "state",
       "common": {
-        "role": "motion",
+        "role": "value",
         "name": {
           "en": "vehicle support",
           "de": "fahrzeugunterstützung",
@@ -455,9 +461,9 @@
           "uk": "підтримка автомобіля",
           "zh-cn": "车辆支助"
         },
-        "type": "number",
+        "type": "boolean",
         "read": true,
-        "write": true
+        "write": false
       },
       "native": {}
     },
@@ -478,7 +484,7 @@
       "_id": "sensor.motion",
       "type": "state",
       "common": {
-        "role": "motion",
+        "role": "sensor.motion",
         "name": {
           "en": "Motion Detection",
           "de": "Bewegungserkennung",
@@ -491,9 +497,9 @@
           "pl": "Motion Detection",
           "zh-cn": "纠正"
         },
-        "type": "number",
+        "type": "boolean",
         "read": true,
-        "write": true
+        "write": false
       },
       "native": {}
     },
@@ -646,7 +652,7 @@
         },
         "type": "string",
         "read": true,
-        "write": true
+        "write": false
       },
       "native": {}
     },
@@ -669,7 +675,7 @@
         },
         "type": "number",
         "read": true,
-        "write": true
+        "write": false
       },
       "native": {}
     },
@@ -677,7 +683,7 @@
       "_id": "network.connected",
       "type": "state",
       "common": {
-        "role": "indicator.connected",
+        "role": "indicator.reachable",
         "name": {
           "en": "Camera connected",
           "de": "Kamera verbunden",
@@ -875,7 +881,7 @@
         "role": "value",
         "name": {
           "en": "Camera buildDay",
-          "de": "Kameraaufbau Tag",
+          "de": "Kamera Produktionstag",
           "ru": "Создание камеры День",
           "pt": "Construção de câmera Dia",
           "nl": "Camera bouwt Dag",
@@ -1067,7 +1073,7 @@
       "_id": "settings.ir",
       "type": "state",
       "common": {
-        "role": "value",
+        "role": "state",
         "name": "ir",
         "type": "string",
         "read": true,
@@ -1078,7 +1084,7 @@
       "_id": "settings.switchLed",
       "type": "state",
       "common": {
-        "role": "value",
+        "role": "state",
         "name": "led",
         "type": "boolean",
         "read": true,
@@ -1089,7 +1095,7 @@
       "_id": "settings.ledBrightness",
       "type": "state",
       "common": {
-        "role": "value",
+        "role": "state",
         "name": {
           "en": "LED Brightness",
           "de": "LED Helligkeit",
@@ -1111,7 +1117,7 @@
       "_id": "settings.ptzPreset",
       "type": "state",
       "common": {
-        "role": "value",
+        "role": "state",
         "name": {
           "en": "PTZ preset",
           "de": "PTZ Preset",
@@ -1133,7 +1139,7 @@
       "_id": "settings.ptzPatrol",
       "type": "state",
       "common": {
-        "role": "value",
+        "role": "state",
         "name": {
           "en": "PTZ patrol",
           "de": "PTZ Patrol",
@@ -1155,7 +1161,7 @@
       "_id": "settings.push",
       "type": "state",
       "common": {
-        "role": "value",
+        "role": "state",
         "name": {
           "en": "enable push",
           "de": "push einschalten",
@@ -1177,7 +1183,7 @@
       "_id": "settings.autoFocus",
       "type": "state",
       "common": {
-        "role": "value",
+        "role": "state",
         "name": {
           "en": "auto focus",
           "de": "autofokus",
@@ -1199,7 +1205,7 @@
       "_id": "settings.setZoomFocus",
       "type": "state",
       "common": {
-        "role": "value",
+        "role": "state",
         "name": {
           "en": "set zoom position",
           "de": "zoom position",
@@ -1221,10 +1227,10 @@
       "_id": "settings.playAlarm",
       "type": "state",
       "common": {
-        "role": "value",
+        "role": "state",
         "name": {
           "en": "play alarm",
-          "de": "spielalarm",
+          "de": "alarm ton abspielen",
           "ru": "играть тревогу",
           "pt": "alarme de jogo",
           "nl": "speel alarm",
@@ -1243,7 +1249,7 @@
       "_id": "settings.getDiscData",
       "type": "state",
       "common": {
-        "role": "value",
+        "role": "state",
         "name": {
           "en": "get drive data",
           "de": "laufwerksdaten",
@@ -1265,10 +1271,10 @@
       "_id": "settings.ptzEnableGuard",
       "type": "state",
       "common": {
-        "role": "value",
+        "role": "state",
         "name": {
           "en": "enable PTZguard",
-          "de": "PTZguard ermöglichen",
+          "de": "PTZguard einschalten",
           "ru": "включить PTZguard",
           "pt": "habilitar PTZguard",
           "nl": "in staat PTZguard",
@@ -1287,10 +1293,10 @@
       "_id": "settings.ptzGuardTimeout",
       "type": "state",
       "common": {
-        "role": "value",
+        "role": "state",
         "name": {
           "en": "timeout ptzGuard",
-          "de": "zeit ptzGuard",
+          "de": "timeout ptzGuard",
           "ru": "timeout ptzGuard",
           "pt": "timeout ptzGuard",
           "nl": "time-out ptzGuard",
@@ -1387,9 +1393,9 @@
           "uk": "Електронна пошта",
           "zh-cn": "电子邮件"
         },
-        "type": "object",
+        "type": "string",
         "read": true,
-        "write": true
+        "write": false
       }
     }
   ]

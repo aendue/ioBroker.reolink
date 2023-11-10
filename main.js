@@ -68,7 +68,7 @@ class ReoLinkCam extends utils.Adapter {
 
 		this.log.info(`Current IP: ${this.config.cameraIp}`);
 		await this.setStateAsync("network.ip",{val: this.config.cameraIp, ack: true});
-		await this.setStateAsync("network.channel",{val: this.config.cameraChannel, ack: true});
+		await this.setStateAsync("network.channel",{val: Number(this.config.cameraChannel), ack: true});
 
 		//first API Call...if something isnt working stop Adapter
 		await this.getDevinfo().catch(error => {
@@ -114,6 +114,7 @@ class ReoLinkCam extends utils.Adapter {
 		this.subscribeStates("settings.getDiscData");
 		this.subscribeStates("settings.ptzEnableGuard");
 		this.subscribeStates("settings.ptzGuardTimeout");
+		this.subscribeStates("Command.Reboot");
 	}
 	//function for getting motion detection
 	async getMdState(){
@@ -130,7 +131,7 @@ class ReoLinkCam extends utils.Adapter {
 					const MdValues = MdInfoValues.data[0];
 
 					this.log.debug("Motion Detection value: " + MdValues.value.state);
-					await this.setStateAsync("sensor.motion", {val: MdValues.value.state, ack: true});
+					await this.setStateAsync("sensor.motion", {val: !!(MdValues.value.state), ack: true});
 
 				}
 			} catch (error) {
@@ -139,14 +140,14 @@ class ReoLinkCam extends utils.Adapter {
 			}
 		}
 	}
-	
+
 	async getAiState(){
 		if (this.reolinkApiClient){
 			try{
 				const AiInfoValues = await this.reolinkApiClient.get(`/api.cgi?cmd=GetAiState&channel=${this.config.cameraChannel}&user=${this.config.cameraUser}&password=${this.config.cameraPassword}`);
 
 				this.log.debug(`camAiStateInfo ${JSON.stringify(AiInfoValues.status)}: ${JSON.stringify(AiInfoValues.data)}`);
-				
+
 
 				if(AiInfoValues.status === 200){
 					this.apiConnected = true;
@@ -154,14 +155,14 @@ class ReoLinkCam extends utils.Adapter {
 
 					const AiValues = AiInfoValues.data[0];
 
-					await this.setStateAsync("sensor.dog_cat.state", {val: AiValues.value.dog_cat.alarm_state, ack: true});
-					await this.setStateAsync("sensor.dog_cat.support", {val: AiValues.value.dog_cat.support, ack: true});
-					await this.setStateAsync("sensor.face.state", {val: AiValues.value.face.alarm_state, ack: true});
-					await this.setStateAsync("sensor.face.support", {val: AiValues.value.face.support, ack: true});
-					await this.setStateAsync("sensor.people.state", {val: AiValues.value.people.alarm_state, ack: true});
-					await this.setStateAsync("sensor.people.support", {val: AiValues.value.people.support, ack: true});
-					await this.setStateAsync("sensor.vehicle.state", {val: AiValues.value.vehicle.alarm_state, ack: true});
-					await this.setStateAsync("sensor.vehicle.support", {val: AiValues.value.vehicle.support, ack: true});
+					await this.setStateAsync("sensor.dog_cat.state", {val: !!(AiValues.value.dog_cat.alarm_state), ack: true});
+					await this.setStateAsync("sensor.dog_cat.support", {val: !!(AiValues.value.dog_cat.support), ack: true});
+					await this.setStateAsync("sensor.face.state", {val: !!(AiValues.value.face.alarm_state), ack: true});
+					await this.setStateAsync("sensor.face.support", {val: !!(AiValues.value.face.support), ack: true});
+					await this.setStateAsync("sensor.people.state", {val: !!(AiValues.value.people.alarm_state), ack: true});
+					await this.setStateAsync("sensor.people.support", {val: !!(AiValues.value.people.support), ack: true});
+					await this.setStateAsync("sensor.vehicle.state", {val: !!(AiValues.value.vehicle.alarm_state), ack: true});
+					await this.setStateAsync("sensor.vehicle.support", {val: !!(AiValues.value.vehicle.support), ack: true});
 
 					this.log.debug("dog_cat_state detection:" + AiValues.value.dog_cat.alarm_state);
 					this.log.debug("face_state detection:" + AiValues.value.face.alarm_state);
@@ -178,7 +179,8 @@ class ReoLinkCam extends utils.Adapter {
 	async getDevinfo(){
 		if (this.reolinkApiClient) {
 			try {
-				const DevInfoValues = await this.reolinkApiClient.get(`/api.cgi?cmd=GetDevInfo&channel=0&user=${this.config.cameraUser}&password=${this.config.cameraPassword}`);
+				this.log.debug("getDevinfo");
+				const DevInfoValues = await this.reolinkApiClient.get(`/api.cgi?cmd=GetDevInfo&channel=${this.config.cameraChannel}&user=${this.config.cameraUser}&password=${this.config.cameraPassword}`);
 				this.log.debug(`camMdStateInfo ${JSON.stringify(DevInfoValues.status)}: ${JSON.stringify(DevInfoValues.data)}`);
 
 				if(DevInfoValues.status === 200){
@@ -593,7 +595,7 @@ class ReoLinkCam extends utils.Adapter {
 		this.getPtzGuardInfo();
 	}
 	async refreshState(source){
-		//this.log.debug(`refreshState': started from "${source}"`);
+		this.log.debug(`refreshState': started from "${source}"`);
 
 		this.getMdState();
 		this.getAiState();
@@ -615,10 +617,17 @@ class ReoLinkCam extends utils.Adapter {
 			//this.log.debug(`refreshStateTimeout: re-created refresh timeout (API not connected): id ${this.refreshStateTimeout}- secounds: ${notConnectedTimeout}`);
 
 		} else {
+			let refreshInterval = parseInt(this.config.apiRefreshInterval);
+			if (refreshInterval > 10000) {
+				refreshInterval = 10000;
+			}
+			if (refreshInterval < 1) {
+				refreshInterval = 1;
+			}
 			this.refreshStateTimeout = this.setTimeout(() => {
 				this.refreshStateTimeout = null;
 				this.refreshState("timeout(default");
-			}, parseInt(this.config.apiRefreshInterval) * 1000);
+			}, refreshInterval * 1000);
 			//this.log.debug(`refreshStateTimeout: re-created refresh timeout (default): id ${this.refreshStateTimeout}- secounds: ${this.config.apiRefreshInterval}`);
 		}
 	}
@@ -639,7 +648,7 @@ class ReoLinkCam extends utils.Adapter {
 						this.log.debug("Error or not supported " + this.getMailNotification.name);
 						await this.setStateAsync("settings.EmailNotification", {val: "Error or not supported", ack: true});
 					}else{
-						await this.setStateAsync("RAW.Email", {val: mail, ack: true});
+						await this.setStateAsync("RAW.Email", {val: JSON.stringify(mail), ack: true});
 						await this.setStateAsync("settings.EmailNotification", {val: mail.value.Email.enable, ack: true});
 					}
 				}
@@ -772,6 +781,9 @@ class ReoLinkCam extends utils.Adapter {
 				}
 				if(propName === "EmailNotification") {
 					this.setMailNotification(state.val);
+				}
+				if(propName === "Reboot") {
+					// TODO: reboot command
 				}
 			}
 		} else {
