@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "reolink",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "news": {
+      "1.0.1": {
+        "en": "resolve review for latest adapter addition\nmaybe the last node 16 version\nbooleans are now false/true and not 0/1",
+        "de": "rezension für neueste adapter-addition\nvielleicht die letzte node 16 version\nbooleans sind jetzt falsch/wahr und nicht 0/1",
+        "ru": "разрешить обзор для последнего дополнения адаптера\nможет быть, последняя нода 16 версия\nbooleans теперь false/true и не 0/1",
+        "pt": "revisão de resolução para adição de adaptador mais recente\ntalvez o último nó 16 versão\nbooleanos são agora falsos / falsos e não 0/1",
+        "nl": "review voor nieuwste aanvulling\nmisschien de laatste 16 versie\nbooleans zijn nu vals en niet 0/1",
+        "fr": "résolvez l'examen pour la dernière addition d'adaptateur\npeut-être la dernière version n° 16\nles booléens sont maintenant faux/vérité et non 0/1",
+        "it": "risolvere la recensione per l'ultima aggiunta dell'adattatore\nforse l'ultimo nodo 16 versione\ni booleani sono ora falsi/trui e non 0/1",
+        "es": "resolver revisión para la última adición del adaptador\ntal vez el último nodo 16 versión\nbooleanos son ahora falsos/verdad y no 0/1",
+        "pl": "recenzja najnowszych dodatków adapterów\nprawdopodobnie jest to ostatnia wersja 16 węzła\nbolety są nieprawdziwe, a nie 0/1",
+        "uk": "вирішити огляд для останнього доповнення адаптера\nможливо, останній вузол 16 версія\nbooleans тепер false/true і не 0/1",
+        "zh-cn": "b. 对最新适应增援的决心审查\n可能是最后一个第16版本。\n假释现在是虚假/真实的,而不是0.1。"
+      },
       "1.0.0": {
         "en": "resolve review for latest adapter addition\nmaybe the last node 16 version",
         "de": "rezension für neueste adapter-addition\nvielleicht die letzte node 16 version",
@@ -80,19 +93,6 @@
         "pl": "pkt\nprotokół zmiany (http/https)\ndoprowadziło to do czystości i jasności\nproszę\nauto koncentruje się na/off\nzoom\nczas gry (pol.)\nwykrycie to pozwoliło ponownie na wykrycie ruchu",
         "zh-cn": "p.tz preset经试验\n修改议定书(http://s.pdf)\na. 成果和光明\n动议/动议\n汽车焦点\n古 巴\n震惊(有时)\n探 证",
         "uk": "перевірено попередні налаштування ptz\nможлива зміна протоколу (http/https).\nсвітлодіод ввімкнення/вимкнення та яскравості\nнатисніть увімкнути/вимкнути\nавтофокус увімкнення/вимкнення\nвстановити масштаб\nвідтворити будильник (n разів)\nвиявлення руху знову ввімкнено"
-      },
-      "0.0.3": {
-        "en": "npm release prepare\nptz preset (untested, missing ptz cam)",
-        "de": "npm release bereiten\nptz preset (nicht getestet, fehlende ptz cam)",
-        "ru": "npm релиз подготовить\nptz preset (недавно, отсутствует ptz cam)",
-        "pt": "npm liberação preparar\nptz preset (untested, faltando ptz cam)",
-        "nl": "vertaling:\nptz preset (geest, vermiste ptz cam)",
-        "fr": "npm release prepare\nptz preset (non testé, ptz cam manquant)",
-        "it": "npm rilascio preparare\nptz preset (non testato, mancante cam ptz)",
-        "es": "npm liberación preparar\npreset de ptz (tratado, cámara de ptz desaparecida)",
-        "pl": "release\npkt z presetem (bezpośrednio)",
-        "zh-cn": "释放准备\np.tz preset (untest,缺失 ptz cam)",
-        "uk": "підготувати випуск npm\nпопереднє налаштування ptz (неперевірено, відсутня камера ptz)"
       }
     },
     "titleLang": {
