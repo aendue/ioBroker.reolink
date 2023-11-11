@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "reolink",
-    "version": "0.1.2",
+    "version": "1.0.0",
     "news": {
+      "1.0.0": {
+        "en": "resolve review for latest adapter addition\nmaybe the last node 16 version",
+        "de": "rezension für neueste adapter-addition\nvielleicht die letzte node 16 version",
+        "ru": "разрешить обзор для последнего дополнения адаптера\nможет быть, последняя нода 16 версия",
+        "pt": "revisão de resolução para adição de adaptador mais recente\ntalvez o último nó 16 versão",
+        "nl": "review voor nieuwste aanvulling\nmisschien de laatste 16 versie",
+        "fr": "résolvez l'examen pour la dernière addition d'adaptateur\npeut-être la dernière version n° 16",
+        "it": "risolvere la recensione per l'ultima aggiunta dell'adattatore\nforse l'ultimo nodo 16 versione",
+        "es": "resolver revisión para la última adición del adaptador\ntal vez el último nodo 16 versión",
+        "pl": "recenzja najnowszych dodatków adapterów\nprawdopodobnie jest to ostatnia wersja 16 węzła",
+        "uk": "вирішити огляд для останнього доповнення адаптера\nможливо, останній вузол 16 версія",
+        "zh-cn": "b. 对最新适应增援的决心审查\n可能是最后一个第16版本。"
+      },
       "0.1.2": {
         "en": "ptz patrol added\nnode 12 tests removed\nadded getAiState",
         "de": "ptz patrol hinzugefügt\nknoten 12 tests entfernt\njetzt kaufen",
@@ -80,19 +93,6 @@
         "pl": "release\npkt z presetem (bezpośrednio)",
         "zh-cn": "释放准备\np.tz preset (untest,缺失 ptz cam)",
         "uk": "підготувати випуск npm\nпопереднє налаштування ptz (неперевірено, відсутня камера ptz)"
-      },
-      "0.0.2": {
-        "en": "added languages\nadded get image function (snap)",
-        "de": "weitere sprachen\nhinzufügen von bildfunktion (snap)",
-        "ru": "добавленные языки\nдобавлена функция изображения (snap)",
-        "pt": "línguas adicionadas\nadicionado obter função de imagem (snap)",
-        "nl": "voegde talen toe\nvoegde beeldfunctie toe",
-        "fr": "langues ajoutées\najouter la fonction image (snap)",
-        "it": "lingue aggiuntive\naggiunto ottenere funzione immagine (snap)",
-        "es": "idiomas añadidos\nañadir la función de imagen (snap)",
-        "pl": "język docelowy\ndodano funkcję obrazu (snap)",
-        "zh-cn": "增加语文\n增加图像功能(绑架)",
-        "uk": "додані мови\nдодана функція отримання зображення (прив'язка)"
       }
     },
     "titleLang": {
@@ -163,7 +163,7 @@
     "cameraPassword"
   ],
   "protectedNative": [
-      "cameraPassword"
+    "cameraPassword"
   ],
   "native": {
     "cameraType": "",

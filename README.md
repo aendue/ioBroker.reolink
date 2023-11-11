@@ -66,9 +66,10 @@ sendTo("reolink.0",{action: "snap"}, function(result){
     Placeholder for the next version (at the beginning of the line):
     ### **WORK IN PROGRESS**
 -->
-### **WORK IN PROGRESS**
+### 1.0.0 (2023-11-11)
 * (oelison) resolve review for latest adapter addition
 * (oelison) maybe the last node 16 version
+* (oelison) booleans are now false/true and not 0/1
 
 ### 0.1.2 (2023-11-03)
 * (oelison) ptz patrol added
