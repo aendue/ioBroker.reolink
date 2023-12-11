@@ -14,7 +14,7 @@
                     "label": "IP-Adresse"
                 },
                 "cameraProtocol": {
-                    "newline": true,
+                    "newLine": true,
                     "type": "select",
                     "label": "Protocol",
                     "sm": 2,
@@ -40,7 +40,7 @@
                     "label": "Kanal"
                 },
                 "cameraUser": {
-                    "newline": true,
+                    "newLine": true,
                     "type": "text",
                     "sm": 2,
                     "md": 4,
