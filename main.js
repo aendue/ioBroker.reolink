@@ -457,7 +457,7 @@ class ReoLinkCam extends utils.Adapter {
 		if (irValue == "Error or not supported"){
 			return;
 		}
-		if(irValue == "Auto" || irValue == "Off"){
+		if(irValue == "Auto" || irValue == "Off" || irValue == "On"){
 			const irCmd = [{
 				"cmd":"SetIrLights",
 				"action": 0,

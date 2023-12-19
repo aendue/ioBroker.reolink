@@ -61,6 +61,14 @@ sendTo("reolink.0",{action: "snap"}, function(result){
 {type:"image/png",base64:"iVBORw....askldfj"}
 ```
 
+## Known working cameras (firmware out of year 2023)
+
+- RLC-420-5MP
+- E1 Outdoor
+- RLC-522
+- RLC-810A
+- RLC-823A
+
 ## Changelog
 <!--
     Placeholder for the next version (at the beginning of the line):
