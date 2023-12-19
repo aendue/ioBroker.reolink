@@ -74,7 +74,7 @@ sendTo("reolink.0",{action: "snap"}, function(result){
     Placeholder for the next version (at the beginning of the line):
     ### **WORK IN PROGRESS**
 -->
-### **WORK IN PROGRESS**
+### 1.0.2 (2023-12-19)
 * (oelison) known working cameras added
 * (oelison) setIrLights accept "On" now
 * (oelison) [#40](https://github.com/aendue/ioBroker.reolink/issues/40)
