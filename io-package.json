@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "reolink",
-    "version": "1.0.2",
+    "version": "1.0.3",
     "news": {
+      "1.0.3": {
+        "en": "[#49](https://github.com/aendue/ioBroker.reolink/issues/49)\n[#47](https://github.com/aendue/ioBroker.reolink/issues/47)",
+        "de": "[#49](https://github.com/aendue/ioBroker.reolink/issues/49)\n[#47](https://github.com/aendue/ioBroker.reolink/issues/47)",
+        "ru": "[#49] (https://github.com/aendue/ioBroker.reolink/issues/49)\n[#47] (https://github.com/aendue/ioBroker.reolink/issues/47)",
+        "pt": "[#49](https://github.com/aendue/ioBroker.reolink/issues/49)\n[#47](https://github.com/aendue/ioBroker.reolink/issues/47)",
+        "nl": "[#49](https://github.com/aendue/ioBroker.reolink/issues/49)\n[#47](https://github.com/aendue/ioBroker.reolink/issues/47)",
+        "fr": "[#49](https://github.com/aendue/ioBroker.reolink/issues/49)\n[#47](https://github.com/aendue/ioBroker.reolink/issues/47)",
+        "it": "[#49](https://github.com/aendue/ioBroker.reolink/issues/49)\n[#47](https://github.com/aendue/ioBroker.reolink/issues/47)",
+        "es": "[#49](https://github.com/aendue/ioBroker.reolink/issues/49)\n[#47](https://github.com/aendue/ioBroker.reolink/issues/47)",
+        "pl": "[# 49] (https: / / github.com / aendue / ioBroker.reolink / issues / 49)\n[# 47] (https: / / github.com / aendue / ioBroker.reolink / issues / 47)",
+        "uk": "[#49](https://github.com/aendue/ioBroker.reolink/issues/49)\n[#47](https://github.com/aendue/ioBroker.reolink/issues/47)",
+        "zh-cn": "[49] (https://github.com/aendue/ioBroker.reolink/issues/49) (中文(简体) )\n[47] (https://github.com/aendue/ioBroker.reolink/issues/47) (中文(简体) )"
+      },
       "1.0.2": {
         "en": "known working cameras added\nsetIrLights accept \"On\" now\n[#40](https://github.com/aendue/ioBroker.reolink/issues/40)\n[#42](https://github.com/aendue/ioBroker.reolink/issues/42)",
         "de": "bekannte arbeitskameras hinzugefügt\nsetIrLights akzeptieren Jetzt\n[#40](https://github.com/aendue/ioBroker.reolink/issues/40)\n[#42](https://github.com/aendue/ioBroker.reolink/issues/42)",
@@ -80,19 +93,6 @@
         "pl": "funkcje asynchroniczne (Axios Errors)\ndodał do niej funkcje\ndodać IrLight funkcja\ndodać funkcja WhiteLED\nfunkcja dopasowania\nfunkcja seta\nkod",
         "uk": "фіксовані функції асинхрону (Axios помилки)\nдодано getAutoFocus фрішення\nдодано ІРЛайт Funktion\nдодано Функція WhiteLED\nдодано функцію getMailNotification\nдодано setMailNotification функція\nкод очищення",
         "zh-cn": "固定兼职职能(Axios Errors)\n增 编\n增 编 IrLight葬\n增 编 白色传播功能\n附加的Mailthation职能\n增添了一套禁止歧视职能\n清洁守则"
-      },
-      "0.0.5": {
-        "en": "guard point (new info)",
-        "de": "wachpunkt (neue infos)",
-        "ru": "точка охраны (новая информация)",
-        "pt": "guard point (novas informações)",
-        "nl": "beveiligingspunt (nieuwe info)",
-        "fr": "point de garde (nouvelles informations)",
-        "it": "punto di guardia (nuove informazioni)",
-        "es": "punto de guardia (nueva información)",
-        "pl": "strona strażnicza (new info)",
-        "zh-cn": "警卫点(新生)",
-        "uk": "пункт охорони (нова інформація)"
       }
     },
     "titleLang": {
