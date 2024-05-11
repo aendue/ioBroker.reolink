@@ -19,7 +19,7 @@
     "url": "https://github.com/aendue/ioBroker.reolink"
   },
   "engines": {
-    "node": ">=16.0.0"
+    "node": ">=18.0.0"
   },
   "dependencies": {
     "@iobroker/adapter-core": "^3.0.3",
