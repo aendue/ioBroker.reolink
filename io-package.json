@@ -1265,6 +1265,27 @@
       }
     },
     {
+      "_id": "settings.scheduledRecording",
+      "type": "state",
+      "common": {
+        "role": "state",
+        "name": {
+          "en": "Scheduled recording",
+          "de": "Zeitgesteuerte Aufzeichnung",
+          "pt": "Gravação programada",
+          "nl": "Geplande opname",
+          "fr": "Enregistrement programmé",
+          "it": "Registrazione programmata",
+          "es": "Grabación programada",
+          "pl": "Zaplanowane nagrywanie",
+          "zh-cn": "计划录制"
+        },
+        "type": "boolean",
+        "read": true,
+        "write": true
+      }
+    },
+    {
       "_id": "settings.playAlarm",
       "type": "state",
       "common": {

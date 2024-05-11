@@ -87,6 +87,7 @@ class ReoLinkCam extends utils.Adapter {
 		await this.getZoomAndFocus();
 		await this.getIrLights();
 		await this.getWhiteLed();
+		await this.getRecording();
 
 		this.log.debug("getStateAsync start Email notification");
 		//create state dynamically
@@ -113,6 +114,7 @@ class ReoLinkCam extends utils.Adapter {
 		this.subscribeStates("settings.autoFocus");
 		this.subscribeStates("settings.setZoomFocus");
 		this.subscribeStates("settings.push");
+		this.subscribeStates("settings.scheduledRecording");
 		this.subscribeStates("settings.playAlarm");
 		this.subscribeStates("settings.getDiscData");
 		this.subscribeStates("settings.ptzEnableGuard");
@@ -321,7 +323,7 @@ class ReoLinkCam extends utils.Adapter {
 		this.log.debug("sendCmdObj: " + JSON.stringify(cmdObject));
 		try	{
 			if (this.reolinkApiClient) {
-				const result = await this.reolinkApiClient.post(`/api.cgi?user=${this.config.cameraUser}&password=${this.config.cameraPassword}`, cmdObject);
+				const result = await this.reolinkApiClient.post(`/api.cgi?cmd=${cmdName}&user=${this.config.cameraUser}&password=${this.config.cameraPassword}`, cmdObject);
 				this.log.debug(JSON.stringify(result.status));
 				this.log.debug(JSON.stringify(result.data));
 				if ("error" in result.data[0])
@@ -511,6 +513,69 @@ class ReoLinkCam extends utils.Adapter {
 			}
 		}];
 		this.sendCmd(ptzCheckCmd,"StartZoomFocus");
+	}
+	async setScheduledRecording(state) {
+		if (state !== true && state !== false) {
+			this.log.error("Value not supported!");
+			this.getRecording();
+
+			return;
+		}
+
+		const scheduledRecordingCmd = [{
+			"cmd": "SetRecV20",
+			"param": {
+				"Rec": {
+					"enable": state ? 1 : 0, // The description in API Guide v8 had this key inside `schedule`, which does not work.
+					"schedule": {
+						"channel": this.config.cameraChannel
+					}
+				}
+			}
+		}];
+
+		this.sendCmd(scheduledRecordingCmd, "SetRecV20");
+	}
+	async getRecording(){
+		if (!this.reolinkApiClient) {
+			return;
+		}
+
+		try {
+			const recordingCmd = [{
+				"cmd": "GetRecV20",
+				"action": 1,
+				"param": {
+					"channel": this.config.cameraChannel,
+				}
+			}];
+			const recordingSettingsResponse = await this.reolinkApiClient.post(`/api.cgi?cmd=GetRecV20&user=${this.config.cameraUser}&password=${this.config.cameraPassword}`, recordingCmd);
+
+			this.log.debug(`recordingSettings ${JSON.stringify(recordingSettingsResponse.status)}: ${JSON.stringify(recordingSettingsResponse.data)}`);
+			if (recordingSettingsResponse.status !== 200) {
+				return;
+			}
+
+			this.apiConnected = true;
+			await this.setStateAsync("network.connected", {val: this.apiConnected, ack: true});
+
+			const recordingSettingValues = recordingSettingsResponse.data[0];
+			// This response object contains much more than `enable`.
+			// There would be as well `overwrite`, `postRec`, `preRec`, `saveDay` and the 4 schedule tables as "1010.."-string
+			const scheduledRecordingState = recordingSettingValues.value.Rec.enable;
+
+			if (scheduledRecordingState === 0) {
+				await this.setStateAsync("settings.scheduledRecording", {val: false, ack: true});
+			} else if (scheduledRecordingState === 1) {
+				await this.setStateAsync("settings.scheduledRecording", {val: true, ack: true});
+			} else {
+				this.log.error(`An unknown scheduled recording state was detected: ${scheduledRecordingState}`);
+			}
+		} catch (error) {
+			this.apiConnected = false;
+			await this.setStateAsync("network.connected", {val: this.apiConnected, ack: true});
+			this.log.error(error);
+		}
 	}
 	async audioAlarmPlay(count) {
 		const audioAlarmPlayCmd = [{
@@ -860,6 +925,9 @@ class ReoLinkCam extends utils.Adapter {
 				}
 				if(propName === "push") {
 					this.setPush(state.val);
+				}
+				if(propName === "scheduledRecording") {
+					this.setScheduledRecording(state.val);
 				}
 				if(propName === "playAlarm") {
 					this.audioAlarmPlay(state.val);
