@@ -84,7 +84,10 @@ class ReoLinkCam extends utils.Adapter {
 		await this.getDriveInfo();
 		await this.getPtzGuardInfo();
 		await this.getAutoFocus();
+		await this.getZoomAndFocus();
 		await this.getIrLights();
+		await this.getWhiteLed();
+		await this.getRecording();
 
 		this.log.debug("getStateAsync start Email notification");
 		//create state dynamically
@@ -105,11 +108,13 @@ class ReoLinkCam extends utils.Adapter {
 		this.subscribeStates("settings.ir");
 		this.subscribeStates("settings.switchLed");
 		this.subscribeStates("settings.ledBrightness");
+		this.subscribeStates("settings.ledMode");
 		this.subscribeStates("settings.ptzPreset");
 		this.subscribeStates("settings.ptzPatrol");
 		this.subscribeStates("settings.autoFocus");
 		this.subscribeStates("settings.setZoomFocus");
 		this.subscribeStates("settings.push");
+		this.subscribeStates("settings.scheduledRecording");
 		this.subscribeStates("settings.playAlarm");
 		this.subscribeStates("settings.getDiscData");
 		this.subscribeStates("settings.ptzEnableGuard");
@@ -272,7 +277,6 @@ class ReoLinkCam extends utils.Adapter {
 		}
 	}
 	async getLocalLink(){
-
 		if (this.reolinkApiClient) {
 			try {
 				const LinkInfoValues = await this.reolinkApiClient.get(`/api.cgi?cmd=GetLocalLink&channel=0&user=${this.config.cameraUser}&password=${this.config.cameraPassword}`);
@@ -319,7 +323,7 @@ class ReoLinkCam extends utils.Adapter {
 		this.log.debug("sendCmdObj: " + JSON.stringify(cmdObject));
 		try	{
 			if (this.reolinkApiClient) {
-				const result = await this.reolinkApiClient.post(`/api.cgi?user=${this.config.cameraUser}&password=${this.config.cameraPassword}`, cmdObject);
+				const result = await this.reolinkApiClient.post(`/api.cgi?cmd=${cmdName}&user=${this.config.cameraUser}&password=${this.config.cameraPassword}`, cmdObject);
 				this.log.debug(JSON.stringify(result.status));
 				this.log.debug(JSON.stringify(result.data));
 				if ("error" in result.data[0])
@@ -392,23 +396,23 @@ class ReoLinkCam extends utils.Adapter {
 		this.sendCmd(pushOnCmd,"SetPush");
 	}
 	async setAutoFocus(state) {
-		if (state == "Error or not supported"){
+		if (state == "Error or not supported") {
 			return;
 		}
-		if(state == "0" || state == "1"){
+		if (state == "0" || state == "1") {
 			const AutoFocusval = parseInt(state);
 			const autoFocusCmd = [{
 				"cmd": "SetAutoFocus",
 				"action": 0,
 				"param": {
 					"AutoFocus": {
-						"channel": 0,
+						"channel": this.config.cameraChannel,
 						"disable": AutoFocusval
 					}
 				}
 			}];
 			this.sendCmd(autoFocusCmd, "SetAutoFocus");
-		}else{
+		} else {
 			this.log.error("Value not supported!");
 			this.getAutoFocus();
 		}
@@ -416,7 +420,14 @@ class ReoLinkCam extends utils.Adapter {
 	async getAutoFocus(){
 		if (this.reolinkApiClient) {
 			try {
-				const AutoFocusValue = await this.reolinkApiClient.get(`/api.cgi?cmd=GetAutoFocus&channel=${this.config.cameraChannel}&user=${this.config.cameraUser}&password=${this.config.cameraPassword}`);
+				const getAutoFocusCmd = [{
+					"cmd": "GetAutoFocus",
+					"action": 0,
+					"param": {
+						"channel": this.config.cameraChannel,
+					}
+				}];
+				const AutoFocusValue = await this.reolinkApiClient.post(`/api.cgi?cmd=GetAutoFocus&user=${this.config.cameraUser}&password=${this.config.cameraPassword}`, getAutoFocusCmd);
 
 				this.log.debug(`AutoFocusValue ${JSON.stringify(AutoFocusValue.status)}: ${JSON.stringify(AutoFocusValue.data)}`);
 
@@ -425,12 +436,62 @@ class ReoLinkCam extends utils.Adapter {
 					await this.setStateAsync("network.connected", {val: this.apiConnected, ack: true});
 					const AutoFocus = AutoFocusValue.data[0];
 
-					if ("error" in AutoFocus){
+					if ("error" in AutoFocus) {
 						this.log.debug("Error or not supported " + this.getAutoFocus.name);
 						await this.setStateAsync("settings.autoFocus", {val: "Error or not supported", ack: true});
-					}else{
-						await this.setStateAsync("settings.autoFocus", {val: AutoFocus.value.AutoFocus.disable, ack: true});
+					} else {
+						// The datatype of the object is string.
+						// 1 means forbid (but is there any effect?)
+						// 0 means not disabled
+						const intState = AutoFocus.value.AutoFocus.disable;
+						if (intState === 0) {
+							await this.setStateAsync("settings.autoFocus", {val: "0", ack: true});
+						} else if (intState === 1) {
+							await this.setStateAsync("settings.autoFocus", {val: "1", ack: true});
+						} else {
+							await this.setStateAsync("settings.autoFocus", {val: "Unknown", ack: true});
+						}
 					}
+				}
+			} catch (error) {
+				this.apiConnected = false;
+				await this.setStateAsync("network.connected", {val: this.apiConnected, ack: true});
+				this.log.error(error);
+			}
+		}
+	}
+	async getZoomAndFocus(){
+		if (this.reolinkApiClient) {
+			try {
+				const getZoomFocusCmd = [{
+					"cmd": "GetZoomFocus",
+					"action": 0,
+					"param": {
+						"channel": this.config.cameraChannel,
+					}
+				}];
+				const ZoomFocusValue = await this.reolinkApiClient.post(`/api.cgi?cmd=GetZoomFocus&user=${this.config.cameraUser}&password=${this.config.cameraPassword}`, getZoomFocusCmd);
+
+				this.log.debug(`ZoomFocusValue ${JSON.stringify(ZoomFocusValue.status)}: ${JSON.stringify(ZoomFocusValue.data)}`);
+
+				if(ZoomFocusValue.status === 200) {
+					this.apiConnected = true;
+					await this.setStateAsync("network.connected", {val: this.apiConnected, ack: true});
+					const ZoomFocus = ZoomFocusValue.data[0];
+
+					if ("error" in ZoomFocus) {
+						this.log.debug("Error or not supported " + this.getZoomAndFocus.name);
+
+						return;
+					}
+
+					// zoom is the zoom position. See setZoomFocus()
+					const zoom = ZoomFocus.value.ZoomFocus.zoom.pos;
+					// the lens focus is adjusted during auto focus procedure.
+					const focus = ZoomFocus.value.ZoomFocus.focus.pos;
+
+					await this.setStateAsync("settings.setZoomFocus", {val: zoom, ack: true});
+					await this.setStateAsync("settings.focus", {val: focus, ack: true});
 				}
 			} catch (error) {
 				this.apiConnected = false;
@@ -445,13 +506,76 @@ class ReoLinkCam extends utils.Adapter {
 			"action": 0,
 			"param": {
 				"ZoomFocus": {
-					"channel": 0,
+					"channel": this.config.cameraChannel,
 					"pos": pos,
 					"op": "ZoomPos"
 				}
 			}
 		}];
 		this.sendCmd(ptzCheckCmd,"StartZoomFocus");
+	}
+	async setScheduledRecording(state) {
+		if (state !== true && state !== false) {
+			this.log.error("Value not supported!");
+			this.getRecording();
+
+			return;
+		}
+
+		const scheduledRecordingCmd = [{
+			"cmd": "SetRecV20",
+			"param": {
+				"Rec": {
+					"enable": state ? 1 : 0, // The description in API Guide v8 had this key inside `schedule`, which does not work.
+					"schedule": {
+						"channel": this.config.cameraChannel
+					}
+				}
+			}
+		}];
+
+		this.sendCmd(scheduledRecordingCmd, "SetRecV20");
+	}
+	async getRecording(){
+		if (!this.reolinkApiClient) {
+			return;
+		}
+
+		try {
+			const recordingCmd = [{
+				"cmd": "GetRecV20",
+				"action": 1,
+				"param": {
+					"channel": this.config.cameraChannel,
+				}
+			}];
+			const recordingSettingsResponse = await this.reolinkApiClient.post(`/api.cgi?cmd=GetRecV20&user=${this.config.cameraUser}&password=${this.config.cameraPassword}`, recordingCmd);
+
+			this.log.debug(`recordingSettings ${JSON.stringify(recordingSettingsResponse.status)}: ${JSON.stringify(recordingSettingsResponse.data)}`);
+			if (recordingSettingsResponse.status !== 200) {
+				return;
+			}
+
+			this.apiConnected = true;
+			await this.setStateAsync("network.connected", {val: this.apiConnected, ack: true});
+
+			const recordingSettingValues = recordingSettingsResponse.data[0];
+			// This response object contains much more than `enable`.
+			// There would be as well `overwrite`, `postRec`, `preRec`, `saveDay` and the 4 schedule tables as "1010.."-string
+			const scheduledRecordingState = recordingSettingValues.value.Rec.enable;
+
+			if (scheduledRecordingState === 0) {
+				await this.setStateAsync("settings.scheduledRecording", {val: false, ack: true});
+			} else if (scheduledRecordingState === 1) {
+				await this.setStateAsync("settings.scheduledRecording", {val: true, ack: true});
+			} else {
+				this.log.error(`An unknown scheduled recording state was detected: ${scheduledRecordingState}`);
+			}
+		} catch (error) {
+			this.apiConnected = false;
+			await this.setStateAsync("network.connected", {val: this.apiConnected, ack: true});
+			this.log.error(error);
+		}
 	}
 	async audioAlarmPlay(count) {
 		const audioAlarmPlayCmd = [{
@@ -461,7 +585,7 @@ class ReoLinkCam extends utils.Adapter {
 				"alarm_mode": "times",
 				"manual_switch": 0,
 				"times": count,
-				"channel": 0
+				"channel": this.config.cameraChannel
 			}
 		}];
 		this.sendCmd(audioAlarmPlayCmd, "AudioAlarmPlay");
@@ -476,12 +600,12 @@ class ReoLinkCam extends utils.Adapter {
 				"action": 0,
 				"param": {
 					"IrLights": {
-						"channel": 0,
+						"channel": this.config.cameraChannel,
 						"state": irValue
 					}
 				}
 			}];
-			this.log.debug(irCmd);
+			this.log.debug(JSON.stringify(irCmd));
 			this.sendCmd(irCmd, "SetIrLights");
 		}else{
 			this.log.error("Value not supported!");
@@ -521,35 +645,60 @@ class ReoLinkCam extends utils.Adapter {
 		{
 			ledState = 1;
 		}
-		const setWhiteLedCmd = [{
+		const switchWhiteLedCmd = [{
 			"cmd": "SetWhiteLed",
 			"param": {
 				"WhiteLed": {
+					"channel": this.config.cameraChannel,
 					"state": ledState,
-					"channel": 0,
-					"mode": 1,
 				}
 			}
 		}];
-		this.sendCmd(setWhiteLedCmd, "SetWhiteLed");
+		this.sendCmd(switchWhiteLedCmd, "SetWhiteLed");
 	}
 	async setWhiteLed(state) {
-		const setWhiteLedCmd = [{
+		const setBrightnessCmd = [{
 			"cmd": "SetWhiteLed",
 			"param": {
 				"WhiteLed": {
-					"channel": 0,
-					"mode": 1,
+					"channel": this.config.cameraChannel,
 					"bright": state
 				}
 			}
 		}];
-		this.sendCmd(setWhiteLedCmd, "SetWhiteLed");
+		this.sendCmd(setBrightnessCmd, "SetWhiteLed");
+	}
+	async setWhiteLedMode(mode) {
+		// mode 0 = off        -> Manual switching. See https://github.com/aendue/ioBroker.reolink/issues/25 @johndoetheanimal for possible restrictions
+		// mode 1 = night mode -> Night Smart Mode
+		// mode 2 = unknown    -> Maybe `Always on at night` if supported.
+		// mode 3 = Timer mode -> Optional: [ { "cmd":"SetWhiteLed", "action":0, "param":{ "WhiteLed":{ "LightingSchedule":{ "EndHour":23, "EndMin":50, "StartHour":23, "StartMin":29 }, "mode":3, "channel":0 } } } ]
+		if (mode !== 0 && mode !== 1 && mode !== 2 && mode !== 3) {
+			this.log.error(`White Led mode ${mode} not supported!`);
+			return;
+		}
+		const setModeCmd = [{
+			"cmd": "SetWhiteLed",
+			"param": {
+				"WhiteLed": {
+					"channel": this.config.cameraChannel,
+					"mode": mode
+				}
+			}
+		}];
+		this.sendCmd(setModeCmd, "SetWhiteLed");
 	}
 	async getWhiteLed(){
 		if (this.reolinkApiClient) {
 			try {
-				const whiteLedValue = await this.reolinkApiClient.get(`/api.cgi?cmd=GetWhiteLeds&channel=${this.config.cameraChannel}&user=${this.config.cameraUser}&password=${this.config.cameraPassword}`);
+				const getLedCmd = [{
+					"cmd": "GetWhiteLed",
+					"action": 0,
+					"param": {
+						"channel": this.config.cameraChannel,
+					}
+				}];
+				const whiteLedValue = await this.reolinkApiClient.post(`/api.cgi?cmd=GetWhiteLed&channel=${this.config.cameraChannel}&user=${this.config.cameraUser}&password=${this.config.cameraPassword}`, getLedCmd);
 
 				this.log.debug(`whiteLedValue ${JSON.stringify(whiteLedValue.status)}: ${JSON.stringify(whiteLedValue.data)}`);
 
@@ -558,10 +707,13 @@ class ReoLinkCam extends utils.Adapter {
 					await this.setStateAsync("network.connected", {val: this.apiConnected, ack: true});
 
 					const whiteLed = whiteLedValue.data[0];
+					const brightness = whiteLed.value.WhiteLed.bright;
+					const mode = whiteLed.value.WhiteLed.mode;
+					const switchLed = whiteLed.value.WhiteLed.state ? true : false;
 
-					// 	this.log.info(MdValues.value.state);
-					await this.setStateAsync("settings.ledBrightness", {val: whiteLed.value.WhiteLed.bright, ack: true});
-
+					await this.setStateAsync("settings.ledBrightness", {val: brightness, ack: true});
+					await this.setStateAsync("settings.ledMode", {val: mode, ack: true});
+					await this.setStateAsync("settings.switchLed", {val: switchLed, ack: true});
 				}
 			} catch (error) {
 				this.apiConnected = false;
@@ -581,7 +733,7 @@ class ReoLinkCam extends utils.Adapter {
 			"action": 0,
 			"param": {
 				"PtzGuard": {
-					"channel": 0,
+					"channel": this.config.cameraChannel,
 					"cmdStr": "setPos",
 					"benable": enable,
 					"bSaveCurrentPos": 0
@@ -597,7 +749,7 @@ class ReoLinkCam extends utils.Adapter {
 			"action": 0,
 			"param": {
 				"PtzGuard": {
-					"channel": 0,
+					"channel": this.config.cameraChannel,
 					"cmdStr": "setPos",
 					"timeout": timeout,
 					"bSaveCurrentPos": 0
@@ -620,7 +772,7 @@ class ReoLinkCam extends utils.Adapter {
 		}
 
 
-		//Cretae new Timer (to re-run actions)
+		//Create new Timer (to re-run actions)
 		if(!this.apiConnected){
 			const notConnectedTimeout = 10;
 			this.refreshStateTimeout = this.setTimeout(() => {
@@ -774,6 +926,9 @@ class ReoLinkCam extends utils.Adapter {
 				if(propName === "push") {
 					this.setPush(state.val);
 				}
+				if(propName === "scheduledRecording") {
+					this.setScheduledRecording(state.val);
+				}
 				if(propName === "playAlarm") {
 					this.audioAlarmPlay(state.val);
 				}
@@ -782,6 +937,9 @@ class ReoLinkCam extends utils.Adapter {
 				}
 				if(propName === "ledBrightness") {
 					this.setWhiteLed(state.val);
+				}
+				if(propName === "ledMode") {
+					this.setWhiteLedMode(state.val);
 				}
 				if(propName === "getDiscData") {
 					this.getDriveInfo();

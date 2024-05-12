@@ -1114,6 +1114,26 @@
       }
     },
     {
+      "_id": "settings.ledMode",
+      "type": "state",
+      "common": {
+        "role": "state",
+        "name": {
+          "en": "LED Mode",
+          "de": "LED Modus",
+          "nl": "LED Mode",
+          "fr": "LED Mode",
+          "it": "LED Modalità",
+          "es": "LED Modo",
+          "pl": "LED Tryb",
+          "zh-cn": "发光模式"
+        },
+        "type": "number",
+        "read": true,
+        "write": true
+      }
+    },
+    {
       "_id": "settings.ptzPreset",
       "type": "state",
       "common": {
@@ -1185,15 +1205,15 @@
       "common": {
         "role": "state",
         "name": {
-          "en": "auto focus",
-          "de": "autofokus",
+          "en": "auto focus disabled",
+          "de": "autofokus deaktiviert",
           "ru": "авто фокус",
-          "pt": "foco auto",
-          "nl": "automatisch",
-          "fr": "auto focus",
-          "it": "auto messa a fuoco",
-          "es": "enfoque automático",
-          "pl": "autofocus",
+          "pt": "foco auto desactivada",
+          "nl": "autofocus uitgeschakeld",
+          "fr": "autofocus désactivé",
+          "it": "autofocus disattivato",
+          "es": "enfoque desactivado",
+          "pl": "autofocus wyłączony",
           "zh-cn": "汽车重点"
         },
         "type": "string",
@@ -1219,6 +1239,48 @@
           "zh-cn": "2. 动物状况"
         },
         "type": "number",
+        "read": true,
+        "write": true
+      }
+    },
+    {
+      "_id": "settings.focus",
+      "type": "state",
+      "common": {
+        "role": "state",
+        "name": {
+          "en": "focus level",
+          "de": "focus level",
+          "pt": "focus level",
+          "nl": "focusniveau",
+          "fr": "niveau de focalisation",
+          "it": "livello di concentrazione",
+          "es": "nivel de enfoque",
+          "pl": "poziom ostrości",
+          "zh-cn": "重点级"
+        },
+        "type": "number",
+        "read": true,
+        "write": false
+      }
+    },
+    {
+      "_id": "settings.scheduledRecording",
+      "type": "state",
+      "common": {
+        "role": "state",
+        "name": {
+          "en": "Scheduled recording",
+          "de": "Zeitgesteuerte Aufzeichnung",
+          "pt": "Gravação programada",
+          "nl": "Geplande opname",
+          "fr": "Enregistrement programmé",
+          "it": "Registrazione programmata",
+          "es": "Grabación programada",
+          "pl": "Zaplanowane nagrywanie",
+          "zh-cn": "计划录制"
+        },
+        "type": "boolean",
         "read": true,
         "write": true
       }
