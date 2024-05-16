@@ -80,6 +80,7 @@ sendTo("reolink.0",{action: "snap"}, function(result){
 * (Nibbels) [#25](https://github.com/aendue/ioBroker.reolink/issues/25) detach led light from led light mode
 * (Nibbels) added setWhiteLedMode function
 * (Nibbels) read zoom and focus with POST request (works on RLC-823A v3.1)
+* (oelison) removed node 16
 
 ### 1.0.3 (2024-01-21)
 * (oelison) [#49](https://github.com/aendue/ioBroker.reolink/issues/49)
