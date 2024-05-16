@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "reolink",
-    "version": "1.0.3",
+    "version": "1.1.0",
     "news": {
+      "1.1.0": {
+        "en": "[#56](https://github.com/aendue/ioBroker.reolink/issues/56) added function to switch scheduled recording on and off\n[#25](https://github.com/aendue/ioBroker.reolink/issues/25) detach led light from led light mode\nadded setWhiteLedMode function\nread zoom and focus with POST request (works on RLC-823A v3.1)\nremoved node 16",
+        "de": "[#56](https://github.com/aendue/ioBroker.reolink/issues/56) hat die Funktion hinzugefügt, die geplante Aufnahme ein- und ausschaltet\n[#25](https://github.com/aendue/ioBroker.reolink/issues/25) abnehmbares LED-Licht aus LED-Lichtmodus\nhinzugefügt WhiteLedMode Funktion\nzoom und fokus mit POST-Anforderung (Arbeiten auf RLC-823A v3.1)\nentfernter knoten anhang",
+        "ru": "[#56] (https://github.com/aendue/ioBroker.reolink/issues/56)\n[#25] (https://github.com/aendue/ioBroker.reolink/issues/25) Отключение светодиодного света\nдобавлен Функция WhiteLedMode\nчитайте зум и сосредоточьтесь с запросом POST (работает на RLC-823A v3.1)\nудаленный узел 16",
+        "pt": "[#56](https://github.com/aendue/ioBroker.reolink/issues/56) adicionou a função para alternar a gravação agendada e desligada\n[#25](https://github.com/aendue/ioBroker.reolink/issues/25) deslize levou luz do modo de luz led\nconjunto adicionado Função de WhiteLedMode\nler zoom e foco com pedido POST (trabalho em RLC-823A v3.1)\nnó removido 16",
+        "nl": "[#56](https://github.com/aendue/ioBroker.reolink/issues/56) toegevoegd functie om geplande opname aan en uit te schakelen\n[#25](https://github.com/aendue/ioBroker.reolink/issues/25) loskoppelen led licht van led licht modus\nset toegevoegd WhiteLedMode-functie\nlees zoom en focus met POST verzoek (werken op RLC-823A v3.1)\nverwijderde knoop 16",
+        "fr": "[#56](https://github.com/aendue/ioBroker.reolink/issues/56) a ajouté une fonction pour activer et désactiver l'enregistrement programmé\n[#25](https://github.com/aendue/ioBroker.reolink/issues/25) détachez la lumière led du mode lumière led\nensemble ajouté Fonction WhiteLedMode\nlire zoom et mise au point avec la demande POST (travaille sur RLC-823A v3.1)\nnoeud enlevé 16",
+        "it": "[#56](https://github.com/aendue/ioBroker.reolink/issues/56) funzione aggiunta per attivare e disattivare la registrazione programmata\n[#25](https://github.com/aendue/ioBroker.reolink/issues/25) il distacco ha condotto la luce dalla modalità di luce led\nset aggiunto Funzione WhiteLedMode\nleggere lo zoom e concentrarsi sulla richiesta POST (lavora su RLC-823A v3.1)\nnodo rimosso 16",
+        "es": "[#56](https://github.com/aendue/ioBroker.reolink/issues/56) añadió la función de activar y apagar la grabación programada\n[#25](https://github.com/aendue/ioBroker.reolink/issues/25) desprendimiento de luz led del modo de luz led\nconjunto Función WhiteLedMode\nleer zoom y enfoque con solicitud POST (trabaja en RLC-823A v3.1)\nnodo eliminado 16",
+        "pl": "[# 56] (https: / / github.com / aendue / ioBroker.reolink / issues / 56) dodano funkcję włączania i wyłączania planowego zapisu\n[# 25] (https: / / github.com / aendue / ioBroker.reolink / issues / 25) odłączanie światła LED od trybu światła LED\ndodany zestaw Funkcja WhiteLedMode\nczytaj zoom i ostrość z zapytaniem POST (działa na RLC- 823A v3.1)\nusunięty węzeł 16",
+        "uk": "[#56](https://github.com/aendue/ioBroker.reolink/issues/56) додана функція для перемикання запланованого запису та вимкнення\n[#25](https://github.com/aendue/ioBroker.reolink/issues/25) detach світлодіодний світло від світлодіодного світла\nдодано набір Функція WhiteLedMode\nчитати Зомбі та фокус із запитом POST (працює на RLC-823A v3.1)\nвидалений вузол 16 мар",
+        "zh-cn": "[#56] (https://github.com/aendue/ioBroker.reolink/issues/56) 添加了功能,以切换已排定的录制开关\n[#25] (https://github.com/aendue/ioBroker.reolink/issues/25) (中文(简体) ). 从导光模式分离引光\n添加的一组 WhiteLedMode 函数\n使用 POST 请求读取缩放和焦点( RLC-823A v3.1 的工作)\n删除节点 第 16 条"
+      },
       "1.0.3": {
         "en": "[#49](https://github.com/aendue/ioBroker.reolink/issues/49)\n[#47](https://github.com/aendue/ioBroker.reolink/issues/47)",
         "de": "[#49](https://github.com/aendue/ioBroker.reolink/issues/49)\n[#47](https://github.com/aendue/ioBroker.reolink/issues/47)",
@@ -80,19 +93,6 @@
         "pl": "ustalono również walidację ssl\nnie ustalono żadnego problemu z flagą az-flagową\nzmienił dane na nośniku.free i RAW. Email\numożliwiło to AutoFocusowi po raz kolejny\nzmiana nazwy państwowej Uwagi (dzisiejszy stan), która tworzy dynamicznie",
         "uk": "sssl перевірка включено\nвиправлена проблема з ack-flag не встановлена\nзмінені типи даних дисків.free і RAW. Електронна пошта\nувімкнути\nзміна імен на державному електронному листіПовідомлення (держава створюється динамічно)",
         "zh-cn": "验证包括\n不确定的固定问题\n数据类型变化不完善、无限和反补贴。 电子邮件\n复兴会\n关于国家电子邮件登记的名称变动(现已动态地创建)"
-      },
-      "0.1.0": {
-        "en": "fixed asynchron functions (Axios Errors)\nadded getAutoFocus funktion\nadded getIrLight funktion\nadded getWhiteLED function\nadded getMailNotification function\nadded setMailNotification function\ncleanup code",
-        "de": "feste asynchrone Funktionen (Axios Errors)\nhinzufügen von AutoFocus Funktion\n! IrLight Funktion\n! WeißLED-Funktion\npasswort vergessen\nsetMailNotification Funktion\nreinigungscode",
-        "ru": "фиксированные функции асинхрона (Axios Errors)\nдобавлено getAutoFocus funktion\nдобавлено ИрЛайт funktion\nдобавлено Функция WhiteLED\nдобавлена функция getMailNotification\nдобавлена функция setMailNotification\nкод очистки",
-        "pt": "funções de assíncrono fixo (Erros de Axios)\nadicionado getAutoFocus funktion\nadicionado get IrLight funktion\nadicionado get Função WhiteLED\nadicionado getMail Função de notificação\nadicionado setMail Função de notificação\ncódigo de limpeza",
-        "nl": "quality over Quantity (QoQ) Releases Vertaling:\nvertaling:\nwordt toegevoegd IrLight funktion\nwordt toegevoegd WhiteLED functie\nvermeldingsfunctie\nvoegde setMailNotificatie functie toe\nopruimen",
-        "fr": "fonctions asynchron fixes (erreurs axios)\najouté getAutoFocus funktion\najouté obtenir IrLight funktion\najouté obtenir Fonction WhiteLED\nfonction getMailNotification\nfonction setMailNotification\ncode de nettoyage",
-        "it": "funzioni di asincrono fisso (Axios Errors)\naggiunto ottenereAutoFocus funktion\naggiunto IrLight funktion\naggiunto Funzione WhiteLED\naggiunto getMailNotification funzione\nset aggiunto Funzione di notifica\ncodice di pulizia",
-        "es": "funciones de asincronización fija ( Errores de eje)\nañadido getAutoFocus funktion\nañadido Función de IrLight\nañadido Función WhiteLED\nfunción de notificación\nsetMailNotificación función\ncódigo de limpieza",
-        "pl": "funkcje asynchroniczne (Axios Errors)\ndodał do niej funkcje\ndodać IrLight funkcja\ndodać funkcja WhiteLED\nfunkcja dopasowania\nfunkcja seta\nkod",
-        "uk": "фіксовані функції асинхрону (Axios помилки)\nдодано getAutoFocus фрішення\nдодано ІРЛайт Funktion\nдодано Функція WhiteLED\nдодано функцію getMailNotification\nдодано setMailNotification функція\nкод очищення",
-        "zh-cn": "固定兼职职能(Axios Errors)\n增 编\n增 编 IrLight葬\n增 编 白色传播功能\n附加的Mailthation职能\n增添了一套禁止歧视职能\n清洁守则"
       }
     },
     "titleLang": {
