@@ -5,10 +5,11 @@
  */
 
 const utils = require("@iobroker/adapter-core");
-const { rejects } = require("assert");
 const axios = require("axios").default;
 const https = require("https");
 let sslvalidation = false;
+const refreshIntervalRecording = 10;
+let refreshIntervalRecordingTimer = 0;
 
 class ReoLinkCam extends utils.Adapter {
 
@@ -560,16 +561,20 @@ class ReoLinkCam extends utils.Adapter {
 			await this.setStateAsync("network.connected", {val: this.apiConnected, ack: true});
 
 			const recordingSettingValues = recordingSettingsResponse.data[0];
+			this.log.debug(`rec set val: ${JSON.stringify(recordingSettingValues)}`);
 			// This response object contains much more than `enable`.
 			// There would be as well `overwrite`, `postRec`, `preRec`, `saveDay` and the 4 schedule tables as "1010.."-string
-			const scheduledRecordingState = recordingSettingValues.value.Rec.enable;
-
-			if (scheduledRecordingState === 0) {
-				await this.setStateAsync("settings.scheduledRecording", {val: false, ack: true});
-			} else if (scheduledRecordingState === 1) {
-				await this.setStateAsync("settings.scheduledRecording", {val: true, ack: true});
+			if (recordingSettingValues.error != null) {
+				this.log.debug(`get record settings error ${recordingSettingValues.error.detail}`);
 			} else {
-				this.log.error(`An unknown scheduled recording state was detected: ${scheduledRecordingState}`);
+				const scheduledRecordingState = recordingSettingValues.value.Rec.enable;
+				if (scheduledRecordingState === 0) {
+					await this.setStateAsync("settings.scheduledRecording", {val: false, ack: true});
+				} else if (scheduledRecordingState === 1) {
+					await this.setStateAsync("settings.scheduledRecording", {val: true, ack: true});
+				} else {
+					this.log.error(`An unknown scheduled recording state was detected: ${scheduledRecordingState}`);
+				}
 			}
 		} catch (error) {
 			this.apiConnected = false;
@@ -759,11 +764,17 @@ class ReoLinkCam extends utils.Adapter {
 		await this.sendCmd(setPtzGuardCmd, "setPtzGuardTimeout");
 		this.getPtzGuardInfo();
 	}
+
 	async refreshState(source){
 		this.log.debug(`refreshState': started from "${source}"`);
 
 		this.getMdState();
 		this.getAiState();
+		refreshIntervalRecordingTimer++;
+		if (refreshIntervalRecordingTimer > refreshIntervalRecording) {
+			this.getRecording();
+			refreshIntervalRecordingTimer = 0;
+		}
 
 		//Delete Timer
 		if(this.refreshStateTimeout){
