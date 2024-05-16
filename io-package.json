@@ -172,7 +172,8 @@
     "cameraChannel": 0,
     "cameraUser": "",
     "cameraPassword": "",
-    "apiRefreshInterval": "10"
+    "apiRefreshInterval": "10",
+    "sslvalid": false
   },
   "objects": [],
   "instanceObjects": [
