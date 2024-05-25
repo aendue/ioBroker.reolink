@@ -130,7 +130,10 @@
       "image",
       "camera"
     ],
-    "license": "MIT",
+    "licenseInformation": {
+      "type": "free",
+      "license": "MIT"
+    },
     "platform": "Javascript/Node.js",
     "main": "main.js",
     "icon": "reolink_logo.png",
@@ -138,12 +141,12 @@
     "extIcon": "https://raw.githubusercontent.com/aendue/ioBroker.reolink/main/admin/reolink_logo.png",
     "readme": "https://github.com/aendue/ioBroker.reolink/blob/main/README.md",
     "loglevel": "info",
+    "tier": 3,
     "mode": "daemon",
     "type": "alarm",
     "compact": true,
     "connectionType": "local",
     "dataSource": "poll",
-    "materialize": true,
     "messagebox": true,
     "adminUI": {
       "config": "json"
