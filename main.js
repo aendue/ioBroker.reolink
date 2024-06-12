@@ -115,6 +115,7 @@ class ReoLinkCam extends utils.Adapter {
 		this.subscribeStates("settings.autoFocus");
 		this.subscribeStates("settings.setZoomFocus");
 		this.subscribeStates("settings.push");
+		this.subscribeStates("settings.ftp");
 		this.subscribeStates("settings.scheduledRecording");
 		this.subscribeStates("settings.playAlarm");
 		this.subscribeStates("settings.getDiscData");
@@ -395,6 +396,21 @@ class ReoLinkCam extends utils.Adapter {
 			}
 		}];
 		this.sendCmd(pushOnCmd,"SetPush");
+	}
+	async setFtp(state) {
+		let ftpOn = 1;
+		if(state == false) {
+			ftpOn = 0;
+		}
+		const ftpOnCmd = [{
+			"cmd": "SetFtpV20",
+			"param": {
+				"Ftp": {
+					"enable": ftpOn
+				}
+			}
+		}];
+		this.sendCmd(ftpOnCmd,"setFtp");
 	}
 	async setAutoFocus(state) {
 		if (state == "Error or not supported") {
@@ -936,6 +952,9 @@ class ReoLinkCam extends utils.Adapter {
 				}
 				if(propName === "push") {
 					this.setPush(state.val);
+				}
+				if(propName === "ftp") {
+					this.setFtp(state.val);
 				}
 				if(propName === "scheduledRecording") {
 					this.setScheduledRecording(state.val);
