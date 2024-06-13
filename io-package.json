@@ -1204,6 +1204,28 @@
       }
     },
     {
+      "_id": "settings.ftp",
+      "type": "state",
+      "common": {
+        "role": "state",
+        "name": {
+          "en": "Enable FTP",
+          "de": "FTP einschalten",
+          "ru": "Активируйте FTP",
+          "pt": "Ativar o FTP",
+          "nl": "FTP activeren",
+          "fr": "Activer le FTP",
+          "it": "Attivare l'FTP",
+          "es": "Activar FTP",
+          "pl": "Aktywuj FTP",
+          "zh-cn": "激活 FTP"
+        },
+        "type": "boolean",
+        "read": true,
+        "write": true
+      }
+    },
+    {
       "_id": "settings.autoFocus",
       "type": "state",
       "common": {
