@@ -309,7 +309,7 @@ class ReoLinkCam extends utils.Adapter {
 		if (this.reolinkApiClient) {
 			try {
 				const randomseed = Math.round(Math.random() * 10000000000000000000).toString(16);
-				const snapShot = await this.reolinkApiClient.get(`/api.cgi?cmd=Snap&channel=0&rs=${randomseed}&user=${this.config.cameraUser}&password=${this.config.cameraPassword}`);
+				const snapShot = await this.reolinkApiClient.get(`/api.cgi?cmd=Snap&channel=${this.config.cameraChannel}&rs=${randomseed}&user=${this.config.cameraUser}&password=${this.config.cameraPassword}`);
 				const contentType = snapShot.headers["content-type"];
 				const base64data = Buffer.from(snapShot.data, "binary").toString("base64");
 				return {type: contentType, base64: base64data};
@@ -351,7 +351,7 @@ class ReoLinkCam extends utils.Adapter {
 			"cmd":"PtzCtrl",
 			"action":0,
 			"param":{
-				"channel":0,
+				"channel":Number(this.config.cameraChannel),
 				"id":ptzPreset,
 				"op":"ToPos",
 				"speed":32
@@ -364,7 +364,7 @@ class ReoLinkCam extends utils.Adapter {
 			const ptzPresetCmd = [{
 				"cmd":"PtzCtrl",
 				"param":{
-					"channel":0,
+					"channel":Number(this.config.cameraChannel),
 					"op":"StopPatrol"
 				}
 			}];
@@ -374,7 +374,7 @@ class ReoLinkCam extends utils.Adapter {
 			const ptzPresetCmd = [{
 				"cmd":"PtzCtrl",
 				"param":{
-					"channel":0,
+					"channel":Number(this.config.cameraChannel),
 					"op":"StartPatrol",
 					"id":ptzPatrolPos
 				}
@@ -423,7 +423,7 @@ class ReoLinkCam extends utils.Adapter {
 				"action": 0,
 				"param": {
 					"AutoFocus": {
-						"channel": this.config.cameraChannel,
+						"channel": Number(this.config.cameraChannel),
 						"disable": AutoFocusval
 					}
 				}
@@ -441,7 +441,7 @@ class ReoLinkCam extends utils.Adapter {
 					"cmd": "GetAutoFocus",
 					"action": 0,
 					"param": {
-						"channel": this.config.cameraChannel,
+						"channel": Number(this.config.cameraChannel),
 					}
 				}];
 				const AutoFocusValue = await this.reolinkApiClient.post(`/api.cgi?cmd=GetAutoFocus&user=${this.config.cameraUser}&password=${this.config.cameraPassword}`, getAutoFocusCmd);
@@ -484,7 +484,7 @@ class ReoLinkCam extends utils.Adapter {
 					"cmd": "GetZoomFocus",
 					"action": 0,
 					"param": {
-						"channel": this.config.cameraChannel,
+						"channel": Number(this.config.cameraChannel),
 					}
 				}];
 				const ZoomFocusValue = await this.reolinkApiClient.post(`/api.cgi?cmd=GetZoomFocus&user=${this.config.cameraUser}&password=${this.config.cameraPassword}`, getZoomFocusCmd);
@@ -523,7 +523,7 @@ class ReoLinkCam extends utils.Adapter {
 			"action": 0,
 			"param": {
 				"ZoomFocus": {
-					"channel": this.config.cameraChannel,
+					"channel": Number(this.config.cameraChannel),
 					"pos": pos,
 					"op": "ZoomPos"
 				}
@@ -545,7 +545,7 @@ class ReoLinkCam extends utils.Adapter {
 				"Rec": {
 					"enable": state ? 1 : 0, // The description in API Guide v8 had this key inside `schedule`, which does not work.
 					"schedule": {
-						"channel": this.config.cameraChannel
+						"channel": Number(this.config.cameraChannel)
 					}
 				}
 			}
@@ -563,7 +563,7 @@ class ReoLinkCam extends utils.Adapter {
 				"cmd": "GetRecV20",
 				"action": 1,
 				"param": {
-					"channel": this.config.cameraChannel,
+					"channel": Number(this.config.cameraChannel),
 				}
 			}];
 			const recordingSettingsResponse = await this.reolinkApiClient.post(`/api.cgi?cmd=GetRecV20&user=${this.config.cameraUser}&password=${this.config.cameraPassword}`, recordingCmd);
@@ -606,7 +606,7 @@ class ReoLinkCam extends utils.Adapter {
 				"alarm_mode": "times",
 				"manual_switch": 0,
 				"times": count,
-				"channel": this.config.cameraChannel
+				"channel": Number(this.config.cameraChannel)
 			}
 		}];
 		this.sendCmd(audioAlarmPlayCmd, "AudioAlarmPlay");
@@ -621,7 +621,7 @@ class ReoLinkCam extends utils.Adapter {
 				"action": 0,
 				"param": {
 					"IrLights": {
-						"channel": this.config.cameraChannel,
+						"channel": Number(this.config.cameraChannel),
 						"state": irValue
 					}
 				}
@@ -670,7 +670,7 @@ class ReoLinkCam extends utils.Adapter {
 			"cmd": "SetWhiteLed",
 			"param": {
 				"WhiteLed": {
-					"channel": this.config.cameraChannel,
+					"channel": Number(this.config.cameraChannel),
 					"state": ledState,
 				}
 			}
@@ -682,7 +682,7 @@ class ReoLinkCam extends utils.Adapter {
 			"cmd": "SetWhiteLed",
 			"param": {
 				"WhiteLed": {
-					"channel": this.config.cameraChannel,
+					"channel": Number(this.config.cameraChannel),
 					"bright": state
 				}
 			}
@@ -702,7 +702,7 @@ class ReoLinkCam extends utils.Adapter {
 			"cmd": "SetWhiteLed",
 			"param": {
 				"WhiteLed": {
-					"channel": this.config.cameraChannel,
+					"channel": Number(this.config.cameraChannel),
 					"mode": mode
 				}
 			}
@@ -716,7 +716,7 @@ class ReoLinkCam extends utils.Adapter {
 					"cmd": "GetWhiteLed",
 					"action": 0,
 					"param": {
-						"channel": this.config.cameraChannel,
+						"channel": Number(this.config.cameraChannel),
 					}
 				}];
 				const whiteLedValue = await this.reolinkApiClient.post(`/api.cgi?cmd=GetWhiteLed&channel=${this.config.cameraChannel}&user=${this.config.cameraUser}&password=${this.config.cameraPassword}`, getLedCmd);
@@ -754,7 +754,7 @@ class ReoLinkCam extends utils.Adapter {
 			"action": 0,
 			"param": {
 				"PtzGuard": {
-					"channel": this.config.cameraChannel,
+					"channel": Number(this.config.cameraChannel),
 					"cmdStr": "setPos",
 					"benable": enable,
 					"bSaveCurrentPos": 0
@@ -770,7 +770,7 @@ class ReoLinkCam extends utils.Adapter {
 			"action": 0,
 			"param": {
 				"PtzGuard": {
-					"channel": this.config.cameraChannel,
+					"channel": Number(this.config.cameraChannel),
 					"cmdStr": "setPos",
 					"timeout": timeout,
 					"bSaveCurrentPos": 0
