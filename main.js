@@ -236,7 +236,7 @@ class ReoLinkCam extends utils.Adapter {
 				this.log.debug(`ptz guard info ${JSON.stringify(driveInfoData.status)}: ${JSON.stringify(driveInfoData.data)}`);
 
 			} catch (error) {
-				this.log.error(error);
+				this.log.error("ptz guard info: " + error);
 			}
 		}
 	}
@@ -274,7 +274,7 @@ class ReoLinkCam extends utils.Adapter {
 					}
 				}
 			} catch (error) {
-				this.log.error(error);
+				this.log.error("drive info" + error);
 			}
 		}
 	}
@@ -301,7 +301,7 @@ class ReoLinkCam extends utils.Adapter {
 
 				await this.setStateAsync("network.connected", {val: this.apiConnected, ack: true});
 
-				this.log.error(error);
+				this.log.error("get local link: " + error);
 			}
 		}
 	}
@@ -314,7 +314,7 @@ class ReoLinkCam extends utils.Adapter {
 				const base64data = Buffer.from(snapShot.data, "binary").toString("base64");
 				return {type: contentType, base64: base64data};
 			} catch (error) {
-				this.log.error(error);
+				this.log.error("get snapshot: " + error);
 				return null;
 			}
 		}
@@ -342,7 +342,7 @@ class ReoLinkCam extends utils.Adapter {
 				}
 			}
 		} catch(error) {
-			this.log.error(error);
+			this.log.error("send cmd: " + error);
 			this.log.error("sendCmd " + cmdName + "connection error");
 		}
 	}
@@ -430,7 +430,7 @@ class ReoLinkCam extends utils.Adapter {
 			}];
 			this.sendCmd(autoFocusCmd, "SetAutoFocus");
 		} else {
-			this.log.error("Value not supported!");
+			this.log.error("Auto focus: Value not supported!");
 			this.getAutoFocus();
 		}
 	}
@@ -473,7 +473,7 @@ class ReoLinkCam extends utils.Adapter {
 			} catch (error) {
 				this.apiConnected = false;
 				await this.setStateAsync("network.connected", {val: this.apiConnected, ack: true});
-				this.log.error(error);
+				this.log.error("get auto focus: " + error);
 			}
 		}
 	}
@@ -513,7 +513,7 @@ class ReoLinkCam extends utils.Adapter {
 			} catch (error) {
 				this.apiConnected = false;
 				await this.setStateAsync("network.connected", {val: this.apiConnected, ack: true});
-				this.log.error(error);
+				this.log.error("get zoom and focus: " + error);
 			}
 		}
 	}
@@ -533,7 +533,7 @@ class ReoLinkCam extends utils.Adapter {
 	}
 	async setScheduledRecording(state) {
 		if (state !== true && state !== false) {
-			this.log.error("Value not supported!");
+			this.log.error("Set scheduled recording: Value not supported!");
 			this.getRecording();
 
 			return;
@@ -595,7 +595,7 @@ class ReoLinkCam extends utils.Adapter {
 		} catch (error) {
 			this.apiConnected = false;
 			await this.setStateAsync("network.connected", {val: this.apiConnected, ack: true});
-			this.log.error(error);
+			this.log.error("get recording: " + error);
 		}
 	}
 	async audioAlarmPlay(count) {
@@ -629,7 +629,7 @@ class ReoLinkCam extends utils.Adapter {
 			this.log.debug(JSON.stringify(irCmd));
 			this.sendCmd(irCmd, "SetIrLights");
 		}else{
-			this.log.error("Value not supported!");
+			this.log.error("Set ir lights: Value not supported!");
 			this.getIrLights();
 		}
 	}
@@ -656,7 +656,7 @@ class ReoLinkCam extends utils.Adapter {
 			} catch (error) {
 				this.apiConnected = false;
 				await this.setStateAsync("network.connected", {val: this.apiConnected, ack: true});
-				this.log.error(error);
+				this.log.error("get ir lights: " + error);
 			}
 		}
 	}
@@ -739,7 +739,7 @@ class ReoLinkCam extends utils.Adapter {
 			} catch (error) {
 				this.apiConnected = false;
 				await this.setStateAsync("network.connected", {val: this.apiConnected, ack: true});
-				this.log.error(error);
+				this.log.error("get white led: " + error);
 			}
 		}
 	}
@@ -847,7 +847,7 @@ class ReoLinkCam extends utils.Adapter {
 			} catch (error) {
 				this.apiConnected = false;
 				await this.setStateAsync("network.connected", {val: this.apiConnected, ack: true});
-				this.log.error(error);
+				this.log.error("get mail notification: " + error);
 			}
 		}
 	}
@@ -877,7 +877,7 @@ class ReoLinkCam extends utils.Adapter {
 			this.sendCmd(mailCmd, "SetEmailV20");
 
 		}else{
-			this.log.error("Value not supported!");
+			this.log.error("Set mail notification: Value not supported!");
 			this.getMailNotification();
 		}
 	}
@@ -895,7 +895,7 @@ class ReoLinkCam extends utils.Adapter {
 			} catch (error) {
 				this.apiConnected = false;
 				await this.setStateAsync("network.connected", {val: this.apiConnected, ack: true});
-				this.log.error(error);
+				this.log.error("reboot cam: " + error);
 			}
 		}
 	}
