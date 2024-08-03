@@ -75,7 +75,7 @@ sendTo("reolink.0",{action: "snap"}, function(result){
     Placeholder for the next version (at the beginning of the line):
     ### **WORK IN PROGRESS**
 -->
-### **WORK IN PROGRESS**
+### 1.1.1 (2024-08-03)
 * (oelison) removed warnings from adapter check
 * (olli) added ftp support
 * (oelison) channel now distinguishing most requests

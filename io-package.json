@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "reolink",
-    "version": "1.1.0",
+    "version": "1.1.1",
     "news": {
+      "1.1.1": {
+        "en": "removed warnings from adapter check\nadded ftp support\nchannel now distinguishing most requests\n[#79](https://github.com/aendue/ioBroker.reolink/issues/79) error messages with more info where",
+        "de": "entfernte warnungen aus der adapterprüfung\nftp unterstützung\nkanal jetzt unterscheiden die meisten anfragen\n[#79](https://github.com/aendue/ioBroker.reolink/issues/79) Fehlermeldungen mit mehr Info wo",
+        "ru": "удаленные предупреждения от проверки адаптера\nдобавленная поддержка ftp\nканал теперь различает большинство запросов\n[#79] (https://github.com/aendue/ioBroker.reolink/issues/79) сообщения об ошибках с большей информацией, где",
+        "pt": "avisos removidos da verificação do adaptador\nsuporte de ftp adicionado\ncanal agora distingue a maioria dos pedidos\n[#79](https://github.com/aendue/ioBroker.reolink/issues/79) mensagens de erro com mais informações onde",
+        "nl": "verwijderde waarschuwingen van adaptercontrole\ntoegevoegde ftp-ondersteuning\nkanaal dat nu de meeste verzoeken onderscheidt\n[#79](https://github.com/aendue/ioBroker.reolink/issues/79) foutmeldingen met meer informatie waar",
+        "fr": "avertissements supprimés de la vérification de l'adaptateur\nsupport ftp ajouté\ncanal distinguant maintenant la plupart des requêtes\n[#79](https://github.com/aendue/ioBroker.reolink/issues/79) messages d'erreur avec plus d'informations où",
+        "it": "avvisi rimossi dal controllo dell'adattatore\nsupporto ftp aggiunto\ncanale ora distinguere la maggior parte delle richieste\n[#79](https://github.com/aendue/ioBroker.reolink/issues/79) messaggi di errore con più informazioni dove",
+        "es": "advertencias eliminadas de la comprobación del adaptador\napoyo añadido ftp\ncanal ahora distingue la mayoría de las solicitudes\n[#79](https://github.com/aendue/ioBroker.reolink/issues/79) mensajes de error con más información",
+        "pl": "usunięte ostrzeżenia z kontroli adaptera\ndodane wsparcie ftp\nkanał wyróżniający większość żądań\n[# 79] (https: / / github.com / aendue / ioBroker.reolink / issues / 79) komunikaty błędów z więcej informacji, gdzie",
+        "uk": "видалити попередження з перевірки адаптера\nдодано підтримку ftp\nканал тепер відрізняє більшість запитів\n[#79](https://github.com/aendue/ioBroker.reolink/issues/79) повідомлення про помилки з більш детальною інформацією, де",
+        "zh-cn": "从适配器检查中删除警告\n添加 ftp 支持\n频道现在区分大多数请求\n[79] (https://github.com/aendue/ioBroker.reolink/issues/79) (中文(简体) ). 带有更多信息的错误信息"
+      },
       "1.1.0": {
         "en": "[#56](https://github.com/aendue/ioBroker.reolink/issues/56) added function to switch scheduled recording on and off\n[#25](https://github.com/aendue/ioBroker.reolink/issues/25) detach led light from led light mode\nadded setWhiteLedMode function\nread zoom and focus with POST request (works on RLC-823A v3.1)\nremoved node 16",
         "de": "[#56](https://github.com/aendue/ioBroker.reolink/issues/56) hat die Funktion hinzugefügt, die geplante Aufnahme ein- und ausschaltet\n[#25](https://github.com/aendue/ioBroker.reolink/issues/25) abnehmbares LED-Licht aus LED-Lichtmodus\nhinzugefügt WhiteLedMode Funktion\nzoom und fokus mit POST-Anforderung (Arbeiten auf RLC-823A v3.1)\nentfernter knoten anhang",
@@ -80,19 +93,6 @@
         "pl": "patrol\n12 testów\ndodać",
         "uk": "ptz патруль додано\nвузол 12 тестів вилучено\nдодано getAiState",
         "zh-cn": "ptz巡逻员\n拆除的12次试验\n增 编"
-      },
-      "0.1.1": {
-        "en": "ssl validation included\nfixed issue with ack-flag not set\nchanged datatypes of disk.free and RAW.Email\nenabled getAutoFocus again\nname change on state EmailNotification (state gets created dynamically now)",
-        "de": "ssl validierung inklusive\nfestes problem mit ack-flag nicht gesetzt\ngeänderte Datentypen von disk.free und RAW. Email\nautoFocus erneut aktivieren\nname ändern auf Zustand E-MailAnmerkung ( Zustand wird dynamisch jetzt erstellt)",
-        "ru": "ssl валидация включена\nфиксированная проблема с ack-flag не установлен\nизмененные типы данных диска.free и RAW. Электронная почта\nвключено getAutoFocus снова\nизменение имени на государственном EmailNotification (государство создается динамически сейчас)",
-        "pt": "validação ssl incluído\nproblema fixo com ack-flag não definido\nmudou tipos de dados de disco.free e RAW. Email\nhabilitado getAutoFocus novamente\nmudança de nome no estado EmailNotification (estado é criado dinamicamente agora)",
-        "nl": "inclusief sl-geld\n_\nveranderde datatypes van diskvrij en RAW. E-mail\n_\nnaamverandering op de e-mail (state wordt dynamisch gecreëerd)",
-        "fr": "ssl validation incluse\nproblème fixe avec ack-flag pas défini\nmodification des types de données de disque.free et RAW. Email\nactivé getAutoFocus à nouveau\nchangement de nom sur l'état EmailNotification (l'état se crée dynamiquement maintenant)",
-        "it": "ssl validazione inclusa\nproblema fisso con ack-flag non impostato\ncambiato i tipi di dati di disk.free e RAW. Email\nabilitato ottenereAutoFocus di nuovo\ncambiamento di nome su stato EmailNotification (stato viene creato dinamicamente ora)",
-        "es": "validación ssl incluida\nedición fija con ack-flag no fijado\ncambió los tipos de datos de disco.free y RAW. Email\nactivado\ncambio de nombre en el estado EmailNotificación (el estado se crea dinámicamente ahora)",
-        "pl": "ustalono również walidację ssl\nnie ustalono żadnego problemu z flagą az-flagową\nzmienił dane na nośniku.free i RAW. Email\numożliwiło to AutoFocusowi po raz kolejny\nzmiana nazwy państwowej Uwagi (dzisiejszy stan), która tworzy dynamicznie",
-        "uk": "sssl перевірка включено\nвиправлена проблема з ack-flag не встановлена\nзмінені типи даних дисків.free і RAW. Електронна пошта\nувімкнути\nзміна імен на державному електронному листіПовідомлення (держава створюється динамічно)",
-        "zh-cn": "验证包括\n不确定的固定问题\n数据类型变化不完善、无限和反补贴。 电子邮件\n复兴会\n关于国家电子邮件登记的名称变动(现已动态地创建)"
       }
     },
     "titleLang": {
