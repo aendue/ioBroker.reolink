@@ -35,6 +35,25 @@ class ReoLinkCam extends utils.Adapter {
 
 	}
 
+	/**
+	 * @param {string} command
+	 * @param {boolean} genRndSeed
+	 * @param {boolean} withChannel
+	 */
+	genUrl(command, genRndSeed, withChannel) {
+		let urlString = `/api.cgi?cmd=${command}&`;
+		const password = encodeURIComponent(this.config.cameraPassword);
+		if (withChannel === true) {
+			urlString += `channel=${this.config.cameraChannel}&`
+		}
+		if (genRndSeed === true) {
+			const randomseed = Math.round(Math.random() * 10000000000000000000).toString(16);
+			urlString += `rs=${randomseed}&`;
+		}
+		urlString += `user=${this.config.cameraUser}&password=${password}`;
+		return urlString;
+	}
+
 	async onReady() {
 		this.setState("info.connection", false, true);
 		this.log.info("Reolink adapter has started");
@@ -68,8 +87,8 @@ class ReoLinkCam extends utils.Adapter {
 		});
 
 		this.log.info(`Current IP: ${this.config.cameraIp}`);
-		await this.setStateAsync("network.ip",{val: this.config.cameraIp, ack: true});
-		await this.setStateAsync("network.channel",{val: Number(this.config.cameraChannel), ack: true});
+		await this.setState("network.ip",{val: this.config.cameraIp, ack: true});
+		await this.setState("network.channel",{val: Number(this.config.cameraChannel), ack: true});
 
 		//first API Call...if something isnt working stop Adapter
 		await this.getDevinfo().catch(error => {
@@ -127,23 +146,24 @@ class ReoLinkCam extends utils.Adapter {
 	async getMdState(){
 		if (this.reolinkApiClient) {
 			try {
-				const MdInfoValues = await this.reolinkApiClient.get(`/api.cgi?cmd=GetMdState&channel=${this.config.cameraChannel}&user=${this.config.cameraUser}&password=${this.config.cameraPassword}`);
+				// cmd, channel, user, password
+				const MdInfoValues = await this.reolinkApiClient.get(this.genUrl("GetMdState", false, true));
 
 				this.log.debug(`camMdStateInfo ${JSON.stringify(MdInfoValues.status)}: ${JSON.stringify(MdInfoValues.data)}`);
 
 				if(MdInfoValues.status === 200) {
 					this.apiConnected = true;
-					await this.setStateAsync("network.connected", {val: this.apiConnected, ack: true});
+					await this.setState("network.connected", {val: this.apiConnected, ack: true});
 
 					const MdValues = MdInfoValues.data[0];
 
 					this.log.debug("Motion Detection value: " + MdValues.value.state);
-					await this.setStateAsync("sensor.motion", {val: !!(MdValues.value.state), ack: true});
+					await this.setState("sensor.motion", {val: !!(MdValues.value.state), ack: true});
 
 				}
 			} catch (error) {
 				this.apiConnected = false;
-				await this.setStateAsync("network.connected", {val: this.apiConnected, ack: true});
+				await this.setState("network.connected", {val: this.apiConnected, ack: true});
 			}
 		}
 	}
@@ -151,39 +171,40 @@ class ReoLinkCam extends utils.Adapter {
 	async getAiState(){
 		if (this.reolinkApiClient){
 			try{
-				const AiInfoValues = await this.reolinkApiClient.get(`/api.cgi?cmd=GetAiState&channel=${this.config.cameraChannel}&user=${this.config.cameraUser}&password=${this.config.cameraPassword}`);
+				// cmd, channel, user, password
+				const AiInfoValues = await this.reolinkApiClient.get(this.genUrl("GetAiState", false, true));
 
 				this.log.debug(`camAiStateInfo ${JSON.stringify(AiInfoValues.status)}: ${JSON.stringify(AiInfoValues.data)}`);
 
 				if(AiInfoValues.status === 200){
 					this.apiConnected = true;
-					await this.setStateAsync("network.connected", {val: this.apiConnected, ack: true});
+					await this.setState("network.connected", {val: this.apiConnected, ack: true});
 
 					const AiValues = AiInfoValues.data[0];
 					try {
-						await this.setStateAsync("sensor.dog_cat.state", {val: !!(AiValues.value.dog_cat.alarm_state), ack: true});
-						await this.setStateAsync("sensor.dog_cat.support", {val: !!(AiValues.value.dog_cat.support), ack: true});
+						await this.setState("sensor.dog_cat.state", {val: !!(AiValues.value.dog_cat.alarm_state), ack: true});
+						await this.setState("sensor.dog_cat.support", {val: !!(AiValues.value.dog_cat.support), ack: true});
 						this.log.debug("dog_cat_state detection:" + AiValues.value.dog_cat.alarm_state);
 					} catch (error) {
 						this.log.debug("dog cat state not found.");
 					}
 					try {
-						await this.setStateAsync("sensor.face.state", {val: !!(AiValues.value.face.alarm_state), ack: true});
-						await this.setStateAsync("sensor.face.support", {val: !!(AiValues.value.face.support), ack: true});
+						await this.setState("sensor.face.state", {val: !!(AiValues.value.face.alarm_state), ack: true});
+						await this.setState("sensor.face.support", {val: !!(AiValues.value.face.support), ack: true});
 						this.log.debug("face_state detection:" + AiValues.value.face.alarm_state);
 					} catch (error) {
 						this.log.debug("face state not found.");
 					}
 					try {
-						await this.setStateAsync("sensor.people.state", {val: !!(AiValues.value.people.alarm_state), ack: true});
-						await this.setStateAsync("sensor.people.support", {val: !!(AiValues.value.people.support), ack: true});
+						await this.setState("sensor.people.state", {val: !!(AiValues.value.people.alarm_state), ack: true});
+						await this.setState("sensor.people.support", {val: !!(AiValues.value.people.support), ack: true});
 						this.log.debug("people_state detection:" + AiValues.value.people.alarm_state);
 					} catch (error) {
 						this.log.debug("people state not found.");
 					}
 					try {
-						await this.setStateAsync("sensor.vehicle.state", {val: !!(AiValues.value.vehicle.alarm_state), ack: true});
-						await this.setStateAsync("sensor.vehicle.support", {val: !!(AiValues.value.vehicle.support), ack: true});
+						await this.setState("sensor.vehicle.state", {val: !!(AiValues.value.vehicle.alarm_state), ack: true});
+						await this.setState("sensor.vehicle.support", {val: !!(AiValues.value.vehicle.support), ack: true});
 						this.log.debug("vehicle_state detection:" + AiValues.value.vehicle.alarm_state);
 					} catch (error) {
 						this.log.debug("vehicle state not found.");
@@ -191,7 +212,7 @@ class ReoLinkCam extends utils.Adapter {
 				}
 			}catch (error){
 				this.apiConnected = false;
-				await this.setStateAsync("network.connected", {val: this.apiConnected, ack: true});
+				await this.setState("network.connected", {val: this.apiConnected, ack: true});
 			}
 		}
 	}
@@ -200,30 +221,31 @@ class ReoLinkCam extends utils.Adapter {
 		if (this.reolinkApiClient) {
 			try {
 				this.log.debug("getDevinfo");
-				const DevInfoValues = await this.reolinkApiClient.get(`/api.cgi?cmd=GetDevInfo&channel=${this.config.cameraChannel}&user=${this.config.cameraUser}&password=${this.config.cameraPassword}`);
+				// cmd, channel, user, password
+				const DevInfoValues = await this.reolinkApiClient.get(this.genUrl("GetDevInfo", false, true));
 				this.log.debug(`camMdStateInfo ${JSON.stringify(DevInfoValues.status)}: ${JSON.stringify(DevInfoValues.data)}`);
 
 				if(DevInfoValues.status === 200){
 					this.setState("info.connection", true, true);
 					this.apiConnected = true;
-					await this.setStateAsync("network.connected", {val: this.apiConnected, ack: true});
+					await this.setState("network.connected", {val: this.apiConnected, ack: true});
 					const DevValues = DevInfoValues.data[0];
 
-					await this.setStateAsync("device.buildDay", {val: DevValues.value.DevInfo.buildDay, ack: true});
-					await this.setStateAsync("device.cfgVer", {val: DevValues.value.DevInfo.cfgVer, ack: true});
-					await this.setStateAsync("device.detail", {val: DevValues.value.DevInfo.detail, ack: true});
-					await this.setStateAsync("device.diskNum", {val: DevValues.value.DevInfo.diskNum, ack: true});
-					await this.setStateAsync("device.firmVer", {val: DevValues.value.DevInfo.firmVer, ack: true});
-					await this.setStateAsync("device.model", {val: DevValues.value.DevInfo.model, ack: true});
-					await this.setStateAsync("device.name", {val: DevValues.value.DevInfo.name, ack: true});
-					await this.setStateAsync("device.serial", {val: DevValues.value.DevInfo.serial, ack: true});
-					await this.setStateAsync("device.wifi", {val: DevValues.value.DevInfo.wifi, ack: true});
+					await this.setState("device.buildDay", {val: DevValues.value.DevInfo.buildDay, ack: true});
+					await this.setState("device.cfgVer", {val: DevValues.value.DevInfo.cfgVer, ack: true});
+					await this.setState("device.detail", {val: DevValues.value.DevInfo.detail, ack: true});
+					await this.setState("device.diskNum", {val: DevValues.value.DevInfo.diskNum, ack: true});
+					await this.setState("device.firmVer", {val: DevValues.value.DevInfo.firmVer, ack: true});
+					await this.setState("device.model", {val: DevValues.value.DevInfo.model, ack: true});
+					await this.setState("device.name", {val: DevValues.value.DevInfo.name, ack: true});
+					await this.setState("device.serial", {val: DevValues.value.DevInfo.serial, ack: true});
+					await this.setState("device.wifi", {val: DevValues.value.DevInfo.wifi, ack: true});
 				}
 
 			} catch (error) {
 				this.setState("info.connection", false, true);
 				this.apiConnected = false;
-				await this.setStateAsync("network.connected", {val: this.apiConnected, ack: true});
+				await this.setState("network.connected", {val: this.apiConnected, ack: true});
 				//this.log.error(error + ": " + error.code);
 				throw error;
 			}
@@ -232,8 +254,9 @@ class ReoLinkCam extends utils.Adapter {
 	async getPtzGuardInfo() {
 		if (this.reolinkApiClient) {
 			try {
-				const driveInfoData = await this.reolinkApiClient.get(`/api.cgi?cmd=GetPtzGuard&user=${this.config.cameraUser}&password=${this.config.cameraPassword}`);
-				this.log.debug(`ptz guard info ${JSON.stringify(driveInfoData.status)}: ${JSON.stringify(driveInfoData.data)}`);
+				// cmd, user, password
+				const ptzGuardInfoData = await this.reolinkApiClient.get(this.genUrl("GetPtzGuard", false, false));
+				this.log.debug(`ptz guard info ${JSON.stringify(ptzGuardInfoData.status)}: ${JSON.stringify(ptzGuardInfoData.data)}`);
 
 			} catch (error) {
 				this.log.error("ptz guard info: " + error);
@@ -243,7 +266,8 @@ class ReoLinkCam extends utils.Adapter {
 	async getDriveInfo() {
 		if (this.reolinkApiClient) {
 			try {
-				const driveInfoData = await this.reolinkApiClient.get(`/api.cgi?cmd=GetHddInfo&user=${this.config.cameraUser}&password=${this.config.cameraPassword}`);
+				// cmd, user, password
+				const driveInfoData = await this.reolinkApiClient.get(this.genUrl("GetHddInfo", false, false));
 				this.log.debug(`getDriveInfo ${JSON.stringify(driveInfoData.status)}: ${JSON.stringify(driveInfoData.data)}`);
 
 				if(driveInfoData.status === 200){
@@ -253,24 +277,24 @@ class ReoLinkCam extends utils.Adapter {
 						if (numberOfDiscs > 1) {
 							this.log.warn("Only the first disc is read. You have " + numberOfDiscs.toString() + " Discs!");
 						}
-						await this.setStateAsync("disc.capacity", {val: driveInfoValues.value.HddInfo[0].capacity, ack: true});
+						await this.setState("disc.capacity", {val: driveInfoValues.value.HddInfo[0].capacity, ack: true});
 						let discFormatted = false;
 						if (driveInfoValues.value.HddInfo[0].format === 1) {
 							discFormatted = true;
 						}
-						await this.setStateAsync("disc.formatted", {val: discFormatted, ack: true});
-						await this.setStateAsync("disc.free", {val: driveInfoValues.value.HddInfo[0].size, ack: true});
+						await this.setState("disc.formatted", {val: discFormatted, ack: true});
+						await this.setState("disc.free", {val: driveInfoValues.value.HddInfo[0].size, ack: true});
 						let discMounted = false;
 						if (driveInfoValues.value.HddInfo[0].mount === 1) {
 							discMounted = true;
 						}
-						await this.setStateAsync("disc.mounted", {val: discMounted, ack: true});
+						await this.setState("disc.mounted", {val: discMounted, ack: true});
 					} else {
 						//no sd card inserted
-						await this.setStateAsync("disc.capacity", {val: 0, ack: true});
-						await this.setStateAsync("disc.formatted", {val: false, ack: true});
-						await this.setStateAsync("disc.free", {val: 0, ack: true});
-						await this.setStateAsync("disc.mounted", {val: false, ack: true});
+						await this.setState("disc.capacity", {val: 0, ack: true});
+						await this.setState("disc.formatted", {val: false, ack: true});
+						await this.setState("disc.free", {val: 0, ack: true});
+						await this.setState("disc.mounted", {val: false, ack: true});
 					}
 				}
 			} catch (error) {
@@ -281,25 +305,26 @@ class ReoLinkCam extends utils.Adapter {
 	async getLocalLink(){
 		if (this.reolinkApiClient) {
 			try {
-				const LinkInfoValues = await this.reolinkApiClient.get(`/api.cgi?cmd=GetLocalLink&channel=0&user=${this.config.cameraUser}&password=${this.config.cameraPassword}`);
+				// cmd, channel, user, password
+				const LinkInfoValues = await this.reolinkApiClient.get(this.genUrl("GetLocalLink", false, true));
 				this.log.debug(`LinkInfoValues ${JSON.stringify(LinkInfoValues.status)}: ${JSON.stringify(LinkInfoValues.data)}`);
 
 				if(LinkInfoValues.status === 200){
 					this.apiConnected = true;
-					await this.setStateAsync("network.connected", {val: this.apiConnected, ack: true});
+					await this.setState("network.connected", {val: this.apiConnected, ack: true});
 					const LinkValues = LinkInfoValues.data[0];
 
-					await this.setStateAsync("network.activeLink", {val: LinkValues.value.LocalLink.activeLink, ack: true});
-					await this.setStateAsync("network.mac", {val: LinkValues.value.LocalLink.mac, ack: true});
-					await this.setStateAsync("network.dns", {val: LinkValues.value.LocalLink.dns.dns1, ack: true});
-					await this.setStateAsync("network.gateway", {val: LinkValues.value.LocalLink.static.gateway, ack: true});
-					await this.setStateAsync("network.mask", {val: LinkValues.value.LocalLink.static.mask, ack: true});
-					await this.setStateAsync("network.networkType", {val: LinkValues.value.LocalLink.type, ack: true});
+					await this.setState("network.activeLink", {val: LinkValues.value.LocalLink.activeLink, ack: true});
+					await this.setState("network.mac", {val: LinkValues.value.LocalLink.mac, ack: true});
+					await this.setState("network.dns", {val: LinkValues.value.LocalLink.dns.dns1, ack: true});
+					await this.setState("network.gateway", {val: LinkValues.value.LocalLink.static.gateway, ack: true});
+					await this.setState("network.mask", {val: LinkValues.value.LocalLink.static.mask, ack: true});
+					await this.setState("network.networkType", {val: LinkValues.value.LocalLink.type, ack: true});
 				}
 			} catch (error) {
 				this.apiConnected = false;
 
-				await this.setStateAsync("network.connected", {val: this.apiConnected, ack: true});
+				await this.setState("network.connected", {val: this.apiConnected, ack: true});
 
 				this.log.error("get local link: " + error);
 			}
@@ -308,8 +333,8 @@ class ReoLinkCam extends utils.Adapter {
 	async getSnapshot() {
 		if (this.reolinkApiClient) {
 			try {
-				const randomseed = Math.round(Math.random() * 10000000000000000000).toString(16);
-				const snapShot = await this.reolinkApiClient.get(`/api.cgi?cmd=Snap&channel=${this.config.cameraChannel}&rs=${randomseed}&user=${this.config.cameraUser}&password=${this.config.cameraPassword}`);
+				// cmd, channel, rs, user, password
+				const snapShot = await this.reolinkApiClient.get(this.genUrl("Snap", true, true));
 				const contentType = snapShot.headers["content-type"];
 				const base64data = Buffer.from(snapShot.data, "binary").toString("base64");
 				return {type: contentType, base64: base64data};
@@ -325,7 +350,8 @@ class ReoLinkCam extends utils.Adapter {
 		this.log.debug("sendCmdObj: " + JSON.stringify(cmdObject));
 		try	{
 			if (this.reolinkApiClient) {
-				const result = await this.reolinkApiClient.post(`/api.cgi?cmd=${cmdName}&user=${this.config.cameraUser}&password=${this.config.cameraPassword}`, cmdObject);
+				// cmd, user, password
+				const result = await this.reolinkApiClient.post(this.genUrl(cmdName, false, false), cmdObject);
 				this.log.debug(JSON.stringify(result.status));
 				this.log.debug(JSON.stringify(result.data));
 				if ("error" in result.data[0])
@@ -334,7 +360,7 @@ class ReoLinkCam extends utils.Adapter {
 
 					switch(cmdName){
 						case "SetAutoFocus":
-							await this.setStateAsync("settings.autoFocus", {val: "Error or not supported", ack: true});
+							await this.setState("settings.autoFocus", {val: "Error or not supported", ack: true});
 							break;
 						default:
 							this.log.error("not defined");
@@ -444,35 +470,36 @@ class ReoLinkCam extends utils.Adapter {
 						"channel": Number(this.config.cameraChannel),
 					}
 				}];
-				const AutoFocusValue = await this.reolinkApiClient.post(`/api.cgi?cmd=GetAutoFocus&user=${this.config.cameraUser}&password=${this.config.cameraPassword}`, getAutoFocusCmd);
+				// cmd, user, password
+				const AutoFocusValue = await this.reolinkApiClient.post(this.genUrl("GetAutoFocus", false, false), getAutoFocusCmd);
 
 				this.log.debug(`AutoFocusValue ${JSON.stringify(AutoFocusValue.status)}: ${JSON.stringify(AutoFocusValue.data)}`);
 
 				if(AutoFocusValue.status === 200) {
 					this.apiConnected = true;
-					await this.setStateAsync("network.connected", {val: this.apiConnected, ack: true});
+					await this.setState("network.connected", {val: this.apiConnected, ack: true});
 					const AutoFocus = AutoFocusValue.data[0];
 
 					if ("error" in AutoFocus) {
 						this.log.debug("Error or not supported " + this.getAutoFocus.name);
-						await this.setStateAsync("settings.autoFocus", {val: "Error or not supported", ack: true});
+						await this.setState("settings.autoFocus", {val: "Error or not supported", ack: true});
 					} else {
 						// The datatype of the object is string.
 						// 1 means forbid (but is there any effect?)
 						// 0 means not disabled
 						const intState = AutoFocus.value.AutoFocus.disable;
 						if (intState === 0) {
-							await this.setStateAsync("settings.autoFocus", {val: "0", ack: true});
+							await this.setState("settings.autoFocus", {val: "0", ack: true});
 						} else if (intState === 1) {
-							await this.setStateAsync("settings.autoFocus", {val: "1", ack: true});
+							await this.setState("settings.autoFocus", {val: "1", ack: true});
 						} else {
-							await this.setStateAsync("settings.autoFocus", {val: "Unknown", ack: true});
+							await this.setState("settings.autoFocus", {val: "Unknown", ack: true});
 						}
 					}
 				}
 			} catch (error) {
 				this.apiConnected = false;
-				await this.setStateAsync("network.connected", {val: this.apiConnected, ack: true});
+				await this.setState("network.connected", {val: this.apiConnected, ack: true});
 				this.log.error("get auto focus: " + error);
 			}
 		}
@@ -487,13 +514,14 @@ class ReoLinkCam extends utils.Adapter {
 						"channel": Number(this.config.cameraChannel),
 					}
 				}];
-				const ZoomFocusValue = await this.reolinkApiClient.post(`/api.cgi?cmd=GetZoomFocus&user=${this.config.cameraUser}&password=${this.config.cameraPassword}`, getZoomFocusCmd);
+				// cmd, user, password
+				const ZoomFocusValue = await this.reolinkApiClient.post(this.genUrl("GetZoomFocus", false, false), getZoomFocusCmd);
 
 				this.log.debug(`ZoomFocusValue ${JSON.stringify(ZoomFocusValue.status)}: ${JSON.stringify(ZoomFocusValue.data)}`);
 
 				if(ZoomFocusValue.status === 200) {
 					this.apiConnected = true;
-					await this.setStateAsync("network.connected", {val: this.apiConnected, ack: true});
+					await this.setState("network.connected", {val: this.apiConnected, ack: true});
 					const ZoomFocus = ZoomFocusValue.data[0];
 
 					if ("error" in ZoomFocus) {
@@ -507,12 +535,12 @@ class ReoLinkCam extends utils.Adapter {
 					// the lens focus is adjusted during auto focus procedure.
 					const focus = ZoomFocus.value.ZoomFocus.focus.pos;
 
-					await this.setStateAsync("settings.setZoomFocus", {val: zoom, ack: true});
-					await this.setStateAsync("settings.focus", {val: focus, ack: true});
+					await this.setState("settings.setZoomFocus", {val: zoom, ack: true});
+					await this.setState("settings.focus", {val: focus, ack: true});
 				}
 			} catch (error) {
 				this.apiConnected = false;
-				await this.setStateAsync("network.connected", {val: this.apiConnected, ack: true});
+				await this.setState("network.connected", {val: this.apiConnected, ack: true});
 				this.log.error("get zoom and focus: " + error);
 			}
 		}
@@ -566,7 +594,8 @@ class ReoLinkCam extends utils.Adapter {
 					"channel": Number(this.config.cameraChannel),
 				}
 			}];
-			const recordingSettingsResponse = await this.reolinkApiClient.post(`/api.cgi?cmd=GetRecV20&user=${this.config.cameraUser}&password=${this.config.cameraPassword}`, recordingCmd);
+			// cmd, user, password
+			const recordingSettingsResponse = await this.reolinkApiClient.post(this.genUrl("GetRecV20", false, false), recordingCmd);
 
 			this.log.debug(`recordingSettings ${JSON.stringify(recordingSettingsResponse.status)}: ${JSON.stringify(recordingSettingsResponse.data)}`);
 			if (recordingSettingsResponse.status !== 200) {
@@ -574,7 +603,7 @@ class ReoLinkCam extends utils.Adapter {
 			}
 
 			this.apiConnected = true;
-			await this.setStateAsync("network.connected", {val: this.apiConnected, ack: true});
+			await this.setState("network.connected", {val: this.apiConnected, ack: true});
 
 			const recordingSettingValues = recordingSettingsResponse.data[0];
 			this.log.debug(`rec set val: ${JSON.stringify(recordingSettingValues)}`);
@@ -585,16 +614,16 @@ class ReoLinkCam extends utils.Adapter {
 			} else {
 				const scheduledRecordingState = recordingSettingValues.value.Rec.enable;
 				if (scheduledRecordingState === 0) {
-					await this.setStateAsync("settings.scheduledRecording", {val: false, ack: true});
+					await this.setState("settings.scheduledRecording", {val: false, ack: true});
 				} else if (scheduledRecordingState === 1) {
-					await this.setStateAsync("settings.scheduledRecording", {val: true, ack: true});
+					await this.setState("settings.scheduledRecording", {val: true, ack: true});
 				} else {
 					this.log.error(`An unknown scheduled recording state was detected: ${scheduledRecordingState}`);
 				}
 			}
 		} catch (error) {
 			this.apiConnected = false;
-			await this.setStateAsync("network.connected", {val: this.apiConnected, ack: true});
+			await this.setState("network.connected", {val: this.apiConnected, ack: true});
 			this.log.error("get recording: " + error);
 		}
 	}
@@ -636,26 +665,27 @@ class ReoLinkCam extends utils.Adapter {
 	async getIrLights(){
 		if (this.reolinkApiClient) {
 			try {
-				const IrLightValue = await this.reolinkApiClient.get(`/api.cgi?cmd=GetIrLights&channel=${this.config.cameraChannel}&user=${this.config.cameraUser}&password=${this.config.cameraPassword}`);
+				// cmd, channel, user, password
+				const IrLightValue = await this.reolinkApiClient.get(this.genUrl("GetIrLights",false, true));
 				this.log.debug(`IrLightValue ${JSON.stringify(IrLightValue.status)}: ${JSON.stringify(IrLightValue.data)}`);
 
 				if(IrLightValue.status === 200) {
 					this.apiConnected = true;
-					await this.setStateAsync("network.connected", {val: this.apiConnected, ack: true});
+					await this.setState("network.connected", {val: this.apiConnected, ack: true});
 
 					const IrLights = IrLightValue.data[0];
 
 					//Antwort pruefen
 					if ("error" in IrLights){
 						this.log.debug("Error or not supported " + this.getIrLights.name);
-						await this.setStateAsync("settings.autoFocus", {val: "Error or not supported", ack: true});
+						await this.setState("settings.autoFocus", {val: "Error or not supported", ack: true});
 					}else{
-						await this.setStateAsync("settings.ir", {val: IrLights.value.IrLights.state, ack: true});
+						await this.setState("settings.ir", {val: IrLights.value.IrLights.state, ack: true});
 					}
 				}
 			} catch (error) {
 				this.apiConnected = false;
-				await this.setStateAsync("network.connected", {val: this.apiConnected, ack: true});
+				await this.setState("network.connected", {val: this.apiConnected, ack: true});
 				this.log.error("get ir lights: " + error);
 			}
 		}
@@ -719,26 +749,27 @@ class ReoLinkCam extends utils.Adapter {
 						"channel": Number(this.config.cameraChannel),
 					}
 				}];
-				const whiteLedValue = await this.reolinkApiClient.post(`/api.cgi?cmd=GetWhiteLed&channel=${this.config.cameraChannel}&user=${this.config.cameraUser}&password=${this.config.cameraPassword}`, getLedCmd);
+				// cmd, channel, user, password
+				const whiteLedValue = await this.reolinkApiClient.post(this.genUrl("GetWhiteLed", false, true), getLedCmd);
 
 				this.log.debug(`whiteLedValue ${JSON.stringify(whiteLedValue.status)}: ${JSON.stringify(whiteLedValue.data)}`);
 
 				if(whiteLedValue.status === 200) {
 					this.apiConnected = true;
-					await this.setStateAsync("network.connected", {val: this.apiConnected, ack: true});
+					await this.setState("network.connected", {val: this.apiConnected, ack: true});
 
 					const whiteLed = whiteLedValue.data[0];
 					const brightness = whiteLed.value.WhiteLed.bright;
 					const mode = whiteLed.value.WhiteLed.mode;
 					const switchLed = whiteLed.value.WhiteLed.state ? true : false;
 
-					await this.setStateAsync("settings.ledBrightness", {val: brightness, ack: true});
-					await this.setStateAsync("settings.ledMode", {val: mode, ack: true});
-					await this.setStateAsync("settings.switchLed", {val: switchLed, ack: true});
+					await this.setState("settings.ledBrightness", {val: brightness, ack: true});
+					await this.setState("settings.ledMode", {val: mode, ack: true});
+					await this.setState("settings.switchLed", {val: switchLed, ack: true});
 				}
 			} catch (error) {
 				this.apiConnected = false;
-				await this.setStateAsync("network.connected", {val: this.apiConnected, ack: true});
+				await this.setState("network.connected", {val: this.apiConnected, ack: true});
 				this.log.error("get white led: " + error);
 			}
 		}
@@ -826,27 +857,28 @@ class ReoLinkCam extends utils.Adapter {
 	async getMailNotification(){
 		if (this.reolinkApiClient) {
 			try {
-				const mailValue = await this.reolinkApiClient.get(`/api.cgi?cmd=GetEmailV20&user=${this.config.cameraUser}&password=${this.config.cameraPassword}`);
+				// cmd, user, password
+				const mailValue = await this.reolinkApiClient.get(this.genUrl("GetEmailV20", false, false));
 				this.log.debug(`mailValue ${JSON.stringify(mailValue.status)}: ${JSON.stringify(mailValue.data)}`);
 
 				if(mailValue.status === 200) {
 					this.apiConnected = true;
-					await this.setStateAsync("network.connected", {val: this.apiConnected, ack: true});
+					await this.setState("network.connected", {val: this.apiConnected, ack: true});
 
 					const mail = mailValue.data[0];
 
 					//Antwort pruefen
 					if ("error" in mail){
 						this.log.debug("Error or not supported " + this.getMailNotification.name);
-						await this.setStateAsync("settings.EmailNotification", {val: "Error or not supported", ack: true});
+						await this.setState("settings.EmailNotification", {val: "Error or not supported", ack: true});
 					}else{
-						await this.setStateAsync("RAW.Email", {val: JSON.stringify(mail), ack: true});
-						await this.setStateAsync("settings.EmailNotification", {val: mail.value.Email.enable, ack: true});
+						await this.setState("RAW.Email", {val: JSON.stringify(mail), ack: true});
+						await this.setState("settings.EmailNotification", {val: mail.value.Email.enable, ack: true});
 					}
 				}
 			} catch (error) {
 				this.apiConnected = false;
-				await this.setStateAsync("network.connected", {val: this.apiConnected, ack: true});
+				await this.setState("network.connected", {val: this.apiConnected, ack: true});
 				this.log.error("get mail notification: " + error);
 			}
 		}
@@ -884,17 +916,18 @@ class ReoLinkCam extends utils.Adapter {
 	async rebootCam(){
 		if (this.reolinkApiClient) {
 			try {
-				const mailValue = await this.reolinkApiClient.get(`/api.cgi?cmd=Reboot&user=${this.config.cameraUser}&password=${this.config.cameraPassword}`);
+				// cmd, user, password
+				const mailValue = await this.reolinkApiClient.get(this.genUrl("Reboot", false, false));
 				this.log.debug(`mailValue ${JSON.stringify(mailValue.status)}: ${JSON.stringify(mailValue.data)}`);
 
 				if(mailValue.status === 200) {
 					this.apiConnected = true;
-					await this.setStateAsync("network.connected", {val: this.apiConnected, ack: true});
+					await this.setState("network.connected", {val: this.apiConnected, ack: true});
 					this.log.info(this.config.cameraIp + " reboot triggered!");
 				}
 			} catch (error) {
 				this.apiConnected = false;
-				await this.setStateAsync("network.connected", {val: this.apiConnected, ack: true});
+				await this.setState("network.connected", {val: this.apiConnected, ack: true});
 				this.log.error("reboot cam: " + error);
 			}
 		}
