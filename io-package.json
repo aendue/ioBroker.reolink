@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "reolink",
-    "version": "1.1.1",
+    "version": "1.1.2",
     "news": {
+      "1.1.2": {
+        "en": "[#22](https://github.com/aendue/ioBroker.reolink/issues/22) password with some more special chars works now\nadapter warnings resolved",
+        "de": "[#22](https://github.com/aendue/ioBroker.reolink/issues/22) Passwort mit einigen weiteren speziellen Zeichen funktioniert jetzt\nadapterwarnungen behoben",
+        "ru": "[#22] (https://github.com/aendue/ioBroker.reolink/issues/22) пароль с некоторыми более специальными харями работает сейчас\nпредупреждения адаптера разрешены",
+        "pt": "[#22](https://github.com/aendue/ioBroker.reolink/issues/22) senha com algumas obras de caridade mais especiais agora\navisos do adaptador resolvidos",
+        "nl": "[#22](https://github.com/aendue/ioBroker.reolink/issues/22) wachtwoord met wat meer speciale tekens werkt nu\nadapter waarschuwingen verdwenen",
+        "fr": "[#22](https://github.com/aendue/ioBroker.reolink/issues/22) mot de passe avec des caractères plus spéciaux fonctionne maintenant\navertissements d'adaptateur résolus",
+        "it": "[#22](https://github.com/aendue/ioBroker.reolink/issues/22) password con alcune opere di beneficenza più speciali ora\navvertenze adattatori risolte",
+        "es": "[#22](https://github.com/aendue/ioBroker.reolink/issues/22) contraseña con algunos más obras de caridad especiales ahora\nadmisiones de adaptador resueltas",
+        "pl": "[# 22] (https: / / github.com / aendue / ioBroker.reolink / issues / 22) hasło z trochę więcej specjalnych znaków działa teraz\nostrzeżenia adaptera ustąpiły",
+        "uk": "[#22](https://github.com/aendue/ioBroker.reolink/products/22) пароля з деякими спеціальними chars працює зараз\nпопередження адаптерів",
+        "zh-cn": "[#22] (https://github.com/aendue/ioBroker.reolink/issues/22) (中文(简体) ). 密码加上一些特殊的字符\n已解决适配器警告"
+      },
       "1.1.1": {
         "en": "removed warnings from adapter check\nadded ftp support\nchannel now distinguishing most requests\n[#79](https://github.com/aendue/ioBroker.reolink/issues/79) error messages with more info where",
         "de": "entfernte warnungen aus der adapterprüfung\nftp unterstützung\nkanal jetzt unterscheiden die meisten anfragen\n[#79](https://github.com/aendue/ioBroker.reolink/issues/79) Fehlermeldungen mit mehr Info wo",
