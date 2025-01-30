@@ -825,6 +825,7 @@ class ReoLinkCam extends utils.Adapter {
 		refreshIntervalRecordingTimer++;
 		if (refreshIntervalRecordingTimer > refreshIntervalRecording) {
 			this.getRecording();
+			this.getDriveInfo();
 			refreshIntervalRecordingTimer = 0;
 		}
 
