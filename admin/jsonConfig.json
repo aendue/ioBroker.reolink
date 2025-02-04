@@ -55,6 +55,13 @@
                     "md": 4,
                     "lg": 4,
                     "label": "Passwort"
+                },
+                "UriEncodedPassword":{
+                    "type": "checkbox",
+                    "sm": 4,
+                    "md": 4,
+                    "lg": 4,
+                    "label": "Uri encode password"
                 }
             }
         },

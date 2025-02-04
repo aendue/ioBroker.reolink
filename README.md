@@ -17,6 +17,8 @@ Adapter for ioBroker Plattform to get [Reolink camera](https://reolink.com/) inf
 
 In general all newer Reolink cameras support API commands. They just differ in their supported commands.
 
+One reminder to the password. Try with or without URI encoding, when you have only one special char. Better use no special char and simply a longer password for the same security.
+
 If you wish to have any specific API command included...just let me now.
 
 ## Implemented functions
@@ -75,6 +77,10 @@ sendTo("reolink.0",{action: "snap"}, function(result){
     Placeholder for the next version (at the beginning of the line):
     ### **WORK IN PROGRESS**
 -->
+### **WORK IN PROGRESS**
+* (oelison) update disk info
+* (oelison) uri enconding is switchable (helps sometimes by one special char)
+
 ### 1.1.2 (2024-09-14)
 * (oelison) [#22](https://github.com/aendue/ioBroker.reolink/issues/22) password with some more special chars works now
 * (oelison) adapter warnings resolved

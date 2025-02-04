@@ -175,7 +175,8 @@
     "cameraUser": "",
     "cameraPassword": "",
     "apiRefreshInterval": "10",
-    "sslvalid": false
+    "sslvalid": false,
+    "UriEncodedPassword": true
   },
   "objects": [],
   "instanceObjects": [

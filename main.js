@@ -42,9 +42,14 @@ class ReoLinkCam extends utils.Adapter {
 	 */
 	genUrl(command, genRndSeed, withChannel) {
 		let urlString = `/api.cgi?cmd=${command}&`;
-		const password = encodeURIComponent(this.config.cameraPassword);
+		let password = encodeURIComponent(this.config.cameraPassword);
+		if(this.config.UriEncodedPassword != undefined) {
+			if(this.config.UriEncodedPassword == false) {
+				password = this.config.cameraPassword;
+			}
+		}
 		if (withChannel === true) {
-			urlString += `channel=${this.config.cameraChannel}&`
+			urlString += `channel=${this.config.cameraChannel}&`;
 		}
 		if (genRndSeed === true) {
 			const randomseed = Math.round(Math.random() * 10000000000000000000).toString(16);
@@ -820,6 +825,7 @@ class ReoLinkCam extends utils.Adapter {
 		refreshIntervalRecordingTimer++;
 		if (refreshIntervalRecordingTimer > refreshIntervalRecording) {
 			this.getRecording();
+			this.getDriveInfo();
 			refreshIntervalRecordingTimer = 0;
 		}
 
