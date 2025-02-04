@@ -80,6 +80,7 @@ sendTo("reolink.0",{action: "snap"}, function(result){
 ### **WORK IN PROGRESS**
 * (oelison) update disk info
 * (oelison) uri enconding is switchable (helps sometimes by one special char)
+* (oelison) #28 PTZ check added
 
 ### 1.1.2 (2024-09-14)
 * (oelison) [#22](https://github.com/aendue/ioBroker.reolink/issues/22) password with some more special chars works now
@@ -166,7 +167,7 @@ sendTo("reolink.0",{action: "snap"}, function(result){
 ## License
 MIT License
 
-Copyright (c) 2024 Andy Grundt <andygrundt@gmail.com>
+Copyright (c) 2025 Andy Grundt <andygrundt@gmail.com>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

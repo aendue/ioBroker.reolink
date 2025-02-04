@@ -1378,6 +1378,29 @@
       }
     },
     {
+      "_id": "settings.ptzCheck",
+      "type": "state",
+      "common": {
+        "role": "state",
+        "name": {
+          "en": "PTZ check",
+          "de": "PTZ-Check",
+          "ru": "PTZ проверка",
+          "pt": "Verificação PTZ",
+          "nl": "PTZ-controle",
+          "fr": "Contrôle PTZ",
+          "it": "Controllo PTZ",
+          "es": "PTZ check",
+          "pl": "Kontrola PTZ",
+          "uk": "Перевірка ПТЗ",
+          "zh-cn": "PTZ 检查"
+        },
+        "type": "boolean",
+        "read": true,
+        "write": true
+      }
+    },
+    {
       "_id": "settings.ptzGuardTimeout",
       "type": "state",
       "common": {
