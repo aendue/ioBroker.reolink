@@ -22,7 +22,7 @@
     "node": ">=18.0.0"
   },
   "dependencies": {
-    "@iobroker/adapter-core": "^3.2.2",
+    "@iobroker/adapter-core": "^3.2.3",
     "axios": "^1.7.7",
     "base-64": "^1.0.0",
     "https": "^1.0.0"

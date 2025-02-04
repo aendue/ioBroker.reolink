@@ -145,6 +145,7 @@ class ReoLinkCam extends utils.Adapter {
         this.subscribeStates("settings.playAlarm");
         this.subscribeStates("settings.getDiscData");
         this.subscribeStates("settings.ptzEnableGuard");
+        this.subscribeStates("settings.ptzCheck");
         this.subscribeStates("settings.ptzGuardTimeout");
         this.subscribeStates("Command.Reboot");
     }
@@ -729,7 +730,7 @@ class ReoLinkCam extends utils.Adapter {
         }
     }
     async startZoomFocus(pos) {
-        const ptzCheckCmd = [
+        const startZoomCmd = [
             {
                 cmd: "StartZoomFocus",
                 action: 0,
@@ -742,7 +743,19 @@ class ReoLinkCam extends utils.Adapter {
                 },
             },
         ];
-        this.sendCmd(ptzCheckCmd, "StartZoomFocus");
+        this.sendCmd(startZoomCmd, "StartZoomFocus");
+    }
+    async setPtzCheck() {
+        const ptzCheckCmd = [
+            {
+                cmd: "PtzCheck",
+                action: 0,
+                param: {
+                    channel: Number(this.config.cameraChannel),
+                },
+            },
+        ];
+        this.sendCmd(ptzCheckCmd, "PtzCallibration");
     }
     async setScheduledRecording(state) {
         if (state !== true && state !== false) {
@@ -1284,6 +1297,9 @@ class ReoLinkCam extends utils.Adapter {
                 }
                 if (propName === "ptzEnableGuard") {
                     this.setPtzGuard(state.val);
+                }
+                if (propName === "ptzCheck") {
+                    this.setPtzCheck();
                 }
                 if (propName === "ptzGuardTimeout") {
                     this.setPtzGuardTimeout(state.val);
