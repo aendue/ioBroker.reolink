@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "reolink",
-    "version": "1.1.2",
+    "version": "1.2.0",
     "news": {
+      "1.2.0": {
+        "en": "update disk info\nuri enconding is switchable (helps sometimes by one special char)\n#28 PTZ check added",
+        "de": "dateidaten aktualisieren\nuri enconding ist schaltbar (hilfe manchmal von einem speziellen zeichen)\n#28 PTZ Check hinzugefügt",
+        "ru": "info\nuri enconding можно переключить (помогает иногда одним специальным шаром)\n#28 PTZ добавлена",
+        "pt": "atualizar informações do disco\nuri enconding é comutável (ajuda às vezes por um carvão especial)\n#28 PTZ Verificação adicionada",
+        "nl": "schijfinfo bijwerken\nuri enconding is schakelbaar (helpt soms door een speciale char)\n28 PTZ controle toegevoegd",
+        "fr": "mettre à jour les informations du disque\nuri enconding est commutable (aide parfois par un char spécial)\n#28 PTZ vérification ajoutée",
+        "it": "aggiornare le informazioni sul disco\nuri enconding è commutabile (aiuta a volte da uno speciale char)\n#28 PTZ controllo aggiunto",
+        "es": "actualización del disco info\nuri enconding es conmutable (ayuda a veces por un char especial)\n#28 PTZ cheque añadido",
+        "pl": "aktualizacja informacji o dysku\nuri enconding jest switchable (pomaga czasami przez jeden specjalny znak)\n# 28 PTZ check added",
+        "uk": "оновлення інформації диска\nuri enconding (допомагає іноді одним особливим char)\n#28 ПТЗ додано",
+        "zh-cn": "更新磁盘信息\nuri 编码是可切换的(有时由一个特殊的字符帮助)\n#28 PTZ (英语). 检查已添加"
+      },
       "1.1.2": {
         "en": "[#22](https://github.com/aendue/ioBroker.reolink/issues/22) password with some more special chars works now\nadapter warnings resolved",
         "de": "[#22](https://github.com/aendue/ioBroker.reolink/issues/22) Passwort mit einigen weiteren speziellen Zeichen funktioniert jetzt\nadapterwarnungen behoben",
@@ -80,19 +93,6 @@
         "pl": "recenzja najnowszych dodatków adapterów\nprawdopodobnie jest to ostatnia wersja 16 węzła\nbolety są nieprawdziwe, a nie 0/1",
         "uk": "вирішити огляд для останнього доповнення адаптера\nможливо, останній вузол 16 версія\nbooleans тепер false/true і не 0/1",
         "zh-cn": "b. 对最新适应增援的决心审查\n可能是最后一个第16版本。\n假释现在是虚假/真实的,而不是0.1。"
-      },
-      "0.1.2": {
-        "en": "ptz patrol added\nnode 12 tests removed\nadded getAiState",
-        "de": "ptz patrol hinzugefügt\nknoten 12 tests entfernt\njetzt kaufen",
-        "ru": "ptz патруль добавлен\nnode 12 тестов удалено\nдобавлено getAiState",
-        "pt": "ptz patrulha adicionado\nnode 12 testes removidos\nadicionado getAiState",
-        "nl": "ptz patrouille toegevoegd\n12 testen verwijderd\nvertaling:",
-        "fr": "ptz patrouille ajouté\nnode 12 tests enlevés\najouté getAiState",
-        "it": "ptz pattuglia aggiunto\nnodo 12 test rimossi\naggiunto getAiState",
-        "es": "patrulla de ptz\nnodo 12 pruebas eliminadas\nadd getAiState",
-        "pl": "patrol\n12 testów\ndodać",
-        "uk": "ptz патруль додано\nвузол 12 тестів вилучено\nдодано getAiState",
-        "zh-cn": "ptz巡逻员\n拆除的12次试验\n增 编"
       }
     },
     "titleLang": {

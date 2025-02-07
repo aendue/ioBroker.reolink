@@ -77,7 +77,7 @@ sendTo("reolink.0",{action: "snap"}, function(result){
     Placeholder for the next version (at the beginning of the line):
     ### **WORK IN PROGRESS**
 -->
-### **WORK IN PROGRESS**
+### 1.2.0 (2025-02-07)
 * (oelison) update disk info
 * (oelison) uri enconding is switchable (helps sometimes by one special char)
 * (oelison) #28 PTZ check added
