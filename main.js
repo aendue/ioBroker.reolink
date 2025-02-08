@@ -1249,7 +1249,7 @@ class ReoLinkCam extends utils.Adapter {
      * @param id contain the chaged property
      * @param state contain the new state
      */
-    onStateChange(id, state) {
+    async onStateChange(id, state) {
         if (state) {
             if (state.ack === false) {
                 // The state was changed
