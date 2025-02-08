@@ -148,6 +148,7 @@ class ReoLinkCam extends utils.Adapter {
         this.subscribeStates("settings.ptzCheck");
         this.subscribeStates("settings.ptzGuardTimeout");
         this.subscribeStates("Command.Reboot");
+        this.subscribeStates("Command.Snap");
     }
     //function for getting motion detection
     async getMdState() {
@@ -1310,6 +1311,11 @@ class ReoLinkCam extends utils.Adapter {
                 if (propName === "Reboot") {
                     // TODO: reboot command
                 }
+				if(propName === "Snap") {
+					this.setState(id, false, true);
+					const image = await this.getSnapshot();
+					this.setState('RAW.Image', JSON.stringify(image), true);
+				}
             }
         } else {
             // The state was deleted
