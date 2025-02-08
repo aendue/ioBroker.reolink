@@ -1467,6 +1467,21 @@
       "native": {}
     },
     {
+      "_id": "Command.Snap",
+      "type": "state",
+      "common": {
+        "role": "button",
+        "name": {
+          "en": "Snap",
+          "de": "Schnappschloss"
+        },
+        "type": "boolean",
+        "read": false,
+        "write": true
+      },
+      "native": {}
+    },
+    {
       "_id": "RAW",
       "type": "channel",
       "common": {
@@ -1505,6 +1520,20 @@
           "zh-cn": "电子邮件"
         },
         "type": "string",
+        "read": true,
+        "write": false
+      }
+    },
+    {
+      "_id": "RAW.Image",
+      "type": "state",
+      "common": {
+        "role": "value",
+        "name": {
+          "en": "Image",
+          "de": "Bild"
+        },
+        "type": "json",
         "read": true,
         "write": false
       }
