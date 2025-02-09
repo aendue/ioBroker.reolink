@@ -215,7 +215,7 @@ class ReoLinkCam extends utils.Adapter {
                         });
                         this.log.debug(`dog_cat_state detection:${AiValues.value.dog_cat.alarm_state}`);
                     } catch (error) {
-                        this.log.error(`get ai state animal: ${error}`);
+                        this.log.debug(`get ai state animal: ${error}`);
                         this.log.debug("dog cat state not found.");
                     }
                     try {
@@ -229,7 +229,7 @@ class ReoLinkCam extends utils.Adapter {
                         });
                         this.log.debug(`face_state detection:${AiValues.value.face.alarm_state}`);
                     } catch (error) {
-                        this.log.error(`get ai state face: ${error}`);
+                        this.log.debug(`get ai state face: ${error}`);
                         this.log.debug("face state not found.");
                     }
                     try {
@@ -243,7 +243,7 @@ class ReoLinkCam extends utils.Adapter {
                         });
                         this.log.debug(`people_state detection:${AiValues.value.people.alarm_state}`);
                     } catch (error) {
-                        this.log.error(`get ai state people: ${error}`);
+                        this.log.debug(`get ai state people: ${error}`);
                         this.log.debug("people state not found.");
                     }
                     try {
@@ -257,7 +257,7 @@ class ReoLinkCam extends utils.Adapter {
                         });
                         this.log.debug(`vehicle_state detection:${AiValues.value.vehicle.alarm_state}`);
                     } catch (error) {
-                        this.log.error(`get ai state vehicle: ${error}`);
+                        this.log.debug(`get ai state vehicle: ${error}`);
                         this.log.debug("vehicle state not found.");
                     }
                 }
