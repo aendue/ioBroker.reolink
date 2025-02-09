@@ -77,7 +77,7 @@ sendTo("reolink.0",{action: "snap"}, function(result){
     Placeholder for the next version (at the beginning of the line):
     ### **WORK IN PROGRESS**
 -->
-### **WORK IN PROGRESS**
+### 1.2.1 (2025-02-09)
 * (oelsion) set some errors to debug logs
 
 ### 1.2.0 (2025-02-07)

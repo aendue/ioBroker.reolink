@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "reolink",
-    "version": "1.2.0",
+    "version": "1.2.1",
     "news": {
+      "1.2.1": {
+        "en": "set some errors to debug logs",
+        "de": "fehler auf debug-logs einstellen",
+        "ru": "установить некоторые ошибки для отладки журналов",
+        "pt": "definir alguns erros para depurar logs",
+        "nl": "enkele fouten in de debug-logs plaatsen",
+        "fr": "définir quelques erreurs pour déboguer les journaux",
+        "it": "impostare alcuni errori per debug logs",
+        "es": "establecer algunos errores para depurar registros",
+        "pl": "ustawić pewne błędy w logach debugowania",
+        "uk": "встановити деякі помилки для видалення журналів",
+        "zh-cn": "设置一些调试日志错误"
+      },
       "1.2.0": {
         "en": "update disk info\nuri enconding is switchable (helps sometimes by one special char)\n#28 PTZ check added",
         "de": "dateidaten aktualisieren\nuri enconding ist schaltbar (hilfe manchmal von einem speziellen zeichen)\n#28 PTZ Check hinzugefügt",
@@ -80,19 +93,6 @@
         "pl": "dodawane są znane kamery robocze\nsetIrLight (ang.). teraz\n(#40(https:/github.com/aendue/ioBroker.reolink/issues/40) (ang.)\n(#42(https:/github.com/aendue/ioBroker.reolink/issues/42) (ang.)",
         "uk": "відомі робочі камери\nsetIrLights Приймати Зараз\n[#40](https://github.com/aendue/ioBroker.reolink/issues/40)\n[#42](https://github.com/aendue/ioBroker.reolink/issues/42)",
         "zh-cn": "已知的工作摄像机添加\nb. 接受的一套最佳做法 我现在\n[第40](http://github.com/aendue/ioBroker.reolink/issues/40)\n[第42](http://github.com/aendue/ioBroker.reolink/issues/42)"
-      },
-      "1.0.1": {
-        "en": "resolve review for latest adapter addition\nmaybe the last node 16 version\nbooleans are now false/true and not 0/1",
-        "de": "rezension für neueste adapter-addition\nvielleicht die letzte node 16 version\nbooleans sind jetzt falsch/wahr und nicht 0/1",
-        "ru": "разрешить обзор для последнего дополнения адаптера\nможет быть, последняя нода 16 версия\nbooleans теперь false/true и не 0/1",
-        "pt": "revisão de resolução para adição de adaptador mais recente\ntalvez o último nó 16 versão\nbooleanos são agora falsos / falsos e não 0/1",
-        "nl": "review voor nieuwste aanvulling\nmisschien de laatste 16 versie\nbooleans zijn nu vals en niet 0/1",
-        "fr": "résolvez l'examen pour la dernière addition d'adaptateur\npeut-être la dernière version n° 16\nles booléens sont maintenant faux/vérité et non 0/1",
-        "it": "risolvere la recensione per l'ultima aggiunta dell'adattatore\nforse l'ultimo nodo 16 versione\ni booleani sono ora falsi/trui e non 0/1",
-        "es": "resolver revisión para la última adición del adaptador\ntal vez el último nodo 16 versión\nbooleanos son ahora falsos/verdad y no 0/1",
-        "pl": "recenzja najnowszych dodatków adapterów\nprawdopodobnie jest to ostatnia wersja 16 węzła\nbolety są nieprawdziwe, a nie 0/1",
-        "uk": "вирішити огляд для останнього доповнення адаптера\nможливо, останній вузол 16 версія\nbooleans тепер false/true і не 0/1",
-        "zh-cn": "b. 对最新适应增援的决心审查\n可能是最后一个第16版本。\n假释现在是虚假/真实的,而不是0.1。"
       }
     },
     "titleLang": {
