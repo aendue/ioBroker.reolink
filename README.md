@@ -67,18 +67,26 @@ sendTo("reolink.0",{action: "snap"}, function(result){
 
 - RLC-420-5MP
 - E1 Outdoor
+- E1 Zoom
 - RLC-522
 - RLC-810A
 - RLC-823A
 - Duo 3 PoE
+
+## Known *NOT* working cameras
+
+- E1 Pro
 
 ## Changelog
 <!--
     Placeholder for the next version (at the beginning of the line):
     ### **WORK IN PROGRESS**
 -->
+### **WORK IN PROGRESS**
+* (oelison) update readme #141
+
 ### 1.2.1 (2025-02-09)
-* (oelsion) set some errors to debug logs
+* (oelison) set some errors to debug logs
 
 ### 1.2.0 (2025-02-07)
 * (oelison) update disk info
