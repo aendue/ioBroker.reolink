@@ -17,7 +17,7 @@ Adapter for ioBroker Plattform to get [Reolink camera](https://reolink.com/) inf
 
 In general all newer Reolink cameras support API commands. They just differ in their supported commands.
 
-One reminder to the password. Try with or without URI encoding, when you have only one special char. Better use no special char and simply a longer password for the same security.
+One reminder to the password. Try with or without URI encoding, when you have only one special char. Better use no special char and simply a longer password for the same security. Check with http://cam.ip.add.ress/api.cgi?cmd=GetDevInfo&channel=0&user=username&password=yoursecurity if your credentials are working.
 
 If you wish to have any specific API command included...just let me now.
 
