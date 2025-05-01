@@ -92,7 +92,7 @@ sendTo("reolink.0",{action: "snap"}, function(result){
     Placeholder for the next version (at the beginning of the line):
     ### **WORK IN PROGRESS**
 -->
-### **WORK IN PROGRESS**
+### 1.2.2 (2025-05-01)
 * (oelison) update readme #141 #155
 * (oelison) supress errors with axios timeout #154
 

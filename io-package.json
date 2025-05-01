@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "reolink",
-    "version": "1.2.1",
+    "version": "1.2.2",
     "news": {
+      "1.2.2": {
+        "en": "update readme #141 #155\nsupress errors with axios timeout #154",
+        "de": "update readme #141 #155\nsupress fehler mit axios timeout #154",
+        "ru": "обновление readme #141 #155\nсупрессивные ошибки с тайм-аутом #154",
+        "pt": "atualização readme #141 #155\nsupress erros com axios timeout #154",
+        "nl": "update readme #141 #155\nsupress fouten met axios timeout #154",
+        "fr": "mise à jour readme #141 #155\nerreurs supress avec axios timeout #154",
+        "it": "aggiornamento readme #141 #155\nerrori supress con timeout assios #154",
+        "es": "actualización readme #141 #155\nerrores de supresión con axios timeout #154",
+        "pl": "update readme # 141 # 155\nsupress błędy z axios timeout # 154",
+        "uk": "javascript licenses api веб-сайт\nпомилки пригнічності аксіосу #154",
+        "zh-cn": "更新读数 #141 #155\naxios 超时 154 时出现错误"
+      },
       "1.2.1": {
         "en": "set some errors to debug logs",
         "de": "fehler auf debug-logs einstellen",
@@ -80,19 +93,6 @@
         "pl": "[# 49] (https: / / github.com / aendue / ioBroker.reolink / issues / 49)\n[# 47] (https: / / github.com / aendue / ioBroker.reolink / issues / 47)",
         "uk": "[#49](https://github.com/aendue/ioBroker.reolink/issues/49)\n[#47](https://github.com/aendue/ioBroker.reolink/issues/47)",
         "zh-cn": "[49] (https://github.com/aendue/ioBroker.reolink/issues/49) (中文(简体) )\n[47] (https://github.com/aendue/ioBroker.reolink/issues/47) (中文(简体) )"
-      },
-      "1.0.2": {
-        "en": "known working cameras added\nsetIrLights accept \"On\" now\n[#40](https://github.com/aendue/ioBroker.reolink/issues/40)\n[#42](https://github.com/aendue/ioBroker.reolink/issues/42)",
-        "de": "bekannte arbeitskameras hinzugefügt\nsetIrLights akzeptieren Jetzt\n[#40](https://github.com/aendue/ioBroker.reolink/issues/40)\n[#42](https://github.com/aendue/ioBroker.reolink/issues/42)",
-        "ru": "добавлены известные рабочие камеры\nsetIrLights принять Сейчас\n[#40](https://github.com/aendue/ioBroker.reolink/issues/40)\n[#42](https://github.com/aendue/ioBroker.reolink/issues/42)",
-        "pt": "câmaras de trabalho conhecidas adicionadas\nsetIrLights aceitar Agora\n[#40](https://github.com/aendue/ioBroker.reolink/issues/40)\n[#42](https://github.com/aendue/ioBroker.reolink/issues/42)",
-        "nl": "gekende camera's toegevoegd\nplaatsen accepteren Op dit moment\n* _htps * *github.com/ aendue/ioBroker\n_",
-        "fr": "caméras de travail connues ajoutées\nsetIrLights accept Maintenant\n[#40](https://github.com/aendue/ioBroker.reolink/issues/40)\n[#42](https://github.com/aendue/ioBroker.reolink/issues/42)",
-        "it": "telecamere di lavoro note aggiunto\naccettazione di setIrLights Ora\n[#40](https://github.com/aendue/ioBroker.reolink/issues/40)\n[#42](https://github.com/aendue/ioBroker.reolink/issues/42)",
-        "es": "cámaras de trabajo conocidas\nsetIrLights aceptar Ahora\n[#40](https://github.com/aendue/ioBroker.reolink/issues/40)\n[#42](https://github.com/aendue/ioBroker.reolink/issues/42)",
-        "pl": "dodawane są znane kamery robocze\nsetIrLight (ang.). teraz\n(#40(https:/github.com/aendue/ioBroker.reolink/issues/40) (ang.)\n(#42(https:/github.com/aendue/ioBroker.reolink/issues/42) (ang.)",
-        "uk": "відомі робочі камери\nsetIrLights Приймати Зараз\n[#40](https://github.com/aendue/ioBroker.reolink/issues/40)\n[#42](https://github.com/aendue/ioBroker.reolink/issues/42)",
-        "zh-cn": "已知的工作摄像机添加\nb. 接受的一套最佳做法 我现在\n[第40](http://github.com/aendue/ioBroker.reolink/issues/40)\n[第42](http://github.com/aendue/ioBroker.reolink/issues/42)"
       }
     },
     "titleLang": {
@@ -1248,28 +1248,28 @@
       }
     },
     {
-        "_id": "settings.EmailNotification",
-        "type": "state",
-        "common": {
-          "role": "value",
-          "name": {
-            "en": "e-mail notification",
-            "de": "e-mail-benachrichtigung",
-            "ru": "уведомление по электронной почте",
-            "pt": "notificação por e-mail",
-            "nl": "e-mail notificatie",
-            "fr": "notification par courriel",
-            "it": "notifica e-mail",
-            "es": "e-mail notification",
-            "pl": "powiadomienie e-mail",
-            "uk": "повідомлення електронної пошти",
-            "zh-cn": "电子邮件通知"
-          },
-          "type": "number",
-          "read": true,
-          "write": true
-        }
-      },
+      "_id": "settings.EmailNotification",
+      "type": "state",
+      "common": {
+        "role": "value",
+        "name": {
+          "en": "e-mail notification",
+          "de": "e-mail-benachrichtigung",
+          "ru": "уведомление по электронной почте",
+          "pt": "notificação por e-mail",
+          "nl": "e-mail notificatie",
+          "fr": "notification par courriel",
+          "it": "notifica e-mail",
+          "es": "e-mail notification",
+          "pl": "powiadomienie e-mail",
+          "uk": "повідомлення електронної пошти",
+          "zh-cn": "电子邮件通知"
+        },
+        "type": "number",
+        "read": true,
+        "write": true
+      }
+    },
     {
       "_id": "settings.setZoomFocus",
       "type": "state",
