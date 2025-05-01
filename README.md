@@ -51,6 +51,15 @@ If you wish to have any specific API command included...just let me now.
  - LED Light
  - Mail Notification
 
+### Push notification settings
+
+Push notifications to a phone will only be provided if the following conditions are met:
+ - The Push notifications switch in the adapter is ON.
+ - For NVRs, both the global and channel switch are ON.
+ - The Push-notification in the Reolink App of that phone is ON.
+
+The Push-notification in the Reolink app is independent of the adapter setting. It is also independent of the settings on other phones connected to the same camera. Reolink does this so you have an independent way of turning off push notifications per phone. This means deactivating push at iobroker does not touch the toggle button in the app at all.
+
 ### Example Usage of get image:
 
 ```
