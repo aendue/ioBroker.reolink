@@ -176,7 +176,12 @@ class ReoLinkCam extends utils.Adapter {
                     });
                 }
             } catch (error) {
-                this.log.error(`get md state: ${error}`);
+                var errorMessage = error.message.toString();
+                if (errorMessage.includes("timeout of")) {
+                    this.log.debug(`get md state: ${error}`);
+                } else {
+                    this.log.error(`get md state: ${error}`);
+                }
                 this.apiConnected = false;
                 await this.setState("network.connected", {
                     val: this.apiConnected,
@@ -262,7 +267,12 @@ class ReoLinkCam extends utils.Adapter {
                     }
                 }
             } catch (error) {
-                this.log.error(`get ai state general: ${error}`);
+                var errorMessage = error.message.toString();
+                if (errorMessage.includes("timeout of")) {
+                    this.log.debug(`get ai state general: ${error}`);
+                } else {
+                    this.log.error(`get ai state general: ${error}`);
+                }
                 this.apiConnected = false;
                 await this.setState("network.connected", {
                     val: this.apiConnected,
@@ -402,7 +412,12 @@ class ReoLinkCam extends utils.Adapter {
                     }
                 }
             } catch (error) {
-                this.log.error(`drive info${error}`);
+                var errorMessage = error.message.toString();
+                if (errorMessage.includes("timeout of")) {
+                    this.log.debug(`drive info ${error}`);
+                } else {
+                    this.log.error(`drive info ${error}`);
+                }
             }
         }
     }
@@ -843,7 +858,12 @@ class ReoLinkCam extends utils.Adapter {
                 val: this.apiConnected,
                 ack: true,
             });
-            this.log.error(`get recording: ${error}`);
+            var errorMessage = error.message.toString();
+            if (errorMessage.includes("timeout of")) {
+                this.log.debug(`get recording: ${error}`);
+            } else {
+                this.log.error(`get recording: ${error}`);
+            }
         }
     }
     async audioAlarmPlay(count) {
