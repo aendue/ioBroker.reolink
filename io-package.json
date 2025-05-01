@@ -1248,6 +1248,29 @@
       }
     },
     {
+        "_id": "settings.EmailNotification",
+        "type": "state",
+        "common": {
+          "role": "value",
+          "name": {
+            "en": "e-mail notification",
+            "de": "e-mail-benachrichtigung",
+            "ru": "уведомление по электронной почте",
+            "pt": "notificação por e-mail",
+            "nl": "e-mail notificatie",
+            "fr": "notification par courriel",
+            "it": "notifica e-mail",
+            "es": "e-mail notification",
+            "pl": "powiadomienie e-mail",
+            "uk": "повідомлення електронної пошти",
+            "zh-cn": "电子邮件通知"
+          },
+          "type": "number",
+          "read": true,
+          "write": true
+        }
+      },
+    {
       "_id": "settings.setZoomFocus",
       "type": "state",
       "common": {
