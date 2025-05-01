@@ -85,6 +85,7 @@ sendTo("reolink.0",{action: "snap"}, function(result){
 ## Known *NOT* working cameras
 
 - E1 Pro
+- Argus 4 (maybe all Argus are not working)
 
 ## Changelog
 <!--
