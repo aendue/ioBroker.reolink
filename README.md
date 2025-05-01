@@ -93,7 +93,8 @@ sendTo("reolink.0",{action: "snap"}, function(result){
     ### **WORK IN PROGRESS**
 -->
 ### **WORK IN PROGRESS**
-* (oelison) update readme #141
+* (oelison) update readme #141 #155
+* (oelison) supress errors with axios timeout #154
 
 ### 1.2.1 (2025-02-09)
 * (oelison) set some errors to debug logs
