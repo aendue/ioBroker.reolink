@@ -71,6 +71,17 @@ sendTo("reolink.0",{action: "snap"}, function(result){
 ```
 {type:"image/png",base64:"iVBORw....askldfj"}
 ```
+for telegram this is working
+```
+sendTo("reolink.0",{action: "snap"}, function(result){
+    const buffer =Buffer.from(result.base64, "base64");
+    sendTo('telegram.0', {
+        text: buffer,
+        type: "photo",
+        caption: 'the image'
+    });
+});
+```
 
 ## Known working cameras (firmware out of year 2023)
 
