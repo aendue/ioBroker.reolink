@@ -118,7 +118,7 @@ class ReoLinkCam extends utils.Adapter {
         this.log.debug("getStateAsync start Email notification");
         //create state dynamically
         this.getStateAsync("device.name", (err, state) => {
-            this.setState("setting.EmailNotification", state.val);
+            this.setState("settings.EmailNotification", state.val);
             this.getMailNotification();
             this.subscribeStates("settings.EmailNotification");
             this.log.debug("Email notification subscribed");
