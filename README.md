@@ -103,7 +103,7 @@ sendTo("reolink.0",{action: "snap"}, function(result){
     Placeholder for the next version (at the beginning of the line):
     ### **WORK IN PROGRESS**
 -->
-### **WORK IN PROGRESS**
+### 1.2.3 (2025-06-30)
 * (oelison) settings email notification #170
 * (oelison) testing node.js 24 #172
 

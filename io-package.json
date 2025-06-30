@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "reolink",
-    "version": "1.2.2",
+    "version": "1.2.3",
     "news": {
+      "1.2.3": {
+        "en": "settings email notification #170\ntesting node.js 24 #172",
+        "de": "einstellungen e-mail benachrichtigung #170\ntest node.js 24 #172",
+        "ru": "настройки электронной почты #170\nтестирование node.js 24 #172",
+        "pt": "configurações notificação de e- mail #170\ntesting node.js 24 #172",
+        "nl": "instellingen e-mail notificatie #170\ntestknoop.js 24 #172",
+        "fr": "paramètres email notification #170\ntesting node.js 24 #172",
+        "it": "impostazioni e-mail di notifica #170\ntest node.js 24 #172",
+        "es": "configuración notificación de correo electrónico #170\ntest node.js 24 #172",
+        "pl": "ustawienia powiadomienia e-mail # 170\ntest node.js 24 # 172",
+        "uk": "налаштування повідомлення електронної пошти #170\njavascript licenses api веб-сайт go1.13.8",
+        "zh-cn": "设置电子邮件通知 # 170\n测试节点.js 24 #172"
+      },
       "1.2.2": {
         "en": "update readme #141 #155\nsupress errors with axios timeout #154",
         "de": "update readme #141 #155\nsupress fehler mit axios timeout #154",
@@ -80,19 +93,6 @@
         "pl": "[# 56] (https: / / github.com / aendue / ioBroker.reolink / issues / 56) dodano funkcję włączania i wyłączania planowego zapisu\n[# 25] (https: / / github.com / aendue / ioBroker.reolink / issues / 25) odłączanie światła LED od trybu światła LED\ndodany zestaw Funkcja WhiteLedMode\nczytaj zoom i ostrość z zapytaniem POST (działa na RLC- 823A v3.1)\nusunięty węzeł 16",
         "uk": "[#56](https://github.com/aendue/ioBroker.reolink/issues/56) додана функція для перемикання запланованого запису та вимкнення\n[#25](https://github.com/aendue/ioBroker.reolink/issues/25) detach світлодіодний світло від світлодіодного світла\nдодано набір Функція WhiteLedMode\nчитати Зомбі та фокус із запитом POST (працює на RLC-823A v3.1)\nвидалений вузол 16 мар",
         "zh-cn": "[#56] (https://github.com/aendue/ioBroker.reolink/issues/56) 添加了功能,以切换已排定的录制开关\n[#25] (https://github.com/aendue/ioBroker.reolink/issues/25) (中文(简体) ). 从导光模式分离引光\n添加的一组 WhiteLedMode 函数\n使用 POST 请求读取缩放和焦点( RLC-823A v3.1 的工作)\n删除节点 第 16 条"
-      },
-      "1.0.3": {
-        "en": "[#49](https://github.com/aendue/ioBroker.reolink/issues/49)\n[#47](https://github.com/aendue/ioBroker.reolink/issues/47)",
-        "de": "[#49](https://github.com/aendue/ioBroker.reolink/issues/49)\n[#47](https://github.com/aendue/ioBroker.reolink/issues/47)",
-        "ru": "[#49] (https://github.com/aendue/ioBroker.reolink/issues/49)\n[#47] (https://github.com/aendue/ioBroker.reolink/issues/47)",
-        "pt": "[#49](https://github.com/aendue/ioBroker.reolink/issues/49)\n[#47](https://github.com/aendue/ioBroker.reolink/issues/47)",
-        "nl": "[#49](https://github.com/aendue/ioBroker.reolink/issues/49)\n[#47](https://github.com/aendue/ioBroker.reolink/issues/47)",
-        "fr": "[#49](https://github.com/aendue/ioBroker.reolink/issues/49)\n[#47](https://github.com/aendue/ioBroker.reolink/issues/47)",
-        "it": "[#49](https://github.com/aendue/ioBroker.reolink/issues/49)\n[#47](https://github.com/aendue/ioBroker.reolink/issues/47)",
-        "es": "[#49](https://github.com/aendue/ioBroker.reolink/issues/49)\n[#47](https://github.com/aendue/ioBroker.reolink/issues/47)",
-        "pl": "[# 49] (https: / / github.com / aendue / ioBroker.reolink / issues / 49)\n[# 47] (https: / / github.com / aendue / ioBroker.reolink / issues / 47)",
-        "uk": "[#49](https://github.com/aendue/ioBroker.reolink/issues/49)\n[#47](https://github.com/aendue/ioBroker.reolink/issues/47)",
-        "zh-cn": "[49] (https://github.com/aendue/ioBroker.reolink/issues/49) (中文(简体) )\n[47] (https://github.com/aendue/ioBroker.reolink/issues/47) (中文(简体) )"
       }
     },
     "titleLang": {
