@@ -181,6 +181,28 @@
   "objects": [],
   "instanceObjects": [
     {
+      "_id": "ai_config",
+      "type": "channel",
+      "common": {
+        "name": "AI Config"
+      },
+      "native": {}
+    },
+    {
+      "_id": "ai_config.raw",
+      "type": "state",
+      "common": {
+        "role": "value",
+        "name": {
+          "en": "Raw AI Config"
+        },
+        "type": "json",
+        "read": true,
+        "write": false
+      },
+      "native": {}
+    },
+    {
       "_id": "sensor",
       "type": "channel",
       "common": {

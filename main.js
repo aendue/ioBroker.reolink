@@ -275,6 +275,53 @@ class ReoLinkCam extends utils.Adapter {
             }
         }
     }
+
+    async getAiCfg() {
+        if (!this.reolinkApiClient) {
+            return;
+        }
+
+        try {
+            // cmd, channel, user, password
+            const cfg = await this.reolinkApiClient.get(this.genUrl("GetAiCfg", false, true));
+
+            this.log.debug(`GetAiCfg ${JSON.stringify(cfg.status)}: ${JSON.stringify(cfg.data)}`);
+
+            if (cfg.status !== 200) {
+                return;
+            }
+
+            this.apiConnected = true;
+            await this.setState("network.connected", {
+                val: this.apiConnected,
+                ack: true,
+            });
+
+            const val = cfg.data[0].value;
+            try {
+                await this.setState("ai_config.raw", {
+                    val: JSON.stringify(val),
+                    ack: true,
+                });
+                this.log.debug(`ai_config.raw = ${JSON.stringify(val)}`);
+            } catch (error) {
+                this.log.debug(`ai_config.raw: ${error}`);
+            }
+        } catch (error) {
+            var errorMessage = error.message.toString();
+            if (errorMessage.includes("timeout of")) {
+                this.log.debug(`get ai config general: ${error}`);
+            } else {
+                this.log.error(`get ai config general: ${error}`);
+            }
+            this.apiConnected = false;
+            await this.setState("network.connected", {
+                val: this.apiConnected,
+                ack: true,
+            });
+        }
+    }
+
     //function for getting general information of camera device
     async getDevinfo() {
         if (this.reolinkApiClient) {
@@ -1096,6 +1143,7 @@ class ReoLinkCam extends utils.Adapter {
 
         this.getMdState();
         this.getAiState();
+        this.getAiCfg();
         refreshIntervalRecordingTimer++;
         if (refreshIntervalRecordingTimer > refreshIntervalRecording) {
             this.getRecording();
