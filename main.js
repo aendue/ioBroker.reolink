@@ -142,6 +142,7 @@ class ReoLinkCam extends utils.Adapter {
         this.subscribeStates("settings.ptzCheck");
         this.subscribeStates("settings.ptzGuardTimeout");
         this.subscribeStates("Command.Reboot");
+        this.subscribeStates("ai_config.*");
     }
     //function for getting motion detection
     async getMdState() {
@@ -320,6 +321,24 @@ class ReoLinkCam extends utils.Adapter {
                 ack: true,
             });
         }
+    }
+
+    async setAiCfg(jsonString) {
+        try {
+            const command = [
+                {
+                    cmd: "SetAiCfg",
+                    param: JSON.parse(jsonString),
+                },
+            ];
+
+            await this.sendCmd(command, "SetAiCfg");
+        } catch (error) {
+            this.log.error(`setAiCfg: ${error}`);
+        }
+
+        // Immediately after patching the settings, get the new settings.
+        await this.getAiCfg();
     }
 
     //function for getting general information of camera device
@@ -1318,6 +1337,12 @@ class ReoLinkCam extends utils.Adapter {
                 const idValues = id.split(".");
                 const propName = idValues[idValues.length - 1];
                 this.log.info(`Changed state: ${propName}`);
+
+                if (id.endsWith("ai_config.raw")) {
+                    this.setAiCfg(state.val);
+                    return;
+                }
+
                 if (propName == "ir") {
                     this.setIrLights(state.val);
                 }
