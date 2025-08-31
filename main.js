@@ -1245,6 +1245,7 @@ class ReoLinkCam extends utils.Adapter {
     }
     async setMailNotification(state) {
         if (state == 0 || state == 1) {
+            await this.getMailNotification();
             const mail = await this.getStateAsync("RAW.Email");
             const val = JSON.parse(mail.val).value.Email;
 
