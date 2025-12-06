@@ -1,1558 +1,1548 @@
 {
-  "common": {
-    "name": "reolink",
-    "version": "1.2.3",
-    "news": {
-      "1.2.3": {
-        "en": "settings email notification #170\ntesting node.js 24 #172",
-        "de": "einstellungen e-mail benachrichtigung #170\ntest node.js 24 #172",
-        "ru": "настройки электронной почты #170\nтестирование node.js 24 #172",
-        "pt": "configurações notificação de e- mail #170\ntesting node.js 24 #172",
-        "nl": "instellingen e-mail notificatie #170\ntestknoop.js 24 #172",
-        "fr": "paramètres email notification #170\ntesting node.js 24 #172",
-        "it": "impostazioni e-mail di notifica #170\ntest node.js 24 #172",
-        "es": "configuración notificación de correo electrónico #170\ntest node.js 24 #172",
-        "pl": "ustawienia powiadomienia e-mail # 170\ntest node.js 24 # 172",
-        "uk": "налаштування повідомлення електронної пошти #170\njavascript licenses api веб-сайт go1.13.8",
-        "zh-cn": "设置电子邮件通知 # 170\n测试节点.js 24 #172"
-      },
-      "1.2.2": {
-        "en": "update readme #141 #155\nsupress errors with axios timeout #154",
-        "de": "update readme #141 #155\nsupress fehler mit axios timeout #154",
-        "ru": "обновление readme #141 #155\nсупрессивные ошибки с тайм-аутом #154",
-        "pt": "atualização readme #141 #155\nsupress erros com axios timeout #154",
-        "nl": "update readme #141 #155\nsupress fouten met axios timeout #154",
-        "fr": "mise à jour readme #141 #155\nerreurs supress avec axios timeout #154",
-        "it": "aggiornamento readme #141 #155\nerrori supress con timeout assios #154",
-        "es": "actualización readme #141 #155\nerrores de supresión con axios timeout #154",
-        "pl": "update readme # 141 # 155\nsupress błędy z axios timeout # 154",
-        "uk": "javascript licenses api веб-сайт\nпомилки пригнічності аксіосу #154",
-        "zh-cn": "更新读数 #141 #155\naxios 超时 154 时出现错误"
-      },
-      "1.2.1": {
-        "en": "set some errors to debug logs",
-        "de": "fehler auf debug-logs einstellen",
-        "ru": "установить некоторые ошибки для отладки журналов",
-        "pt": "definir alguns erros para depurar logs",
-        "nl": "enkele fouten in de debug-logs plaatsen",
-        "fr": "définir quelques erreurs pour déboguer les journaux",
-        "it": "impostare alcuni errori per debug logs",
-        "es": "establecer algunos errores para depurar registros",
-        "pl": "ustawić pewne błędy w logach debugowania",
-        "uk": "встановити деякі помилки для видалення журналів",
-        "zh-cn": "设置一些调试日志错误"
-      },
-      "1.2.0": {
-        "en": "update disk info\nuri enconding is switchable (helps sometimes by one special char)\n#28 PTZ check added",
-        "de": "dateidaten aktualisieren\nuri enconding ist schaltbar (hilfe manchmal von einem speziellen zeichen)\n#28 PTZ Check hinzugefügt",
-        "ru": "info\nuri enconding можно переключить (помогает иногда одним специальным шаром)\n#28 PTZ добавлена",
-        "pt": "atualizar informações do disco\nuri enconding é comutável (ajuda às vezes por um carvão especial)\n#28 PTZ Verificação adicionada",
-        "nl": "schijfinfo bijwerken\nuri enconding is schakelbaar (helpt soms door een speciale char)\n28 PTZ controle toegevoegd",
-        "fr": "mettre à jour les informations du disque\nuri enconding est commutable (aide parfois par un char spécial)\n#28 PTZ vérification ajoutée",
-        "it": "aggiornare le informazioni sul disco\nuri enconding è commutabile (aiuta a volte da uno speciale char)\n#28 PTZ controllo aggiunto",
-        "es": "actualización del disco info\nuri enconding es conmutable (ayuda a veces por un char especial)\n#28 PTZ cheque añadido",
-        "pl": "aktualizacja informacji o dysku\nuri enconding jest switchable (pomaga czasami przez jeden specjalny znak)\n# 28 PTZ check added",
-        "uk": "оновлення інформації диска\nuri enconding (допомагає іноді одним особливим char)\n#28 ПТЗ додано",
-        "zh-cn": "更新磁盘信息\nuri 编码是可切换的(有时由一个特殊的字符帮助)\n#28 PTZ (英语). 检查已添加"
-      },
-      "1.1.2": {
-        "en": "[#22](https://github.com/aendue/ioBroker.reolink/issues/22) password with some more special chars works now\nadapter warnings resolved",
-        "de": "[#22](https://github.com/aendue/ioBroker.reolink/issues/22) Passwort mit einigen weiteren speziellen Zeichen funktioniert jetzt\nadapterwarnungen behoben",
-        "ru": "[#22] (https://github.com/aendue/ioBroker.reolink/issues/22) пароль с некоторыми более специальными харями работает сейчас\nпредупреждения адаптера разрешены",
-        "pt": "[#22](https://github.com/aendue/ioBroker.reolink/issues/22) senha com algumas obras de caridade mais especiais agora\navisos do adaptador resolvidos",
-        "nl": "[#22](https://github.com/aendue/ioBroker.reolink/issues/22) wachtwoord met wat meer speciale tekens werkt nu\nadapter waarschuwingen verdwenen",
-        "fr": "[#22](https://github.com/aendue/ioBroker.reolink/issues/22) mot de passe avec des caractères plus spéciaux fonctionne maintenant\navertissements d'adaptateur résolus",
-        "it": "[#22](https://github.com/aendue/ioBroker.reolink/issues/22) password con alcune opere di beneficenza più speciali ora\navvertenze adattatori risolte",
-        "es": "[#22](https://github.com/aendue/ioBroker.reolink/issues/22) contraseña con algunos más obras de caridad especiales ahora\nadmisiones de adaptador resueltas",
-        "pl": "[# 22] (https: / / github.com / aendue / ioBroker.reolink / issues / 22) hasło z trochę więcej specjalnych znaków działa teraz\nostrzeżenia adaptera ustąpiły",
-        "uk": "[#22](https://github.com/aendue/ioBroker.reolink/products/22) пароля з деякими спеціальними chars працює зараз\nпопередження адаптерів",
-        "zh-cn": "[#22] (https://github.com/aendue/ioBroker.reolink/issues/22) (中文(简体) ). 密码加上一些特殊的字符\n已解决适配器警告"
-      },
-      "1.1.1": {
-        "en": "removed warnings from adapter check\nadded ftp support\nchannel now distinguishing most requests\n[#79](https://github.com/aendue/ioBroker.reolink/issues/79) error messages with more info where",
-        "de": "entfernte warnungen aus der adapterprüfung\nftp unterstützung\nkanal jetzt unterscheiden die meisten anfragen\n[#79](https://github.com/aendue/ioBroker.reolink/issues/79) Fehlermeldungen mit mehr Info wo",
-        "ru": "удаленные предупреждения от проверки адаптера\nдобавленная поддержка ftp\nканал теперь различает большинство запросов\n[#79] (https://github.com/aendue/ioBroker.reolink/issues/79) сообщения об ошибках с большей информацией, где",
-        "pt": "avisos removidos da verificação do adaptador\nsuporte de ftp adicionado\ncanal agora distingue a maioria dos pedidos\n[#79](https://github.com/aendue/ioBroker.reolink/issues/79) mensagens de erro com mais informações onde",
-        "nl": "verwijderde waarschuwingen van adaptercontrole\ntoegevoegde ftp-ondersteuning\nkanaal dat nu de meeste verzoeken onderscheidt\n[#79](https://github.com/aendue/ioBroker.reolink/issues/79) foutmeldingen met meer informatie waar",
-        "fr": "avertissements supprimés de la vérification de l'adaptateur\nsupport ftp ajouté\ncanal distinguant maintenant la plupart des requêtes\n[#79](https://github.com/aendue/ioBroker.reolink/issues/79) messages d'erreur avec plus d'informations où",
-        "it": "avvisi rimossi dal controllo dell'adattatore\nsupporto ftp aggiunto\ncanale ora distinguere la maggior parte delle richieste\n[#79](https://github.com/aendue/ioBroker.reolink/issues/79) messaggi di errore con più informazioni dove",
-        "es": "advertencias eliminadas de la comprobación del adaptador\napoyo añadido ftp\ncanal ahora distingue la mayoría de las solicitudes\n[#79](https://github.com/aendue/ioBroker.reolink/issues/79) mensajes de error con más información",
-        "pl": "usunięte ostrzeżenia z kontroli adaptera\ndodane wsparcie ftp\nkanał wyróżniający większość żądań\n[# 79] (https: / / github.com / aendue / ioBroker.reolink / issues / 79) komunikaty błędów z więcej informacji, gdzie",
-        "uk": "видалити попередження з перевірки адаптера\nдодано підтримку ftp\nканал тепер відрізняє більшість запитів\n[#79](https://github.com/aendue/ioBroker.reolink/issues/79) повідомлення про помилки з більш детальною інформацією, де",
-        "zh-cn": "从适配器检查中删除警告\n添加 ftp 支持\n频道现在区分大多数请求\n[79] (https://github.com/aendue/ioBroker.reolink/issues/79) (中文(简体) ). 带有更多信息的错误信息"
-      },
-      "1.1.0": {
-        "en": "[#56](https://github.com/aendue/ioBroker.reolink/issues/56) added function to switch scheduled recording on and off\n[#25](https://github.com/aendue/ioBroker.reolink/issues/25) detach led light from led light mode\nadded setWhiteLedMode function\nread zoom and focus with POST request (works on RLC-823A v3.1)\nremoved node 16",
-        "de": "[#56](https://github.com/aendue/ioBroker.reolink/issues/56) hat die Funktion hinzugefügt, die geplante Aufnahme ein- und ausschaltet\n[#25](https://github.com/aendue/ioBroker.reolink/issues/25) abnehmbares LED-Licht aus LED-Lichtmodus\nhinzugefügt WhiteLedMode Funktion\nzoom und fokus mit POST-Anforderung (Arbeiten auf RLC-823A v3.1)\nentfernter knoten anhang",
-        "ru": "[#56] (https://github.com/aendue/ioBroker.reolink/issues/56)\n[#25] (https://github.com/aendue/ioBroker.reolink/issues/25) Отключение светодиодного света\nдобавлен Функция WhiteLedMode\nчитайте зум и сосредоточьтесь с запросом POST (работает на RLC-823A v3.1)\nудаленный узел 16",
-        "pt": "[#56](https://github.com/aendue/ioBroker.reolink/issues/56) adicionou a função para alternar a gravação agendada e desligada\n[#25](https://github.com/aendue/ioBroker.reolink/issues/25) deslize levou luz do modo de luz led\nconjunto adicionado Função de WhiteLedMode\nler zoom e foco com pedido POST (trabalho em RLC-823A v3.1)\nnó removido 16",
-        "nl": "[#56](https://github.com/aendue/ioBroker.reolink/issues/56) toegevoegd functie om geplande opname aan en uit te schakelen\n[#25](https://github.com/aendue/ioBroker.reolink/issues/25) loskoppelen led licht van led licht modus\nset toegevoegd WhiteLedMode-functie\nlees zoom en focus met POST verzoek (werken op RLC-823A v3.1)\nverwijderde knoop 16",
-        "fr": "[#56](https://github.com/aendue/ioBroker.reolink/issues/56) a ajouté une fonction pour activer et désactiver l'enregistrement programmé\n[#25](https://github.com/aendue/ioBroker.reolink/issues/25) détachez la lumière led du mode lumière led\nensemble ajouté Fonction WhiteLedMode\nlire zoom et mise au point avec la demande POST (travaille sur RLC-823A v3.1)\nnoeud enlevé 16",
-        "it": "[#56](https://github.com/aendue/ioBroker.reolink/issues/56) funzione aggiunta per attivare e disattivare la registrazione programmata\n[#25](https://github.com/aendue/ioBroker.reolink/issues/25) il distacco ha condotto la luce dalla modalità di luce led\nset aggiunto Funzione WhiteLedMode\nleggere lo zoom e concentrarsi sulla richiesta POST (lavora su RLC-823A v3.1)\nnodo rimosso 16",
-        "es": "[#56](https://github.com/aendue/ioBroker.reolink/issues/56) añadió la función de activar y apagar la grabación programada\n[#25](https://github.com/aendue/ioBroker.reolink/issues/25) desprendimiento de luz led del modo de luz led\nconjunto Función WhiteLedMode\nleer zoom y enfoque con solicitud POST (trabaja en RLC-823A v3.1)\nnodo eliminado 16",
-        "pl": "[# 56] (https: / / github.com / aendue / ioBroker.reolink / issues / 56) dodano funkcję włączania i wyłączania planowego zapisu\n[# 25] (https: / / github.com / aendue / ioBroker.reolink / issues / 25) odłączanie światła LED od trybu światła LED\ndodany zestaw Funkcja WhiteLedMode\nczytaj zoom i ostrość z zapytaniem POST (działa na RLC- 823A v3.1)\nusunięty węzeł 16",
-        "uk": "[#56](https://github.com/aendue/ioBroker.reolink/issues/56) додана функція для перемикання запланованого запису та вимкнення\n[#25](https://github.com/aendue/ioBroker.reolink/issues/25) detach світлодіодний світло від світлодіодного світла\nдодано набір Функція WhiteLedMode\nчитати Зомбі та фокус із запитом POST (працює на RLC-823A v3.1)\nвидалений вузол 16 мар",
-        "zh-cn": "[#56] (https://github.com/aendue/ioBroker.reolink/issues/56) 添加了功能,以切换已排定的录制开关\n[#25] (https://github.com/aendue/ioBroker.reolink/issues/25) (中文(简体) ). 从导光模式分离引光\n添加的一组 WhiteLedMode 函数\n使用 POST 请求读取缩放和焦点( RLC-823A v3.1 的工作)\n删除节点 第 16 条"
-      }
+    "common": {
+        "name": "reolink",
+        "version": "1.2.3",
+        "news": {
+            "1.2.3": {
+                "en": "settings email notification #170\ntesting node.js 24 #172",
+                "de": "einstellungen e-mail benachrichtigung #170\ntest node.js 24 #172",
+                "ru": "настройки электронной почты #170\nтестирование node.js 24 #172",
+                "pt": "configurações notificação de e- mail #170\ntesting node.js 24 #172",
+                "nl": "instellingen e-mail notificatie #170\ntestknoop.js 24 #172",
+                "fr": "paramètres email notification #170\ntesting node.js 24 #172",
+                "it": "impostazioni e-mail di notifica #170\ntest node.js 24 #172",
+                "es": "configuración notificación de correo electrónico #170\ntest node.js 24 #172",
+                "pl": "ustawienia powiadomienia e-mail # 170\ntest node.js 24 # 172",
+                "uk": "налаштування повідомлення електронної пошти #170\njavascript licenses api веб-сайт go1.13.8",
+                "zh-cn": "设置电子邮件通知 # 170\n测试节点.js 24 #172"
+            },
+            "1.2.2": {
+                "en": "update readme #141 #155\nsupress errors with axios timeout #154",
+                "de": "update readme #141 #155\nsupress fehler mit axios timeout #154",
+                "ru": "обновление readme #141 #155\nсупрессивные ошибки с тайм-аутом #154",
+                "pt": "atualização readme #141 #155\nsupress erros com axios timeout #154",
+                "nl": "update readme #141 #155\nsupress fouten met axios timeout #154",
+                "fr": "mise à jour readme #141 #155\nerreurs supress avec axios timeout #154",
+                "it": "aggiornamento readme #141 #155\nerrori supress con timeout assios #154",
+                "es": "actualización readme #141 #155\nerrores de supresión con axios timeout #154",
+                "pl": "update readme # 141 # 155\nsupress błędy z axios timeout # 154",
+                "uk": "javascript licenses api веб-сайт\nпомилки пригнічності аксіосу #154",
+                "zh-cn": "更新读数 #141 #155\naxios 超时 154 时出现错误"
+            },
+            "1.2.1": {
+                "en": "set some errors to debug logs",
+                "de": "fehler auf debug-logs einstellen",
+                "ru": "установить некоторые ошибки для отладки журналов",
+                "pt": "definir alguns erros para depurar logs",
+                "nl": "enkele fouten in de debug-logs plaatsen",
+                "fr": "définir quelques erreurs pour déboguer les journaux",
+                "it": "impostare alcuni errori per debug logs",
+                "es": "establecer algunos errores para depurar registros",
+                "pl": "ustawić pewne błędy w logach debugowania",
+                "uk": "встановити деякі помилки для видалення журналів",
+                "zh-cn": "设置一些调试日志错误"
+            },
+            "1.2.0": {
+                "en": "update disk info\nuri enconding is switchable (helps sometimes by one special char)\n#28 PTZ check added",
+                "de": "dateidaten aktualisieren\nuri enconding ist schaltbar (hilfe manchmal von einem speziellen zeichen)\n#28 PTZ Check hinzugefügt",
+                "ru": "info\nuri enconding можно переключить (помогает иногда одним специальным шаром)\n#28 PTZ добавлена",
+                "pt": "atualizar informações do disco\nuri enconding é comutável (ajuda às vezes por um carvão especial)\n#28 PTZ Verificação adicionada",
+                "nl": "schijfinfo bijwerken\nuri enconding is schakelbaar (helpt soms door een speciale char)\n28 PTZ controle toegevoegd",
+                "fr": "mettre à jour les informations du disque\nuri enconding est commutable (aide parfois par un char spécial)\n#28 PTZ vérification ajoutée",
+                "it": "aggiornare le informazioni sul disco\nuri enconding è commutabile (aiuta a volte da uno speciale char)\n#28 PTZ controllo aggiunto",
+                "es": "actualización del disco info\nuri enconding es conmutable (ayuda a veces por un char especial)\n#28 PTZ cheque añadido",
+                "pl": "aktualizacja informacji o dysku\nuri enconding jest switchable (pomaga czasami przez jeden specjalny znak)\n# 28 PTZ check added",
+                "uk": "оновлення інформації диска\nuri enconding (допомагає іноді одним особливим char)\n#28 ПТЗ додано",
+                "zh-cn": "更新磁盘信息\nuri 编码是可切换的(有时由一个特殊的字符帮助)\n#28 PTZ (英语). 检查已添加"
+            },
+            "1.1.2": {
+                "en": "[#22](https://github.com/aendue/ioBroker.reolink/issues/22) password with some more special chars works now\nadapter warnings resolved",
+                "de": "[#22](https://github.com/aendue/ioBroker.reolink/issues/22) Passwort mit einigen weiteren speziellen Zeichen funktioniert jetzt\nadapterwarnungen behoben",
+                "ru": "[#22] (https://github.com/aendue/ioBroker.reolink/issues/22) пароль с некоторыми более специальными харями работает сейчас\nпредупреждения адаптера разрешены",
+                "pt": "[#22](https://github.com/aendue/ioBroker.reolink/issues/22) senha com algumas obras de caridade mais especiais agora\navisos do adaptador resolvidos",
+                "nl": "[#22](https://github.com/aendue/ioBroker.reolink/issues/22) wachtwoord met wat meer speciale tekens werkt nu\nadapter waarschuwingen verdwenen",
+                "fr": "[#22](https://github.com/aendue/ioBroker.reolink/issues/22) mot de passe avec des caractères plus spéciaux fonctionne maintenant\navertissements d'adaptateur résolus",
+                "it": "[#22](https://github.com/aendue/ioBroker.reolink/issues/22) password con alcune opere di beneficenza più speciali ora\navvertenze adattatori risolte",
+                "es": "[#22](https://github.com/aendue/ioBroker.reolink/issues/22) contraseña con algunos más obras de caridad especiales ahora\nadmisiones de adaptador resueltas",
+                "pl": "[# 22] (https: / / github.com / aendue / ioBroker.reolink / issues / 22) hasło z trochę więcej specjalnych znaków działa teraz\nostrzeżenia adaptera ustąpiły",
+                "uk": "[#22](https://github.com/aendue/ioBroker.reolink/products/22) пароля з деякими спеціальними chars працює зараз\nпопередження адаптерів",
+                "zh-cn": "[#22] (https://github.com/aendue/ioBroker.reolink/issues/22) (中文(简体) ). 密码加上一些特殊的字符\n已解决适配器警告"
+            },
+            "1.1.1": {
+                "en": "removed warnings from adapter check\nadded ftp support\nchannel now distinguishing most requests\n[#79](https://github.com/aendue/ioBroker.reolink/issues/79) error messages with more info where",
+                "de": "entfernte warnungen aus der adapterprüfung\nftp unterstützung\nkanal jetzt unterscheiden die meisten anfragen\n[#79](https://github.com/aendue/ioBroker.reolink/issues/79) Fehlermeldungen mit mehr Info wo",
+                "ru": "удаленные предупреждения от проверки адаптера\nдобавленная поддержка ftp\nканал теперь различает большинство запросов\n[#79] (https://github.com/aendue/ioBroker.reolink/issues/79) сообщения об ошибках с большей информацией, где",
+                "pt": "avisos removidos da verificação do adaptador\nsuporte de ftp adicionado\ncanal agora distingue a maioria dos pedidos\n[#79](https://github.com/aendue/ioBroker.reolink/issues/79) mensagens de erro com mais informações onde",
+                "nl": "verwijderde waarschuwingen van adaptercontrole\ntoegevoegde ftp-ondersteuning\nkanaal dat nu de meeste verzoeken onderscheidt\n[#79](https://github.com/aendue/ioBroker.reolink/issues/79) foutmeldingen met meer informatie waar",
+                "fr": "avertissements supprimés de la vérification de l'adaptateur\nsupport ftp ajouté\ncanal distinguant maintenant la plupart des requêtes\n[#79](https://github.com/aendue/ioBroker.reolink/issues/79) messages d'erreur avec plus d'informations où",
+                "it": "avvisi rimossi dal controllo dell'adattatore\nsupporto ftp aggiunto\ncanale ora distinguere la maggior parte delle richieste\n[#79](https://github.com/aendue/ioBroker.reolink/issues/79) messaggi di errore con più informazioni dove",
+                "es": "advertencias eliminadas de la comprobación del adaptador\napoyo añadido ftp\ncanal ahora distingue la mayoría de las solicitudes\n[#79](https://github.com/aendue/ioBroker.reolink/issues/79) mensajes de error con más información",
+                "pl": "usunięte ostrzeżenia z kontroli adaptera\ndodane wsparcie ftp\nkanał wyróżniający większość żądań\n[# 79] (https: / / github.com / aendue / ioBroker.reolink / issues / 79) komunikaty błędów z więcej informacji, gdzie",
+                "uk": "видалити попередження з перевірки адаптера\nдодано підтримку ftp\nканал тепер відрізняє більшість запитів\n[#79](https://github.com/aendue/ioBroker.reolink/issues/79) повідомлення про помилки з більш детальною інформацією, де",
+                "zh-cn": "从适配器检查中删除警告\n添加 ftp 支持\n频道现在区分大多数请求\n[79] (https://github.com/aendue/ioBroker.reolink/issues/79) (中文(简体) ). 带有更多信息的错误信息"
+            },
+            "1.1.0": {
+                "en": "[#56](https://github.com/aendue/ioBroker.reolink/issues/56) added function to switch scheduled recording on and off\n[#25](https://github.com/aendue/ioBroker.reolink/issues/25) detach led light from led light mode\nadded setWhiteLedMode function\nread zoom and focus with POST request (works on RLC-823A v3.1)\nremoved node 16",
+                "de": "[#56](https://github.com/aendue/ioBroker.reolink/issues/56) hat die Funktion hinzugefügt, die geplante Aufnahme ein- und ausschaltet\n[#25](https://github.com/aendue/ioBroker.reolink/issues/25) abnehmbares LED-Licht aus LED-Lichtmodus\nhinzugefügt WhiteLedMode Funktion\nzoom und fokus mit POST-Anforderung (Arbeiten auf RLC-823A v3.1)\nentfernter knoten anhang",
+                "ru": "[#56] (https://github.com/aendue/ioBroker.reolink/issues/56)\n[#25] (https://github.com/aendue/ioBroker.reolink/issues/25) Отключение светодиодного света\nдобавлен Функция WhiteLedMode\nчитайте зум и сосредоточьтесь с запросом POST (работает на RLC-823A v3.1)\nудаленный узел 16",
+                "pt": "[#56](https://github.com/aendue/ioBroker.reolink/issues/56) adicionou a função para alternar a gravação agendada e desligada\n[#25](https://github.com/aendue/ioBroker.reolink/issues/25) deslize levou luz do modo de luz led\nconjunto adicionado Função de WhiteLedMode\nler zoom e foco com pedido POST (trabalho em RLC-823A v3.1)\nnó removido 16",
+                "nl": "[#56](https://github.com/aendue/ioBroker.reolink/issues/56) toegevoegd functie om geplande opname aan en uit te schakelen\n[#25](https://github.com/aendue/ioBroker.reolink/issues/25) loskoppelen led licht van led licht modus\nset toegevoegd WhiteLedMode-functie\nlees zoom en focus met POST verzoek (werken op RLC-823A v3.1)\nverwijderde knoop 16",
+                "fr": "[#56](https://github.com/aendue/ioBroker.reolink/issues/56) a ajouté une fonction pour activer et désactiver l'enregistrement programmé\n[#25](https://github.com/aendue/ioBroker.reolink/issues/25) détachez la lumière led du mode lumière led\nensemble ajouté Fonction WhiteLedMode\nlire zoom et mise au point avec la demande POST (travaille sur RLC-823A v3.1)\nnoeud enlevé 16",
+                "it": "[#56](https://github.com/aendue/ioBroker.reolink/issues/56) funzione aggiunta per attivare e disattivare la registrazione programmata\n[#25](https://github.com/aendue/ioBroker.reolink/issues/25) il distacco ha condotto la luce dalla modalità di luce led\nset aggiunto Funzione WhiteLedMode\nleggere lo zoom e concentrarsi sulla richiesta POST (lavora su RLC-823A v3.1)\nnodo rimosso 16",
+                "es": "[#56](https://github.com/aendue/ioBroker.reolink/issues/56) añadió la función de activar y apagar la grabación programada\n[#25](https://github.com/aendue/ioBroker.reolink/issues/25) desprendimiento de luz led del modo de luz led\nconjunto Función WhiteLedMode\nleer zoom y enfoque con solicitud POST (trabaja en RLC-823A v3.1)\nnodo eliminado 16",
+                "pl": "[# 56] (https: / / github.com / aendue / ioBroker.reolink / issues / 56) dodano funkcję włączania i wyłączania planowego zapisu\n[# 25] (https: / / github.com / aendue / ioBroker.reolink / issues / 25) odłączanie światła LED od trybu światła LED\ndodany zestaw Funkcja WhiteLedMode\nczytaj zoom i ostrość z zapytaniem POST (działa na RLC- 823A v3.1)\nusunięty węzeł 16",
+                "uk": "[#56](https://github.com/aendue/ioBroker.reolink/issues/56) додана функція для перемикання запланованого запису та вимкнення\n[#25](https://github.com/aendue/ioBroker.reolink/issues/25) detach світлодіодний світло від світлодіодного світла\nдодано набір Функція WhiteLedMode\nчитати Зомбі та фокус із запитом POST (працює на RLC-823A v3.1)\nвидалений вузол 16 мар",
+                "zh-cn": "[#56] (https://github.com/aendue/ioBroker.reolink/issues/56) 添加了功能,以切换已排定的录制开关\n[#25] (https://github.com/aendue/ioBroker.reolink/issues/25) (中文(简体) ). 从导光模式分离引光\n添加的一组 WhiteLedMode 函数\n使用 POST 请求读取缩放和焦点( RLC-823A v3.1 的工作)\n删除节点 第 16 条"
+            }
+        },
+        "titleLang": {
+            "en": "reolink",
+            "de": "reolink",
+            "ru": "реолин",
+            "pt": "religação",
+            "nl": "reolink",
+            "fr": "reolink",
+            "it": "reolink",
+            "es": "reolink",
+            "pl": "reolinka",
+            "zh-cn": "重新联系",
+            "uk": "reolink"
+        },
+        "desc": {
+            "en": "reolink",
+            "de": "reolink",
+            "ru": "реолин",
+            "pt": "religação",
+            "nl": "reolink",
+            "fr": "reolink",
+            "it": "reolink",
+            "es": "reolink",
+            "pl": "reolinka",
+            "zh-cn": "重新联系",
+            "uk": "reolink"
+        },
+        "authors": ["Andy Grundt <andy.grundt@icloud.com>"],
+        "keywords": ["reolink", "ip-camera", "image", "camera"],
+        "licenseInformation": {
+            "type": "free",
+            "license": "MIT"
+        },
+        "platform": "Javascript/Node.js",
+        "icon": "reolink.png",
+        "enabled": true,
+        "extIcon": "https://raw.githubusercontent.com/aendue/ioBroker.reolink/main/admin/reolink.png",
+        "readme": "https://github.com/aendue/ioBroker.reolink/blob/main/README.md",
+        "loglevel": "info",
+        "tier": 3,
+        "mode": "daemon",
+        "type": "alarm",
+        "nogit": true,
+        "compact": true,
+        "connectionType": "local",
+        "dataSource": "poll",
+        "messagebox": true,
+        "adminUI": {
+            "config": "json"
+        },
+        "dependencies": [
+            {
+                "js-controller": ">=5.0.19"
+            }
+        ],
+        "globalDependencies": [
+            {
+                "admin": ">=7.4.10"
+            }
+        ]
     },
-    "titleLang": {
-      "en": "reolink",
-      "de": "reolink",
-      "ru": "реолин",
-      "pt": "religação",
-      "nl": "reolink",
-      "fr": "reolink",
-      "it": "reolink",
-      "es": "reolink",
-      "pl": "reolinka",
-      "zh-cn": "重新联系",
-      "uk": "reolink"
+    "encryptedNative": ["cameraPassword"],
+    "protectedNative": ["cameraPassword"],
+    "native": {
+        "cameraType": "",
+        "cameraIp": "",
+        "cameraProtocol": "https",
+        "cameraChannel": 0,
+        "cameraUser": "",
+        "cameraPassword": "",
+        "apiRefreshInterval": "10",
+        "sslvalid": false,
+        "UriEncodedPassword": true
     },
-    "desc": {
-      "en": "reolink",
-      "de": "reolink",
-      "ru": "реолин",
-      "pt": "religação",
-      "nl": "reolink",
-      "fr": "reolink",
-      "it": "reolink",
-      "es": "reolink",
-      "pl": "reolinka",
-      "zh-cn": "重新联系",
-      "uk": "reolink"
-    },
-    "authors": [
-      "Andy Grundt <andy.grundt@icloud.com>"
-    ],
-    "keywords": [
-      "reolink",
-      "ip-camera",
-      "image",
-      "camera"
-    ],
-    "licenseInformation": {
-      "type": "free",
-      "license": "MIT"
-    },
-    "platform": "Javascript/Node.js",
-    "icon": "reolink_logo.png",
-    "enabled": true,
-    "extIcon": "https://raw.githubusercontent.com/aendue/ioBroker.reolink/main/admin/reolink_logo.png",
-    "readme": "https://github.com/aendue/ioBroker.reolink/blob/main/README.md",
-    "loglevel": "info",
-    "tier": 3,
-    "mode": "daemon",
-    "type": "alarm",
-    "compact": true,
-    "connectionType": "local",
-    "dataSource": "poll",
-    "messagebox": true,
-    "adminUI": {
-      "config": "json"
-    },
-    "dependencies": [
-      {
-        "js-controller": ">=5.0.19"
-      }
-    ],
-    "globalDependencies": [
-      {
-        "admin": ">=7.4.10"
-      }
+    "objects": [],
+    "instanceObjects": [
+        {
+            "_id": "ai_config",
+            "type": "channel",
+            "common": {
+                "name": "AI Config"
+            },
+            "native": {}
+        },
+        {
+            "_id": "ai_config.raw",
+            "type": "state",
+            "common": {
+                "role": "value",
+                "name": {
+                    "en": "Raw AI Config"
+                },
+                "type": "json",
+                "read": true,
+                "write": true
+            },
+            "native": {}
+        },
+        {
+            "_id": "sensor",
+            "type": "channel",
+            "common": {
+                "name": {
+                    "en": "sensor",
+                    "de": "sensor",
+                    "ru": "датчик",
+                    "pt": "sensor de sensor",
+                    "nl": "sensor",
+                    "fr": "capteur",
+                    "it": "sensore sensore sensore sensore",
+                    "es": "sensor",
+                    "pl": "sensor",
+                    "zh-cn": "传感"
+                }
+            },
+            "native": {}
+        },
+        {
+            "_id": "sensor.dog_cat",
+            "type": "channel",
+            "common": {
+                "name": {
+                    "en": "dog cat",
+                    "de": "hund katze",
+                    "ru": "собака кот",
+                    "pt": "cão gato",
+                    "nl": "hond",
+                    "fr": "chien chat",
+                    "it": "cane gatto",
+                    "es": "perro",
+                    "pl": "kot",
+                    "uk": "собака кішка",
+                    "zh-cn": "导 言"
+                }
+            },
+            "native": {}
+        },
+        {
+            "_id": "sensor.dog_cat.state",
+            "type": "state",
+            "common": {
+                "role": "value",
+                "name": {
+                    "en": "dog cat detection",
+                    "de": "hund katze erkennung",
+                    "ru": "обнаружение собаки кота",
+                    "pt": "detecção de gato cão",
+                    "nl": "hondenpolitie",
+                    "fr": "détection de chiens",
+                    "it": "rilevamento del gatto del cane",
+                    "es": "detección de gatos",
+                    "pl": "psy",
+                    "uk": "виявлення собак",
+                    "zh-cn": "目 录"
+                },
+                "type": "boolean",
+                "read": true,
+                "write": false
+            },
+            "native": {}
+        },
+        {
+            "_id": "sensor.dog_cat.support",
+            "type": "state",
+            "common": {
+                "role": "value",
+                "name": {
+                    "en": "dog cat support",
+                    "de": "hund katze unterstützung",
+                    "ru": "собака кошка поддержка",
+                    "pt": "cão gato apoio",
+                    "nl": "honden",
+                    "fr": "soutien aux chats",
+                    "it": "cane gatto supporto",
+                    "es": "gato apoyo",
+                    "pl": "koty",
+                    "uk": "підтримка собак",
+                    "zh-cn": "b. 导向"
+                },
+                "type": "boolean",
+                "read": true,
+                "write": false
+            },
+            "native": {}
+        },
+        {
+            "_id": "sensor.face",
+            "type": "channel",
+            "common": {
+                "name": {
+                    "en": "face",
+                    "de": "gesicht",
+                    "ru": "лицо",
+                    "pt": "rosto",
+                    "nl": "gezicht",
+                    "fr": "face",
+                    "it": "faccia",
+                    "es": "cara",
+                    "pl": "face",
+                    "uk": "обличчя",
+                    "zh-cn": "面对面"
+                }
+            },
+            "native": {}
+        },
+        {
+            "_id": "sensor.face.state",
+            "type": "state",
+            "common": {
+                "role": "value",
+                "name": {
+                    "en": "face detection",
+                    "de": "gesichtserkennung",
+                    "ru": "обнаружение лица",
+                    "pt": "detecção de face",
+                    "nl": "gezichtsdetector",
+                    "fr": "détection du visage",
+                    "it": "rilevamento del viso",
+                    "es": "detección facial",
+                    "pl": "wykrywanie twarzy",
+                    "uk": "виявлення обличчя",
+                    "zh-cn": "探 视"
+                },
+                "type": "boolean",
+                "read": true,
+                "write": false
+            },
+            "native": {}
+        },
+        {
+            "_id": "sensor.face.support",
+            "type": "state",
+            "common": {
+                "role": "value",
+                "name": {
+                    "en": "face support",
+                    "de": "gesichts erkennung möglich",
+                    "ru": "поддержка лица",
+                    "pt": "suporte de face",
+                    "nl": "ondersteuning",
+                    "fr": "face support",
+                    "it": "supporto viso",
+                    "es": "soporte facial",
+                    "pl": "wsparcie",
+                    "uk": "підтримка обличчя",
+                    "zh-cn": "面对的支助"
+                },
+                "type": "boolean",
+                "read": true,
+                "write": false
+            },
+            "native": {}
+        },
+        {
+            "_id": "sensor.people",
+            "type": "channel",
+            "common": {
+                "name": {
+                    "en": "people",
+                    "de": "menschen",
+                    "ru": "люди",
+                    "pt": "pessoas",
+                    "nl": "mensen",
+                    "fr": "gens",
+                    "it": "persone",
+                    "es": "gente",
+                    "pl": "ludzie",
+                    "uk": "люди",
+                    "zh-cn": "人民"
+                }
+            },
+            "native": {}
+        },
+        {
+            "_id": "sensor.people.state",
+            "type": "state",
+            "common": {
+                "role": "value",
+                "name": {
+                    "en": "people detection",
+                    "de": "menschen entdecken",
+                    "ru": "обнаружение людей",
+                    "pt": "detecção de pessoas",
+                    "nl": "mensen detecteren",
+                    "fr": "détection des personnes",
+                    "it": "rilevamento persone",
+                    "es": "detección de personas",
+                    "pl": "wykrywanie",
+                    "uk": "виявлення людей",
+                    "zh-cn": "目 录"
+                },
+                "type": "boolean",
+                "read": true,
+                "write": false
+            },
+            "native": {}
+        },
+        {
+            "_id": "sensor.people.support",
+            "type": "state",
+            "common": {
+                "role": "value",
+                "name": {
+                    "en": "people support",
+                    "de": "menschen unterstützen",
+                    "ru": "люди поддерживают",
+                    "pt": "apoio de pessoas",
+                    "nl": "mensen steunen mensen",
+                    "fr": "soutien aux personnes",
+                    "it": "persone sostengono",
+                    "es": "apoyo a las personas",
+                    "pl": "wspieranie",
+                    "uk": "підтримка людей",
+                    "zh-cn": "人民支持"
+                },
+                "type": "boolean",
+                "read": true,
+                "write": false
+            },
+            "native": {}
+        },
+        {
+            "_id": "sensor.vehicle",
+            "type": "channel",
+            "common": {
+                "name": {
+                    "en": "vehicle",
+                    "de": "fahrzeug",
+                    "ru": "автомобиль",
+                    "pt": "veículo",
+                    "nl": "voertuig",
+                    "fr": "véhicule",
+                    "it": "veicolo",
+                    "es": "vehículo",
+                    "pl": "pojazd",
+                    "uk": "автомобіль",
+                    "zh-cn": "车辆"
+                }
+            },
+            "native": {}
+        },
+        {
+            "_id": "sensor.vehicle.state",
+            "type": "state",
+            "common": {
+                "role": "value",
+                "name": {
+                    "en": "vehicle detection",
+                    "de": "fahrzeugerkennung",
+                    "ru": "обнаружение автомобиля",
+                    "pt": "detecção de veículos",
+                    "nl": "voertuig detectie",
+                    "fr": "détection du véhicule",
+                    "it": "rilevamento del veicolo",
+                    "es": "detección de vehículos",
+                    "pl": "detektor",
+                    "uk": "виявлення транспортного засобу",
+                    "zh-cn": "车辆检查"
+                },
+                "type": "boolean",
+                "read": true,
+                "write": false
+            },
+            "native": {}
+        },
+        {
+            "_id": "sensor.vehicle.support",
+            "type": "state",
+            "common": {
+                "role": "value",
+                "name": {
+                    "en": "vehicle support",
+                    "de": "fahrzeugunterstützung",
+                    "ru": "поддержка автомобиля",
+                    "pt": "suporte do veículo",
+                    "nl": "voertuig ondersteuning",
+                    "fr": "support du véhicule",
+                    "it": "supporto veicolo",
+                    "es": "soporte para vehículos",
+                    "pl": "wsparcie",
+                    "uk": "підтримка автомобіля",
+                    "zh-cn": "车辆支助"
+                },
+                "type": "boolean",
+                "read": true,
+                "write": false
+            },
+            "native": {}
+        },
+        {
+            "_id": "info.connection",
+            "type": "state",
+            "common": {
+                "role": "indicator.connected",
+                "name": "Device or service connected",
+                "type": "boolean",
+                "read": true,
+                "write": false,
+                "def": false
+            },
+            "native": {}
+        },
+        {
+            "_id": "sensor.motion",
+            "type": "state",
+            "common": {
+                "role": "sensor.motion",
+                "name": {
+                    "en": "Motion Detection",
+                    "de": "Bewegungserkennung",
+                    "ru": "Обнаружение движения",
+                    "pt": "Detecção de movimento",
+                    "nl": "Motion Detect",
+                    "fr": "Détection de mouvement",
+                    "it": "Rilevamento di movimento",
+                    "es": "Motion Detection",
+                    "pl": "Motion Detection",
+                    "zh-cn": "纠正"
+                },
+                "type": "boolean",
+                "read": true,
+                "write": false
+            },
+            "native": {}
+        },
+        {
+            "_id": "disc",
+            "type": "channel",
+            "common": {
+                "name": {
+                    "en": "harddisk",
+                    "de": "harddisk",
+                    "ru": "харддиск",
+                    "pt": "disco rígido",
+                    "nl": "harddisk",
+                    "fr": "harddisk",
+                    "it": "dischio duro",
+                    "es": "harddisk",
+                    "pl": "harddisk",
+                    "zh-cn": "硬盘"
+                }
+            },
+            "native": {}
+        },
+        {
+            "_id": "disc.capacity",
+            "type": "state",
+            "common": {
+                "role": "value",
+                "name": {
+                    "en": "capacity [MB]",
+                    "de": "kapazität [MB]",
+                    "ru": "вместимость [MB]",
+                    "pt": "capacidade [MB]",
+                    "nl": "capaciteit [MB]",
+                    "fr": "capacité [MB]",
+                    "it": "capacità [MB]",
+                    "es": "capacidad [MB]",
+                    "pl": "pojemność [MB]",
+                    "zh-cn": "能力 [MB]"
+                },
+                "type": "number",
+                "read": true,
+                "write": false
+            },
+            "native": {}
+        },
+        {
+            "_id": "disc.formatted",
+            "type": "state",
+            "common": {
+                "role": "indicator",
+                "name": {
+                    "en": "formatted",
+                    "de": "formatiert",
+                    "ru": "форматирование",
+                    "pt": "formatado",
+                    "nl": "gevormd",
+                    "fr": "formaté",
+                    "it": "formattato",
+                    "es": "formateado",
+                    "pl": "formatować",
+                    "zh-cn": "格式"
+                },
+                "type": "boolean",
+                "read": true,
+                "write": false
+            },
+            "native": {}
+        },
+        {
+            "_id": "disc.mounted",
+            "type": "state",
+            "common": {
+                "role": "indicator",
+                "name": {
+                    "en": "loaded",
+                    "de": "geladen",
+                    "ru": "загружено",
+                    "pt": "carregado",
+                    "nl": "geladen",
+                    "fr": "chargé",
+                    "it": "caricato",
+                    "es": "cargado",
+                    "pl": "loaded",
+                    "zh-cn": "装载"
+                },
+                "type": "boolean",
+                "read": true,
+                "write": false
+            },
+            "native": {}
+        },
+        {
+            "_id": "disc.free",
+            "type": "state",
+            "common": {
+                "role": "value",
+                "name": {
+                    "en": "free memory [MB]",
+                    "de": "freier speicher [MB]",
+                    "ru": "бесплатная память [MB]",
+                    "pt": "memória livre [MB]",
+                    "nl": "gratis geheugen [MB]",
+                    "fr": "mémoire libre [MB]",
+                    "it": "memoria libera [MB]",
+                    "es": "memoria libre [MB]",
+                    "pl": "free memory [MB]",
+                    "zh-cn": "免费记忆 [MB]"
+                },
+                "type": "number",
+                "read": true,
+                "write": false
+            },
+            "native": {}
+        },
+        {
+            "_id": "network",
+            "type": "channel",
+            "common": {
+                "name": {
+                    "en": "Network",
+                    "de": "Netzwerk",
+                    "ru": "Сеть",
+                    "pt": "Rede",
+                    "nl": "Netwerk",
+                    "fr": "Network",
+                    "it": "Rete di rete",
+                    "es": "Red",
+                    "pl": "Network",
+                    "zh-cn": "网络"
+                }
+            },
+            "native": {}
+        },
+        {
+            "_id": "network.ip",
+            "type": "state",
+            "common": {
+                "role": "value",
+                "name": {
+                    "en": "IP address",
+                    "de": "IP-Adresse",
+                    "ru": "IP адрес",
+                    "pt": "Endereço IP",
+                    "nl": "IP adres",
+                    "fr": "Adresse IP",
+                    "it": "Indirizzo IP",
+                    "es": "Dirección IP",
+                    "pl": "Adres IP",
+                    "zh-cn": "IP地址"
+                },
+                "type": "string",
+                "read": true,
+                "write": false
+            },
+            "native": {}
+        },
+        {
+            "_id": "network.channel",
+            "type": "state",
+            "common": {
+                "role": "value",
+                "name": {
+                    "en": "Channel",
+                    "de": "Kanal",
+                    "ru": "Канал",
+                    "pt": "Canal",
+                    "nl": "Channel",
+                    "fr": "Channel",
+                    "it": "Canale",
+                    "es": "Canal",
+                    "pl": "Channel",
+                    "zh-cn": "海峡"
+                },
+                "type": "number",
+                "read": true,
+                "write": false
+            },
+            "native": {}
+        },
+        {
+            "_id": "network.connected",
+            "type": "state",
+            "common": {
+                "role": "indicator.reachable",
+                "name": {
+                    "en": "Camera connected",
+                    "de": "Kamera verbunden",
+                    "ru": "Камера подключена",
+                    "pt": "Câmara conectada",
+                    "nl": "Camera verbonden",
+                    "fr": "Caméra connectée",
+                    "it": "Telecamera collegata",
+                    "es": "Cámara conectada",
+                    "pl": "Camera connected",
+                    "zh-cn": "2. Camera联系"
+                },
+                "type": "boolean",
+                "read": true,
+                "write": false
+            }
+        },
+        {
+            "_id": "network.mac",
+            "type": "state",
+            "common": {
+                "role": "value",
+                "name": {
+                    "en": "Camera mac",
+                    "de": "Kamera mac",
+                    "ru": "Камера mac",
+                    "pt": "Mac da câmera",
+                    "nl": "Camera mac",
+                    "fr": "Caméra mac",
+                    "it": "Macchina fotografica",
+                    "es": "Cámara mac",
+                    "pl": "Camera macer",
+                    "zh-cn": "Camera mac"
+                },
+                "type": "string",
+                "read": true,
+                "write": false
+            }
+        },
+        {
+            "_id": "network.activeLink",
+            "type": "state",
+            "common": {
+                "role": "value",
+                "name": {
+                    "en": "active link",
+                    "de": "aktiver link",
+                    "ru": "активная ссылка",
+                    "pt": "link ativo",
+                    "nl": "active",
+                    "fr": "active link",
+                    "it": "link attivo",
+                    "es": "enlace activo",
+                    "pl": "link",
+                    "zh-cn": "积极联系"
+                },
+                "type": "string",
+                "read": true,
+                "write": false
+            }
+        },
+        {
+            "_id": "network.dns",
+            "type": "state",
+            "common": {
+                "role": "value",
+                "name": {
+                    "en": "DNS address",
+                    "de": "DNS-Adresse",
+                    "ru": "DNS адрес",
+                    "pt": "Endereço DNS",
+                    "nl": "DNS adres",
+                    "fr": "Adresse DNS",
+                    "it": "Indirizzo DNS",
+                    "es": "Dirección del DNS",
+                    "pl": "Adres DNS",
+                    "zh-cn": "DNS地址"
+                },
+                "type": "string",
+                "read": true,
+                "write": false
+            }
+        },
+        {
+            "_id": "network.gateway",
+            "type": "state",
+            "common": {
+                "role": "value",
+                "name": {
+                    "en": "Gateway address",
+                    "de": "Gateway-Adresse",
+                    "ru": "Gateway адрес",
+                    "pt": "Endereço do Gateway",
+                    "nl": "Gateway adres",
+                    "fr": "Adresse de la passerelle",
+                    "it": "Indirizzo del gateway",
+                    "es": "Dirección de puerta",
+                    "pl": "Adres Gateway",
+                    "zh-cn": "Gateway地址"
+                },
+                "type": "string",
+                "read": true,
+                "write": false
+            }
+        },
+        {
+            "_id": "network.mask",
+            "type": "state",
+            "common": {
+                "role": "value",
+                "name": {
+                    "en": "Subnetmask",
+                    "de": "Subnetmask",
+                    "ru": "Субнетмаск",
+                    "pt": "Subnetmask",
+                    "nl": "Vertaling:",
+                    "fr": "Subnetmask",
+                    "it": "Subnetmask",
+                    "es": "Subnetmask",
+                    "pl": "Subnet",
+                    "zh-cn": "Subnetmask"
+                },
+                "type": "string",
+                "read": true,
+                "write": false
+            }
+        },
+        {
+            "_id": "network.networkType",
+            "type": "state",
+            "common": {
+                "role": "value",
+                "name": {
+                    "en": "NetworkType",
+                    "de": "Netzwerktyp",
+                    "ru": "NetworkType",
+                    "pt": "Tipo de rede",
+                    "nl": "NetworkT",
+                    "fr": "NetworkType",
+                    "it": "Rete",
+                    "es": "NetworkType",
+                    "pl": "NetworkType",
+                    "zh-cn": "网络"
+                },
+                "type": "string",
+                "read": true,
+                "write": false
+            }
+        },
+        {
+            "_id": "device",
+            "type": "channel",
+            "common": {
+                "name": {
+                    "en": "Information from Device",
+                    "de": "Informationen vom Gerät",
+                    "ru": "Информация от устройства",
+                    "pt": "InformaÃ§Ã£o do Dispositivo",
+                    "nl": "Informatie van Device",
+                    "fr": "Information de l'appareil",
+                    "it": "Informazioni da Dispositivo",
+                    "es": "Información del dispositivo",
+                    "pl": "Informacja o Device",
+                    "zh-cn": "从Devic收到的资料"
+                }
+            },
+            "native": {}
+        },
+        {
+            "_id": "device.model",
+            "type": "state",
+            "common": {
+                "role": "value",
+                "name": {
+                    "en": "Camera model",
+                    "de": "Kameramodell",
+                    "ru": "Модель камеры",
+                    "pt": "Modelo de câmera",
+                    "nl": "Camera model",
+                    "fr": "Modèle de caméra",
+                    "it": "Modello di fotocamera",
+                    "es": "Modelo de cámara",
+                    "pl": "Model Camera",
+                    "zh-cn": "2. Camera模型"
+                },
+                "type": "string",
+                "read": true,
+                "write": false
+            }
+        },
+        {
+            "_id": "device.buildDay",
+            "type": "state",
+            "common": {
+                "role": "value",
+                "name": {
+                    "en": "Camera buildDay",
+                    "de": "Kamera Produktionstag",
+                    "ru": "Создание камеры День",
+                    "pt": "Construção de câmera Dia",
+                    "nl": "Camera bouwt Dag",
+                    "fr": "Camera build Jour",
+                    "it": "Costruzione della macchina fotografica Giorno",
+                    "es": "Cámara Día",
+                    "pl": "Kamera Dzień",
+                    "zh-cn": "Camera大楼 日 日"
+                },
+                "type": "string",
+                "read": true,
+                "write": false
+            }
+        },
+        {
+            "_id": "device.cfgVer",
+            "type": "state",
+            "common": {
+                "role": "value",
+                "name": {
+                    "en": "Camera cfgVer",
+                    "de": "Kamera cfg",
+                    "ru": "Камера cfg",
+                    "pt": "Câmera cfg",
+                    "nl": "Camera cfg",
+                    "fr": "Caméra cfg",
+                    "it": "Macchina fotografica cfg",
+                    "es": "Cámara cfg",
+                    "pl": "Camera cfg.",
+                    "zh-cn": "Camera cfg"
+                },
+                "type": "string",
+                "read": true,
+                "write": false
+            }
+        },
+        {
+            "_id": "device.detail",
+            "type": "state",
+            "common": {
+                "role": "value",
+                "name": {
+                    "en": "Camera detail",
+                    "de": "Kamera Detail",
+                    "ru": "Деталь камеры",
+                    "pt": "Detalhes da câmera",
+                    "nl": "Camera detail",
+                    "fr": "Détail de la caméra",
+                    "it": "Dettaglio della fotocamera",
+                    "es": "Detalles de la cámara",
+                    "pl": "Szczegół",
+                    "zh-cn": "Camera详细情况"
+                },
+                "type": "string",
+                "read": true,
+                "write": false
+            }
+        },
+        {
+            "_id": "device.diskNum",
+            "type": "state",
+            "common": {
+                "role": "value",
+                "name": {
+                    "en": "Camera diskNum",
+                    "de": "Kamera HDDAnz",
+                    "ru": "Диск камерыNum",
+                    "pt": "Disco da câmeraNum",
+                    "nl": "Camera DiskNum",
+                    "fr": "Disque de caméraNum",
+                    "it": "Fotocamera discoNum",
+                    "es": "Disco de cámaraNum",
+                    "pl": "Camera discNum",
+                    "zh-cn": "Camera dikNum"
+                },
+                "type": "number",
+                "read": true,
+                "write": false
+            }
+        },
+        {
+            "_id": "device.firmVer",
+            "type": "state",
+            "common": {
+                "role": "value",
+                "name": {
+                    "en": "Camera firmVer",
+                    "de": "Kamera Firmware Version",
+                    "ru": "Камера фирма Вер",
+                    "pt": "Empresa de câmera Ver",
+                    "nl": "Camera firma Ver",
+                    "fr": "Camera firm Ver",
+                    "it": "Azienda di macchine fotografiche Ver",
+                    "es": "Firma de cámara Ver",
+                    "pl": "Firma Camera Wiersze",
+                    "zh-cn": "Camera公司 附 件"
+                },
+                "type": "string",
+                "read": true,
+                "write": false
+            }
+        },
+        {
+            "_id": "device.name",
+            "type": "state",
+            "common": {
+                "role": "value",
+                "name": {
+                    "en": "Camera name",
+                    "de": "Kameraname",
+                    "ru": "Название камеры",
+                    "pt": "Nome da câmara",
+                    "nl": "Camera naam",
+                    "fr": "Nom de la caméra",
+                    "it": "Nome della macchina",
+                    "es": "Nombre de cámara",
+                    "pl": "Camera",
+                    "zh-cn": "Camera姓名"
+                },
+                "type": "string",
+                "read": true,
+                "write": false
+            }
+        },
+        {
+            "_id": "device.serial",
+            "type": "state",
+            "common": {
+                "role": "value",
+                "name": {
+                    "en": "Camera serial",
+                    "de": "Kamera ID",
+                    "ru": "Серия камеры",
+                    "pt": "Série da câmera",
+                    "nl": "Camera serie",
+                    "fr": "Caméra série",
+                    "it": "Fotocamera seriale",
+                    "es": "Cámara serie",
+                    "pl": "Seriali Camera",
+                    "zh-cn": "Cameraserial"
+                },
+                "type": "string",
+                "read": true,
+                "write": false
+            }
+        },
+        {
+            "_id": "device.wifi",
+            "type": "state",
+            "common": {
+                "role": "value",
+                "name": {
+                    "en": "Camera wifi",
+                    "de": "Kamera Wifi",
+                    "ru": "Камера wifi",
+                    "pt": "Câmera wifi",
+                    "nl": "Camera Wifi",
+                    "fr": "Caméra wifi",
+                    "it": "Camera wifi",
+                    "es": "Cámara wifi",
+                    "pl": "Camera",
+                    "zh-cn": "Camerawifi"
+                },
+                "type": "number",
+                "read": true,
+                "write": false
+            }
+        },
+        {
+            "_id": "settings",
+            "type": "channel",
+            "common": {
+                "name": {
+                    "en": "settings",
+                    "de": "einstellungen",
+                    "ru": "настройки",
+                    "pt": "configurações",
+                    "nl": "instellingen",
+                    "fr": "paramètres",
+                    "it": "impostazioni",
+                    "es": "ajustes",
+                    "pl": "ustawienie",
+                    "zh-cn": "环境"
+                }
+            },
+            "native": {}
+        },
+        {
+            "_id": "settings.ir",
+            "type": "state",
+            "common": {
+                "role": "state",
+                "name": "ir",
+                "type": "string",
+                "read": true,
+                "write": true
+            }
+        },
+        {
+            "_id": "settings.switchLed",
+            "type": "state",
+            "common": {
+                "role": "state",
+                "name": "led",
+                "type": "boolean",
+                "read": true,
+                "write": true
+            }
+        },
+        {
+            "_id": "settings.ledBrightness",
+            "type": "state",
+            "common": {
+                "role": "state",
+                "name": {
+                    "en": "LED Brightness",
+                    "de": "LED Helligkeit",
+                    "ru": "LED Яркость",
+                    "pt": "LED Brilho",
+                    "nl": "LED Brightness",
+                    "fr": "LED Luminosité",
+                    "it": "LED Luminosità",
+                    "es": "LED Brillo",
+                    "pl": "LED Brightness",
+                    "zh-cn": "附录 B. 权利"
+                },
+                "type": "number",
+                "read": true,
+                "write": true
+            }
+        },
+        {
+            "_id": "settings.ledMode",
+            "type": "state",
+            "common": {
+                "role": "state",
+                "name": {
+                    "en": "LED Mode",
+                    "de": "LED Modus",
+                    "nl": "LED Mode",
+                    "fr": "LED Mode",
+                    "it": "LED Modalità",
+                    "es": "LED Modo",
+                    "pl": "LED Tryb",
+                    "zh-cn": "发光模式"
+                },
+                "type": "number",
+                "read": true,
+                "write": true
+            }
+        },
+        {
+            "_id": "settings.ptzPreset",
+            "type": "state",
+            "common": {
+                "role": "state",
+                "name": {
+                    "en": "PTZ preset",
+                    "de": "PTZ Preset",
+                    "ru": "Пресет PTZ",
+                    "pt": "Predefinição PTZ",
+                    "nl": "PTZ preset",
+                    "fr": "Présence PTZ",
+                    "it": "Preimpostazione PTZ",
+                    "es": "PTZ preset",
+                    "pl": "PTZ preset",
+                    "zh-cn": "PTZset"
+                },
+                "type": "number",
+                "read": true,
+                "write": true
+            }
+        },
+        {
+            "_id": "settings.ptzPatrol",
+            "type": "state",
+            "common": {
+                "role": "state",
+                "name": {
+                    "en": "PTZ patrol",
+                    "de": "PTZ Patrol",
+                    "ru": "patrol PTZ",
+                    "pt": "patrol PTZ",
+                    "nl": "PTZ patrol",
+                    "fr": "patrol PTZ",
+                    "it": "patrol PTZ",
+                    "es": "PTZ patrol",
+                    "pl": "PTZ patrol",
+                    "zh-cn": "PTZpatrol"
+                },
+                "type": "number",
+                "read": true,
+                "write": true
+            }
+        },
+        {
+            "_id": "settings.push",
+            "type": "state",
+            "common": {
+                "role": "state",
+                "name": {
+                    "en": "enable push",
+                    "de": "push einschalten",
+                    "ru": "включить push",
+                    "pt": "habilitar o push",
+                    "nl": "push",
+                    "fr": "activer push",
+                    "it": "abilitare push",
+                    "es": "push",
+                    "pl": "umożliwiać",
+                    "zh-cn": "推动"
+                },
+                "type": "boolean",
+                "read": true,
+                "write": true
+            }
+        },
+        {
+            "_id": "settings.ftp",
+            "type": "state",
+            "common": {
+                "role": "state",
+                "name": {
+                    "en": "Enable FTP",
+                    "de": "FTP einschalten",
+                    "ru": "Активируйте FTP",
+                    "pt": "Ativar o FTP",
+                    "nl": "FTP activeren",
+                    "fr": "Activer le FTP",
+                    "it": "Attivare l'FTP",
+                    "es": "Activar FTP",
+                    "pl": "Aktywuj FTP",
+                    "zh-cn": "激活 FTP"
+                },
+                "type": "boolean",
+                "read": true,
+                "write": true
+            }
+        },
+        {
+            "_id": "settings.autoFocus",
+            "type": "state",
+            "common": {
+                "role": "state",
+                "name": {
+                    "en": "auto focus disabled",
+                    "de": "autofokus deaktiviert",
+                    "ru": "авто фокус",
+                    "pt": "foco auto desactivada",
+                    "nl": "autofocus uitgeschakeld",
+                    "fr": "autofocus désactivé",
+                    "it": "autofocus disattivato",
+                    "es": "enfoque desactivado",
+                    "pl": "autofocus wyłączony",
+                    "zh-cn": "汽车重点"
+                },
+                "type": "string",
+                "read": true,
+                "write": true
+            }
+        },
+        {
+            "_id": "settings.EmailNotification",
+            "type": "state",
+            "common": {
+                "role": "value",
+                "name": {
+                    "en": "e-mail notification",
+                    "de": "e-mail-benachrichtigung",
+                    "ru": "уведомление по электронной почте",
+                    "pt": "notificação por e-mail",
+                    "nl": "e-mail notificatie",
+                    "fr": "notification par courriel",
+                    "it": "notifica e-mail",
+                    "es": "e-mail notification",
+                    "pl": "powiadomienie e-mail",
+                    "uk": "повідомлення електронної пошти",
+                    "zh-cn": "电子邮件通知"
+                },
+                "type": "number",
+                "read": true,
+                "write": true
+            }
+        },
+        {
+            "_id": "settings.setZoomFocus",
+            "type": "state",
+            "common": {
+                "role": "state",
+                "name": {
+                    "en": "set zoom position",
+                    "de": "zoom position",
+                    "ru": "установите позицию zoom",
+                    "pt": "set zoom position",
+                    "nl": "zoompositie",
+                    "fr": "position de zoom",
+                    "it": "impostare la posizione zoom",
+                    "es": "posición zoom",
+                    "pl": "uporządkować",
+                    "zh-cn": "2. 动物状况"
+                },
+                "type": "number",
+                "read": true,
+                "write": true
+            }
+        },
+        {
+            "_id": "settings.focus",
+            "type": "state",
+            "common": {
+                "role": "state",
+                "name": {
+                    "en": "focus level",
+                    "de": "focus level",
+                    "pt": "focus level",
+                    "nl": "focusniveau",
+                    "fr": "niveau de focalisation",
+                    "it": "livello di concentrazione",
+                    "es": "nivel de enfoque",
+                    "pl": "poziom ostrości",
+                    "zh-cn": "重点级"
+                },
+                "type": "number",
+                "read": true,
+                "write": false
+            }
+        },
+        {
+            "_id": "settings.scheduledRecording",
+            "type": "state",
+            "common": {
+                "role": "state",
+                "name": {
+                    "en": "Scheduled recording",
+                    "de": "Zeitgesteuerte Aufzeichnung",
+                    "pt": "Gravação programada",
+                    "nl": "Geplande opname",
+                    "fr": "Enregistrement programmé",
+                    "it": "Registrazione programmata",
+                    "es": "Grabación programada",
+                    "pl": "Zaplanowane nagrywanie",
+                    "zh-cn": "计划录制"
+                },
+                "type": "boolean",
+                "read": true,
+                "write": true
+            }
+        },
+        {
+            "_id": "settings.playAlarm",
+            "type": "state",
+            "common": {
+                "role": "state",
+                "name": {
+                    "en": "play alarm",
+                    "de": "alarm ton abspielen",
+                    "ru": "играть тревогу",
+                    "pt": "alarme de jogo",
+                    "nl": "speel alarm",
+                    "fr": "jouer l'alarme",
+                    "it": "allarme di gioco",
+                    "es": "toca alarma",
+                    "pl": "alarm",
+                    "zh-cn": "震惊"
+                },
+                "type": "number",
+                "read": true,
+                "write": true
+            }
+        },
+        {
+            "_id": "settings.getDiscData",
+            "type": "state",
+            "common": {
+                "role": "state",
+                "name": {
+                    "en": "get drive data",
+                    "de": "laufwerksdaten",
+                    "ru": "получить данные о приводе",
+                    "pt": "obter dados de unidade",
+                    "nl": "drake gegevens",
+                    "fr": "obtenir des données d'entraînement",
+                    "it": "ottenere dati di unità",
+                    "es": "obtener datos de la unidad",
+                    "pl": "dać dane",
+                    "zh-cn": "数据流动"
+                },
+                "type": "boolean",
+                "read": true,
+                "write": true
+            }
+        },
+        {
+            "_id": "settings.ptzEnableGuard",
+            "type": "state",
+            "common": {
+                "role": "state",
+                "name": {
+                    "en": "enable PTZguard",
+                    "de": "PTZguard einschalten",
+                    "ru": "включить PTZguard",
+                    "pt": "habilitar PTZguard",
+                    "nl": "in staat PTZguard",
+                    "fr": "activer PTZguard",
+                    "it": "abilita PTZguard",
+                    "es": "habilitación PTZguard",
+                    "pl": "umożliwić PTZguard",
+                    "zh-cn": "a. 能够促进 PTZguard"
+                },
+                "type": "boolean",
+                "read": true,
+                "write": true
+            }
+        },
+        {
+            "_id": "settings.ptzCheck",
+            "type": "state",
+            "common": {
+                "role": "state",
+                "name": {
+                    "en": "PTZ check",
+                    "de": "PTZ-Check",
+                    "ru": "PTZ проверка",
+                    "pt": "Verificação PTZ",
+                    "nl": "PTZ-controle",
+                    "fr": "Contrôle PTZ",
+                    "it": "Controllo PTZ",
+                    "es": "PTZ check",
+                    "pl": "Kontrola PTZ",
+                    "uk": "Перевірка ПТЗ",
+                    "zh-cn": "PTZ 检查"
+                },
+                "type": "boolean",
+                "read": true,
+                "write": true
+            }
+        },
+        {
+            "_id": "settings.ptzGuardTimeout",
+            "type": "state",
+            "common": {
+                "role": "state",
+                "name": {
+                    "en": "timeout ptzGuard",
+                    "de": "timeout ptzGuard",
+                    "ru": "timeout ptzGuard",
+                    "pt": "timeout ptzGuard",
+                    "nl": "time-out ptzGuard",
+                    "fr": "timeout ptzGuard",
+                    "it": "timeout ptzGuard",
+                    "es": "tiempo fuera ptzGuard",
+                    "pl": "czasoprzestrzeni ptzGuard",
+                    "zh-cn": "时间 ptzGuard"
+                },
+                "type": "number",
+                "read": true,
+                "write": true
+            }
+        },
+        {
+            "_id": "Command",
+            "type": "channel",
+            "common": {
+                "name": {
+                    "en": "Command",
+                    "de": "Befehl",
+                    "ru": "Команда",
+                    "pt": "Comando",
+                    "nl": "Commando",
+                    "fr": "Commandant",
+                    "it": "Comando",
+                    "es": "Comando",
+                    "pl": "Dowództwo",
+                    "uk": "Про компанію",
+                    "zh-cn": "指挥"
+                }
+            },
+            "native": {}
+        },
+        {
+            "_id": "Command.Reboot",
+            "type": "state",
+            "common": {
+                "role": "button",
+                "name": {
+                    "en": "Reboot",
+                    "de": "Neustart",
+                    "ru": "Перезагрузка",
+                    "pt": "Reiniciar",
+                    "nl": "Reboot",
+                    "fr": "Reboot",
+                    "it": "Reboot",
+                    "es": "Reboot",
+                    "pl": "Reboot",
+                    "uk": "Перезавантаження",
+                    "zh-cn": "Reboot"
+                },
+                "type": "boolean",
+                "read": false,
+                "write": true
+            },
+            "native": {}
+        },
+        {
+            "_id": "RAW",
+            "type": "channel",
+            "common": {
+                "name": {
+                    "en": "RAW",
+                    "de": "RAW",
+                    "ru": "РАВ",
+                    "pt": "RAW",
+                    "nl": "RAW",
+                    "fr": "RAW",
+                    "it": "RAW",
+                    "es": "RAW",
+                    "pl": "RAW",
+                    "uk": "КУРСИ",
+                    "zh-cn": "RAW"
+                }
+            },
+            "native": {}
+        },
+        {
+            "_id": "RAW.Email",
+            "type": "state",
+            "common": {
+                "role": "value",
+                "name": {
+                    "en": "Email",
+                    "de": "Email",
+                    "ru": "Электронная почта",
+                    "pt": "Email",
+                    "nl": "E-mail",
+                    "fr": "Email",
+                    "it": "Email",
+                    "es": "Email",
+                    "pl": "Email",
+                    "uk": "Електронна пошта",
+                    "zh-cn": "电子邮件"
+                },
+                "type": "string",
+                "read": true,
+                "write": false
+            }
+        }
     ]
-  },
-  "encryptedNative": [
-    "cameraPassword"
-  ],
-  "protectedNative": [
-    "cameraPassword"
-  ],
-  "native": {
-    "cameraType": "",
-    "cameraIp": "",
-    "cameraProtocol": "https",
-    "cameraChannel": 0,
-    "cameraUser": "",
-    "cameraPassword": "",
-    "apiRefreshInterval": "10",
-    "sslvalid": false,
-    "UriEncodedPassword": true
-  },
-  "objects": [],
-  "instanceObjects": [
-    {
-      "_id": "ai_config",
-      "type": "channel",
-      "common": {
-        "name": "AI Config"
-      },
-      "native": {}
-    },
-    {
-      "_id": "ai_config.raw",
-      "type": "state",
-      "common": {
-        "role": "value",
-        "name": {
-          "en": "Raw AI Config"
-        },
-        "type": "json",
-        "read": true,
-        "write": true
-      },
-      "native": {}
-    },
-    {
-      "_id": "sensor",
-      "type": "channel",
-      "common": {
-        "name": {
-          "en": "sensor",
-          "de": "sensor",
-          "ru": "датчик",
-          "pt": "sensor de sensor",
-          "nl": "sensor",
-          "fr": "capteur",
-          "it": "sensore sensore sensore sensore",
-          "es": "sensor",
-          "pl": "sensor",
-          "zh-cn": "传感"
-        }
-      },
-      "native": {}
-    },
-    {
-      "_id": "sensor.dog_cat",
-      "type": "channel",
-      "common": {
-        "name": {
-          "en": "dog cat",
-          "de": "hund katze",
-          "ru": "собака кот",
-          "pt": "cão gato",
-          "nl": "hond",
-          "fr": "chien chat",
-          "it": "cane gatto",
-          "es": "perro",
-          "pl": "kot",
-          "uk": "собака кішка",
-          "zh-cn": "导 言"
-        }
-      },
-      "native": {}
-    },
-    {
-      "_id": "sensor.dog_cat.state",
-      "type": "state",
-      "common": {
-        "role": "value",
-        "name": {
-          "en": "dog cat detection",
-          "de": "hund katze erkennung",
-          "ru": "обнаружение собаки кота",
-          "pt": "detecção de gato cão",
-          "nl": "hondenpolitie",
-          "fr": "détection de chiens",
-          "it": "rilevamento del gatto del cane",
-          "es": "detección de gatos",
-          "pl": "psy",
-          "uk": "виявлення собак",
-          "zh-cn": "目 录"
-        },
-        "type": "boolean",
-        "read": true,
-        "write": false
-      },
-      "native": {}
-    },
-    {
-      "_id": "sensor.dog_cat.support",
-      "type": "state",
-      "common": {
-        "role": "value",
-        "name": {
-          "en": "dog cat support",
-          "de": "hund katze unterstützung",
-          "ru": "собака кошка поддержка",
-          "pt": "cão gato apoio",
-          "nl": "honden",
-          "fr": "soutien aux chats",
-          "it": "cane gatto supporto",
-          "es": "gato apoyo",
-          "pl": "koty",
-          "uk": "підтримка собак",
-          "zh-cn": "b. 导向"
-        },
-        "type": "boolean",
-        "read": true,
-        "write": false
-      },
-      "native": {}
-    },
-    {
-      "_id": "sensor.face",
-      "type": "channel",
-      "common": {
-        "name": {
-          "en": "face",
-          "de": "gesicht",
-          "ru": "лицо",
-          "pt": "rosto",
-          "nl": "gezicht",
-          "fr": "face",
-          "it": "faccia",
-          "es": "cara",
-          "pl": "face",
-          "uk": "обличчя",
-          "zh-cn": "面对面"
-        }
-      },
-      "native": {}
-    },
-    {
-      "_id": "sensor.face.state",
-      "type": "state",
-      "common": {
-        "role": "value",
-        "name": {
-          "en": "face detection",
-          "de": "gesichtserkennung",
-          "ru": "обнаружение лица",
-          "pt": "detecção de face",
-          "nl": "gezichtsdetector",
-          "fr": "détection du visage",
-          "it": "rilevamento del viso",
-          "es": "detección facial",
-          "pl": "wykrywanie twarzy",
-          "uk": "виявлення обличчя",
-          "zh-cn": "探 视"
-        },
-        "type": "boolean",
-        "read": true,
-        "write": false
-      },
-      "native": {}
-    },
-    {
-      "_id": "sensor.face.support",
-      "type": "state",
-      "common": {
-        "role": "value",
-        "name": {
-          "en": "face support",
-          "de": "gesichts erkennung möglich",
-          "ru": "поддержка лица",
-          "pt": "suporte de face",
-          "nl": "ondersteuning",
-          "fr": "face support",
-          "it": "supporto viso",
-          "es": "soporte facial",
-          "pl": "wsparcie",
-          "uk": "підтримка обличчя",
-          "zh-cn": "面对的支助"
-        },
-        "type": "boolean",
-        "read": true,
-        "write": false
-      },
-      "native": {}
-    },
-    {
-      "_id": "sensor.people",
-      "type": "channel",
-      "common": {
-        "name": {
-          "en": "people",
-          "de": "menschen",
-          "ru": "люди",
-          "pt": "pessoas",
-          "nl": "mensen",
-          "fr": "gens",
-          "it": "persone",
-          "es": "gente",
-          "pl": "ludzie",
-          "uk": "люди",
-          "zh-cn": "人民"
-        }
-      },
-      "native": {}
-    },
-    {
-      "_id": "sensor.people.state",
-      "type": "state",
-      "common": {
-        "role": "value",
-        "name": {
-          "en": "people detection",
-          "de": "menschen entdecken",
-          "ru": "обнаружение людей",
-          "pt": "detecção de pessoas",
-          "nl": "mensen detecteren",
-          "fr": "détection des personnes",
-          "it": "rilevamento persone",
-          "es": "detección de personas",
-          "pl": "wykrywanie",
-          "uk": "виявлення людей",
-          "zh-cn": "目 录"
-        },
-        "type": "boolean",
-        "read": true,
-        "write": false
-      },
-      "native": {}
-    },
-    {
-      "_id": "sensor.people.support",
-      "type": "state",
-      "common": {
-        "role": "value",
-        "name": {
-          "en": "people support",
-          "de": "menschen unterstützen",
-          "ru": "люди поддерживают",
-          "pt": "apoio de pessoas",
-          "nl": "mensen steunen mensen",
-          "fr": "soutien aux personnes",
-          "it": "persone sostengono",
-          "es": "apoyo a las personas",
-          "pl": "wspieranie",
-          "uk": "підтримка людей",
-          "zh-cn": "人民支持"
-        },
-        "type": "boolean",
-        "read": true,
-        "write": false
-      },
-      "native": {}
-    },
-    {
-      "_id": "sensor.vehicle",
-      "type": "channel",
-      "common": {
-        "name": {
-          "en": "vehicle",
-          "de": "fahrzeug",
-          "ru": "автомобиль",
-          "pt": "veículo",
-          "nl": "voertuig",
-          "fr": "véhicule",
-          "it": "veicolo",
-          "es": "vehículo",
-          "pl": "pojazd",
-          "uk": "автомобіль",
-          "zh-cn": "车辆"
-        }
-      },
-      "native": {}
-    },
-    {
-      "_id": "sensor.vehicle.state",
-      "type": "state",
-      "common": {
-        "role": "value",
-        "name": {
-          "en": "vehicle detection",
-          "de": "fahrzeugerkennung",
-          "ru": "обнаружение автомобиля",
-          "pt": "detecção de veículos",
-          "nl": "voertuig detectie",
-          "fr": "détection du véhicule",
-          "it": "rilevamento del veicolo",
-          "es": "detección de vehículos",
-          "pl": "detektor",
-          "uk": "виявлення транспортного засобу",
-          "zh-cn": "车辆检查"
-        },
-        "type": "boolean",
-        "read": true,
-        "write": false
-      },
-      "native": {}
-    },
-    {
-      "_id": "sensor.vehicle.support",
-      "type": "state",
-      "common": {
-        "role": "value",
-        "name": {
-          "en": "vehicle support",
-          "de": "fahrzeugunterstützung",
-          "ru": "поддержка автомобиля",
-          "pt": "suporte do veículo",
-          "nl": "voertuig ondersteuning",
-          "fr": "support du véhicule",
-          "it": "supporto veicolo",
-          "es": "soporte para vehículos",
-          "pl": "wsparcie",
-          "uk": "підтримка автомобіля",
-          "zh-cn": "车辆支助"
-        },
-        "type": "boolean",
-        "read": true,
-        "write": false
-      },
-      "native": {}
-    },
-    {
-      "_id": "info.connection",
-      "type": "state",
-      "common": {
-        "role": "indicator.connected",
-        "name": "Device or service connected",
-        "type": "boolean",
-        "read": true,
-        "write": false,
-        "def": false
-      },
-      "native": {}
-    },
-    {
-      "_id": "sensor.motion",
-      "type": "state",
-      "common": {
-        "role": "sensor.motion",
-        "name": {
-          "en": "Motion Detection",
-          "de": "Bewegungserkennung",
-          "ru": "Обнаружение движения",
-          "pt": "Detecção de movimento",
-          "nl": "Motion Detect",
-          "fr": "Détection de mouvement",
-          "it": "Rilevamento di movimento",
-          "es": "Motion Detection",
-          "pl": "Motion Detection",
-          "zh-cn": "纠正"
-        },
-        "type": "boolean",
-        "read": true,
-        "write": false
-      },
-      "native": {}
-    },
-    {
-      "_id": "disc",
-      "type": "channel",
-      "common": {
-        "name": {
-          "en": "harddisk",
-          "de": "harddisk",
-          "ru": "харддиск",
-          "pt": "disco rígido",
-          "nl": "harddisk",
-          "fr": "harddisk",
-          "it": "dischio duro",
-          "es": "harddisk",
-          "pl": "harddisk",
-          "zh-cn": "硬盘"
-        }
-      },
-      "native": {}
-    },
-    {
-      "_id": "disc.capacity",
-      "type": "state",
-      "common": {
-        "role": "value",
-        "name": {
-          "en": "capacity [MB]",
-          "de": "kapazität [MB]",
-          "ru": "вместимость [MB]",
-          "pt": "capacidade [MB]",
-          "nl": "capaciteit [MB]",
-          "fr": "capacité [MB]",
-          "it": "capacità [MB]",
-          "es": "capacidad [MB]",
-          "pl": "pojemność [MB]",
-          "zh-cn": "能力 [MB]"
-        },
-        "type": "number",
-        "read": true,
-        "write": false
-      },
-      "native": {}
-    },
-    {
-      "_id": "disc.formatted",
-      "type": "state",
-      "common": {
-        "role": "indicator",
-        "name": {
-          "en": "formatted",
-          "de": "formatiert",
-          "ru": "форматирование",
-          "pt": "formatado",
-          "nl": "gevormd",
-          "fr": "formaté",
-          "it": "formattato",
-          "es": "formateado",
-          "pl": "formatować",
-          "zh-cn": "格式"
-        },
-        "type": "boolean",
-        "read": true,
-        "write": false
-      },
-      "native": {}
-    },
-    {
-      "_id": "disc.mounted",
-      "type": "state",
-      "common": {
-        "role": "indicator",
-        "name": {
-          "en": "loaded",
-          "de": "geladen",
-          "ru": "загружено",
-          "pt": "carregado",
-          "nl": "geladen",
-          "fr": "chargé",
-          "it": "caricato",
-          "es": "cargado",
-          "pl": "loaded",
-          "zh-cn": "装载"
-        },
-        "type": "boolean",
-        "read": true,
-        "write": false
-      },
-      "native": {}
-    },
-    {
-      "_id": "disc.free",
-      "type": "state",
-      "common": {
-        "role": "value",
-        "name": {
-          "en": "free memory [MB]",
-          "de": "freier speicher [MB]",
-          "ru": "бесплатная память [MB]",
-          "pt": "memória livre [MB]",
-          "nl": "gratis geheugen [MB]",
-          "fr": "mémoire libre [MB]",
-          "it": "memoria libera [MB]",
-          "es": "memoria libre [MB]",
-          "pl": "free memory [MB]",
-          "zh-cn": "免费记忆 [MB]"
-        },
-        "type": "number",
-        "read": true,
-        "write": false
-      },
-      "native": {}
-    },
-    {
-      "_id": "network",
-      "type": "channel",
-      "common": {
-        "name": {
-          "en": "Network",
-          "de": "Netzwerk",
-          "ru": "Сеть",
-          "pt": "Rede",
-          "nl": "Netwerk",
-          "fr": "Network",
-          "it": "Rete di rete",
-          "es": "Red",
-          "pl": "Network",
-          "zh-cn": "网络"
-        }
-      },
-      "native": {}
-    },
-    {
-      "_id": "network.ip",
-      "type": "state",
-      "common": {
-        "role": "value",
-        "name": {
-          "en": "IP address",
-          "de": "IP-Adresse",
-          "ru": "IP адрес",
-          "pt": "Endereço IP",
-          "nl": "IP adres",
-          "fr": "Adresse IP",
-          "it": "Indirizzo IP",
-          "es": "Dirección IP",
-          "pl": "Adres IP",
-          "zh-cn": "IP地址"
-        },
-        "type": "string",
-        "read": true,
-        "write": false
-      },
-      "native": {}
-    },
-    {
-      "_id": "network.channel",
-      "type": "state",
-      "common": {
-        "role": "value",
-        "name": {
-          "en": "Channel",
-          "de": "Kanal",
-          "ru": "Канал",
-          "pt": "Canal",
-          "nl": "Channel",
-          "fr": "Channel",
-          "it": "Canale",
-          "es": "Canal",
-          "pl": "Channel",
-          "zh-cn": "海峡"
-        },
-        "type": "number",
-        "read": true,
-        "write": false
-      },
-      "native": {}
-    },
-    {
-      "_id": "network.connected",
-      "type": "state",
-      "common": {
-        "role": "indicator.reachable",
-        "name": {
-          "en": "Camera connected",
-          "de": "Kamera verbunden",
-          "ru": "Камера подключена",
-          "pt": "Câmara conectada",
-          "nl": "Camera verbonden",
-          "fr": "Caméra connectée",
-          "it": "Telecamera collegata",
-          "es": "Cámara conectada",
-          "pl": "Camera connected",
-          "zh-cn": "2. Camera联系"
-        },
-        "type": "boolean",
-        "read": true,
-        "write": false
-      }
-    },
-    {
-      "_id": "network.mac",
-      "type": "state",
-      "common": {
-        "role": "value",
-        "name": {
-          "en": "Camera mac",
-          "de": "Kamera mac",
-          "ru": "Камера mac",
-          "pt": "Mac da câmera",
-          "nl": "Camera mac",
-          "fr": "Caméra mac",
-          "it": "Macchina fotografica",
-          "es": "Cámara mac",
-          "pl": "Camera macer",
-          "zh-cn": "Camera mac"
-        },
-        "type": "string",
-        "read": true,
-        "write": false
-      }
-    },
-    {
-      "_id": "network.activeLink",
-      "type": "state",
-      "common": {
-        "role": "value",
-        "name": {
-          "en": "active link",
-          "de": "aktiver link",
-          "ru": "активная ссылка",
-          "pt": "link ativo",
-          "nl": "active",
-          "fr": "active link",
-          "it": "link attivo",
-          "es": "enlace activo",
-          "pl": "link",
-          "zh-cn": "积极联系"
-        },
-        "type": "string",
-        "read": true,
-        "write": false
-      }
-    },
-    {
-      "_id": "network.dns",
-      "type": "state",
-      "common": {
-        "role": "value",
-        "name": {
-          "en": "DNS address",
-          "de": "DNS-Adresse",
-          "ru": "DNS адрес",
-          "pt": "Endereço DNS",
-          "nl": "DNS adres",
-          "fr": "Adresse DNS",
-          "it": "Indirizzo DNS",
-          "es": "Dirección del DNS",
-          "pl": "Adres DNS",
-          "zh-cn": "DNS地址"
-        },
-        "type": "string",
-        "read": true,
-        "write": false
-      }
-    },
-    {
-      "_id": "network.gateway",
-      "type": "state",
-      "common": {
-        "role": "value",
-        "name": {
-          "en": "Gateway address",
-          "de": "Gateway-Adresse",
-          "ru": "Gateway адрес",
-          "pt": "Endereço do Gateway",
-          "nl": "Gateway adres",
-          "fr": "Adresse de la passerelle",
-          "it": "Indirizzo del gateway",
-          "es": "Dirección de puerta",
-          "pl": "Adres Gateway",
-          "zh-cn": "Gateway地址"
-        },
-        "type": "string",
-        "read": true,
-        "write": false
-      }
-    },
-    {
-      "_id": "network.mask",
-      "type": "state",
-      "common": {
-        "role": "value",
-        "name": {
-          "en": "Subnetmask",
-          "de": "Subnetmask",
-          "ru": "Субнетмаск",
-          "pt": "Subnetmask",
-          "nl": "Vertaling:",
-          "fr": "Subnetmask",
-          "it": "Subnetmask",
-          "es": "Subnetmask",
-          "pl": "Subnet",
-          "zh-cn": "Subnetmask"
-        },
-        "type": "string",
-        "read": true,
-        "write": false
-      }
-    },
-    {
-      "_id": "network.networkType",
-      "type": "state",
-      "common": {
-        "role": "value",
-        "name": {
-          "en": "NetworkType",
-          "de": "Netzwerktyp",
-          "ru": "NetworkType",
-          "pt": "Tipo de rede",
-          "nl": "NetworkT",
-          "fr": "NetworkType",
-          "it": "Rete",
-          "es": "NetworkType",
-          "pl": "NetworkType",
-          "zh-cn": "网络"
-        },
-        "type": "string",
-        "read": true,
-        "write": false
-      }
-    },
-    {
-      "_id": "device",
-      "type": "channel",
-      "common": {
-        "name": {
-          "en": "Information from Device",
-          "de": "Informationen vom Gerät",
-          "ru": "Информация от устройства",
-          "pt": "InformaÃ§Ã£o do Dispositivo",
-          "nl": "Informatie van Device",
-          "fr": "Information de l'appareil",
-          "it": "Informazioni da Dispositivo",
-          "es": "Información del dispositivo",
-          "pl": "Informacja o Device",
-          "zh-cn": "从Devic收到的资料"
-        }
-      },
-      "native": {}
-    },
-    {
-      "_id": "device.model",
-      "type": "state",
-      "common": {
-        "role": "value",
-        "name": {
-          "en": "Camera model",
-          "de": "Kameramodell",
-          "ru": "Модель камеры",
-          "pt": "Modelo de câmera",
-          "nl": "Camera model",
-          "fr": "Modèle de caméra",
-          "it": "Modello di fotocamera",
-          "es": "Modelo de cámara",
-          "pl": "Model Camera",
-          "zh-cn": "2. Camera模型"
-        },
-        "type": "string",
-        "read": true,
-        "write": false
-      }
-    },
-    {
-      "_id": "device.buildDay",
-      "type": "state",
-      "common": {
-        "role": "value",
-        "name": {
-          "en": "Camera buildDay",
-          "de": "Kamera Produktionstag",
-          "ru": "Создание камеры День",
-          "pt": "Construção de câmera Dia",
-          "nl": "Camera bouwt Dag",
-          "fr": "Camera build Jour",
-          "it": "Costruzione della macchina fotografica Giorno",
-          "es": "Cámara Día",
-          "pl": "Kamera Dzień",
-          "zh-cn": "Camera大楼 日 日"
-        },
-        "type": "string",
-        "read": true,
-        "write": false
-      }
-    },
-    {
-      "_id": "device.cfgVer",
-      "type": "state",
-      "common": {
-        "role": "value",
-        "name": {
-          "en": "Camera cfgVer",
-          "de": "Kamera cfg",
-          "ru": "Камера cfg",
-          "pt": "Câmera cfg",
-          "nl": "Camera cfg",
-          "fr": "Caméra cfg",
-          "it": "Macchina fotografica cfg",
-          "es": "Cámara cfg",
-          "pl": "Camera cfg.",
-          "zh-cn": "Camera cfg"
-        },
-        "type": "string",
-        "read": true,
-        "write": false
-      }
-    },
-    {
-      "_id": "device.detail",
-      "type": "state",
-      "common": {
-        "role": "value",
-        "name": {
-          "en": "Camera detail",
-          "de": "Kamera Detail",
-          "ru": "Деталь камеры",
-          "pt": "Detalhes da câmera",
-          "nl": "Camera detail",
-          "fr": "Détail de la caméra",
-          "it": "Dettaglio della fotocamera",
-          "es": "Detalles de la cámara",
-          "pl": "Szczegół",
-          "zh-cn": "Camera详细情况"
-        },
-        "type": "string",
-        "read": true,
-        "write": false
-      }
-    },
-    {
-      "_id": "device.diskNum",
-      "type": "state",
-      "common": {
-        "role": "value",
-        "name": {
-          "en": "Camera diskNum",
-          "de": "Kamera HDDAnz",
-          "ru": "Диск камерыNum",
-          "pt": "Disco da câmeraNum",
-          "nl": "Camera DiskNum",
-          "fr": "Disque de caméraNum",
-          "it": "Fotocamera discoNum",
-          "es": "Disco de cámaraNum",
-          "pl": "Camera discNum",
-          "zh-cn": "Camera dikNum"
-        },
-        "type": "number",
-        "read": true,
-        "write": false
-      }
-    },
-    {
-      "_id": "device.firmVer",
-      "type": "state",
-      "common": {
-        "role": "value",
-        "name": {
-          "en": "Camera firmVer",
-          "de": "Kamera Firmware Version",
-          "ru": "Камера фирма Вер",
-          "pt": "Empresa de câmera Ver",
-          "nl": "Camera firma Ver",
-          "fr": "Camera firm Ver",
-          "it": "Azienda di macchine fotografiche Ver",
-          "es": "Firma de cámara Ver",
-          "pl": "Firma Camera Wiersze",
-          "zh-cn": "Camera公司 附 件"
-        },
-        "type": "string",
-        "read": true,
-        "write": false
-      }
-    },
-    {
-      "_id": "device.name",
-      "type": "state",
-      "common": {
-        "role": "value",
-        "name": {
-          "en": "Camera name",
-          "de": "Kameraname",
-          "ru": "Название камеры",
-          "pt": "Nome da câmara",
-          "nl": "Camera naam",
-          "fr": "Nom de la caméra",
-          "it": "Nome della macchina",
-          "es": "Nombre de cámara",
-          "pl": "Camera",
-          "zh-cn": "Camera姓名"
-        },
-        "type": "string",
-        "read": true,
-        "write": false
-      }
-    },
-    {
-      "_id": "device.serial",
-      "type": "state",
-      "common": {
-        "role": "value",
-        "name": {
-          "en": "Camera serial",
-          "de": "Kamera ID",
-          "ru": "Серия камеры",
-          "pt": "Série da câmera",
-          "nl": "Camera serie",
-          "fr": "Caméra série",
-          "it": "Fotocamera seriale",
-          "es": "Cámara serie",
-          "pl": "Seriali Camera",
-          "zh-cn": "Cameraserial"
-        },
-        "type": "string",
-        "read": true,
-        "write": false
-      }
-    },
-    {
-      "_id": "device.wifi",
-      "type": "state",
-      "common": {
-        "role": "value",
-        "name": {
-          "en": "Camera wifi",
-          "de": "Kamera Wifi",
-          "ru": "Камера wifi",
-          "pt": "Câmera wifi",
-          "nl": "Camera Wifi",
-          "fr": "Caméra wifi",
-          "it": "Camera wifi",
-          "es": "Cámara wifi",
-          "pl": "Camera",
-          "zh-cn": "Camerawifi"
-        },
-        "type": "number",
-        "read": true,
-        "write": false
-      }
-    },
-    {
-      "_id": "settings",
-      "type": "channel",
-      "common": {
-        "name": {
-          "en": "settings",
-          "de": "einstellungen",
-          "ru": "настройки",
-          "pt": "configurações",
-          "nl": "instellingen",
-          "fr": "paramètres",
-          "it": "impostazioni",
-          "es": "ajustes",
-          "pl": "ustawienie",
-          "zh-cn": "环境"
-        }
-      },
-      "native": {}
-    },
-    {
-      "_id": "settings.ir",
-      "type": "state",
-      "common": {
-        "role": "state",
-        "name": "ir",
-        "type": "string",
-        "read": true,
-        "write": true
-      }
-    },
-    {
-      "_id": "settings.switchLed",
-      "type": "state",
-      "common": {
-        "role": "state",
-        "name": "led",
-        "type": "boolean",
-        "read": true,
-        "write": true
-      }
-    },
-    {
-      "_id": "settings.ledBrightness",
-      "type": "state",
-      "common": {
-        "role": "state",
-        "name": {
-          "en": "LED Brightness",
-          "de": "LED Helligkeit",
-          "ru": "LED Яркость",
-          "pt": "LED Brilho",
-          "nl": "LED Brightness",
-          "fr": "LED Luminosité",
-          "it": "LED Luminosità",
-          "es": "LED Brillo",
-          "pl": "LED Brightness",
-          "zh-cn": "附录 B. 权利"
-        },
-        "type": "number",
-        "read": true,
-        "write": true
-      }
-    },
-    {
-      "_id": "settings.ledMode",
-      "type": "state",
-      "common": {
-        "role": "state",
-        "name": {
-          "en": "LED Mode",
-          "de": "LED Modus",
-          "nl": "LED Mode",
-          "fr": "LED Mode",
-          "it": "LED Modalità",
-          "es": "LED Modo",
-          "pl": "LED Tryb",
-          "zh-cn": "发光模式"
-        },
-        "type": "number",
-        "read": true,
-        "write": true
-      }
-    },
-    {
-      "_id": "settings.ptzPreset",
-      "type": "state",
-      "common": {
-        "role": "state",
-        "name": {
-          "en": "PTZ preset",
-          "de": "PTZ Preset",
-          "ru": "Пресет PTZ",
-          "pt": "Predefinição PTZ",
-          "nl": "PTZ preset",
-          "fr": "Présence PTZ",
-          "it": "Preimpostazione PTZ",
-          "es": "PTZ preset",
-          "pl": "PTZ preset",
-          "zh-cn": "PTZset"
-        },
-        "type": "number",
-        "read": true,
-        "write": true
-      }
-    },
-    {
-      "_id": "settings.ptzPatrol",
-      "type": "state",
-      "common": {
-        "role": "state",
-        "name": {
-          "en": "PTZ patrol",
-          "de": "PTZ Patrol",
-          "ru": "patrol PTZ",
-          "pt": "patrol PTZ",
-          "nl": "PTZ patrol",
-          "fr": "patrol PTZ",
-          "it": "patrol PTZ",
-          "es": "PTZ patrol",
-          "pl": "PTZ patrol",
-          "zh-cn": "PTZpatrol"
-        },
-        "type": "number",
-        "read": true,
-        "write": true
-      }
-    },
-    {
-      "_id": "settings.push",
-      "type": "state",
-      "common": {
-        "role": "state",
-        "name": {
-          "en": "enable push",
-          "de": "push einschalten",
-          "ru": "включить push",
-          "pt": "habilitar o push",
-          "nl": "push",
-          "fr": "activer push",
-          "it": "abilitare push",
-          "es": "push",
-          "pl": "umożliwiać",
-          "zh-cn": "推动"
-        },
-        "type": "boolean",
-        "read": true,
-        "write": true
-      }
-    },
-    {
-      "_id": "settings.ftp",
-      "type": "state",
-      "common": {
-        "role": "state",
-        "name": {
-          "en": "Enable FTP",
-          "de": "FTP einschalten",
-          "ru": "Активируйте FTP",
-          "pt": "Ativar o FTP",
-          "nl": "FTP activeren",
-          "fr": "Activer le FTP",
-          "it": "Attivare l'FTP",
-          "es": "Activar FTP",
-          "pl": "Aktywuj FTP",
-          "zh-cn": "激活 FTP"
-        },
-        "type": "boolean",
-        "read": true,
-        "write": true
-      }
-    },
-    {
-      "_id": "settings.autoFocus",
-      "type": "state",
-      "common": {
-        "role": "state",
-        "name": {
-          "en": "auto focus disabled",
-          "de": "autofokus deaktiviert",
-          "ru": "авто фокус",
-          "pt": "foco auto desactivada",
-          "nl": "autofocus uitgeschakeld",
-          "fr": "autofocus désactivé",
-          "it": "autofocus disattivato",
-          "es": "enfoque desactivado",
-          "pl": "autofocus wyłączony",
-          "zh-cn": "汽车重点"
-        },
-        "type": "string",
-        "read": true,
-        "write": true
-      }
-    },
-    {
-      "_id": "settings.EmailNotification",
-      "type": "state",
-      "common": {
-        "role": "value",
-        "name": {
-          "en": "e-mail notification",
-          "de": "e-mail-benachrichtigung",
-          "ru": "уведомление по электронной почте",
-          "pt": "notificação por e-mail",
-          "nl": "e-mail notificatie",
-          "fr": "notification par courriel",
-          "it": "notifica e-mail",
-          "es": "e-mail notification",
-          "pl": "powiadomienie e-mail",
-          "uk": "повідомлення електронної пошти",
-          "zh-cn": "电子邮件通知"
-        },
-        "type": "number",
-        "read": true,
-        "write": true
-      }
-    },
-    {
-      "_id": "settings.setZoomFocus",
-      "type": "state",
-      "common": {
-        "role": "state",
-        "name": {
-          "en": "set zoom position",
-          "de": "zoom position",
-          "ru": "установите позицию zoom",
-          "pt": "set zoom position",
-          "nl": "zoompositie",
-          "fr": "position de zoom",
-          "it": "impostare la posizione zoom",
-          "es": "posición zoom",
-          "pl": "uporządkować",
-          "zh-cn": "2. 动物状况"
-        },
-        "type": "number",
-        "read": true,
-        "write": true
-      }
-    },
-    {
-      "_id": "settings.focus",
-      "type": "state",
-      "common": {
-        "role": "state",
-        "name": {
-          "en": "focus level",
-          "de": "focus level",
-          "pt": "focus level",
-          "nl": "focusniveau",
-          "fr": "niveau de focalisation",
-          "it": "livello di concentrazione",
-          "es": "nivel de enfoque",
-          "pl": "poziom ostrości",
-          "zh-cn": "重点级"
-        },
-        "type": "number",
-        "read": true,
-        "write": false
-      }
-    },
-    {
-      "_id": "settings.scheduledRecording",
-      "type": "state",
-      "common": {
-        "role": "state",
-        "name": {
-          "en": "Scheduled recording",
-          "de": "Zeitgesteuerte Aufzeichnung",
-          "pt": "Gravação programada",
-          "nl": "Geplande opname",
-          "fr": "Enregistrement programmé",
-          "it": "Registrazione programmata",
-          "es": "Grabación programada",
-          "pl": "Zaplanowane nagrywanie",
-          "zh-cn": "计划录制"
-        },
-        "type": "boolean",
-        "read": true,
-        "write": true
-      }
-    },
-    {
-      "_id": "settings.playAlarm",
-      "type": "state",
-      "common": {
-        "role": "state",
-        "name": {
-          "en": "play alarm",
-          "de": "alarm ton abspielen",
-          "ru": "играть тревогу",
-          "pt": "alarme de jogo",
-          "nl": "speel alarm",
-          "fr": "jouer l'alarme",
-          "it": "allarme di gioco",
-          "es": "toca alarma",
-          "pl": "alarm",
-          "zh-cn": "震惊"
-        },
-        "type": "number",
-        "read": true,
-        "write": true
-      }
-    },
-    {
-      "_id": "settings.getDiscData",
-      "type": "state",
-      "common": {
-        "role": "state",
-        "name": {
-          "en": "get drive data",
-          "de": "laufwerksdaten",
-          "ru": "получить данные о приводе",
-          "pt": "obter dados de unidade",
-          "nl": "drake gegevens",
-          "fr": "obtenir des données d'entraînement",
-          "it": "ottenere dati di unità",
-          "es": "obtener datos de la unidad",
-          "pl": "dać dane",
-          "zh-cn": "数据流动"
-        },
-        "type": "boolean",
-        "read": true,
-        "write": true
-      }
-    },
-    {
-      "_id": "settings.ptzEnableGuard",
-      "type": "state",
-      "common": {
-        "role": "state",
-        "name": {
-          "en": "enable PTZguard",
-          "de": "PTZguard einschalten",
-          "ru": "включить PTZguard",
-          "pt": "habilitar PTZguard",
-          "nl": "in staat PTZguard",
-          "fr": "activer PTZguard",
-          "it": "abilita PTZguard",
-          "es": "habilitación PTZguard",
-          "pl": "umożliwić PTZguard",
-          "zh-cn": "a. 能够促进 PTZguard"
-        },
-        "type": "boolean",
-        "read": true,
-        "write": true
-      }
-    },
-    {
-      "_id": "settings.ptzCheck",
-      "type": "state",
-      "common": {
-        "role": "state",
-        "name": {
-          "en": "PTZ check",
-          "de": "PTZ-Check",
-          "ru": "PTZ проверка",
-          "pt": "Verificação PTZ",
-          "nl": "PTZ-controle",
-          "fr": "Contrôle PTZ",
-          "it": "Controllo PTZ",
-          "es": "PTZ check",
-          "pl": "Kontrola PTZ",
-          "uk": "Перевірка ПТЗ",
-          "zh-cn": "PTZ 检查"
-        },
-        "type": "boolean",
-        "read": true,
-        "write": true
-      }
-    },
-    {
-      "_id": "settings.ptzGuardTimeout",
-      "type": "state",
-      "common": {
-        "role": "state",
-        "name": {
-          "en": "timeout ptzGuard",
-          "de": "timeout ptzGuard",
-          "ru": "timeout ptzGuard",
-          "pt": "timeout ptzGuard",
-          "nl": "time-out ptzGuard",
-          "fr": "timeout ptzGuard",
-          "it": "timeout ptzGuard",
-          "es": "tiempo fuera ptzGuard",
-          "pl": "czasoprzestrzeni ptzGuard",
-          "zh-cn": "时间 ptzGuard"
-        },
-        "type": "number",
-        "read": true,
-        "write": true
-      }
-    },
-    {
-      "_id": "Command",
-      "type": "channel",
-      "common": {
-        "name": {
-          "en": "Command",
-          "de": "Befehl",
-          "ru": "Команда",
-          "pt": "Comando",
-          "nl": "Commando",
-          "fr": "Commandant",
-          "it": "Comando",
-          "es": "Comando",
-          "pl": "Dowództwo",
-          "uk": "Про компанію",
-          "zh-cn": "指挥"
-        }
-      },
-      "native": {}
-    },
-    {
-      "_id": "Command.Reboot",
-      "type": "state",
-      "common": {
-        "role": "button",
-        "name": {
-          "en": "Reboot",
-          "de": "Neustart",
-          "ru": "Перезагрузка",
-          "pt": "Reiniciar",
-          "nl": "Reboot",
-          "fr": "Reboot",
-          "it": "Reboot",
-          "es": "Reboot",
-          "pl": "Reboot",
-          "uk": "Перезавантаження",
-          "zh-cn": "Reboot"
-        },
-        "type": "boolean",
-        "read": false,
-        "write": true
-      },
-      "native": {}
-    },
-    {
-      "_id": "RAW",
-      "type": "channel",
-      "common": {
-        "name": {
-          "en": "RAW",
-          "de": "RAW",
-          "ru": "РАВ",
-          "pt": "RAW",
-          "nl": "RAW",
-          "fr": "RAW",
-          "it": "RAW",
-          "es": "RAW",
-          "pl": "RAW",
-          "uk": "КУРСИ",
-          "zh-cn": "RAW"
-        }
-      },
-      "native": {}
-    },
-    {
-      "_id": "RAW.Email",
-      "type": "state",
-      "common": {
-        "role": "value",
-        "name": {
-          "en": "Email",
-          "de": "Email",
-          "ru": "Электронная почта",
-          "pt": "Email",
-          "nl": "E-mail",
-          "fr": "Email",
-          "it": "Email",
-          "es": "Email",
-          "pl": "Email",
-          "uk": "Електронна пошта",
-          "zh-cn": "电子邮件"
-        },
-        "type": "string",
-        "read": true,
-        "write": false
-      }
-    }
-  ]
 }

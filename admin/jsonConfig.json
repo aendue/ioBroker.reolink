@@ -7,7 +7,7 @@
     "items": {
         "_options": {
             "type": "panel",
-            "label": "Kamera Typ",
+            "label": "Camera type",
             "items": {
                 "cameraIp": {
                     "type": "text",
@@ -16,7 +16,7 @@
                     "md": 6,
                     "lg": 4,
                     "xl": 4,
-                    "label": "IP-Adresse"
+                    "label": "IP Address"
                 },
                 "cameraProtocol": {
                     "newLine": true,
@@ -27,19 +27,20 @@
                     "md": 6,
                     "lg": 4,
                     "xl": 4,
+                    "noTranslation": true,
                     "options": [
-                        {"label": "https", "value": "https"},
-                        {"label": "http", "value": "http"}
-                    ] 
+                        { "label": "https", "value": "https" },
+                        { "label": "http", "value": "http" }
+                    ]
                 },
-                "sslvalid":{
+                "sslvalid": {
                     "type": "checkbox",
                     "xs": 12,
                     "sm": 12,
                     "md": 6,
                     "lg": 4,
                     "xl": 4,
-                    "label": "SSL-Zertifikat validieren"
+                    "label": "Validate SSL certificate"
                 },
                 "cameraChannel": {
                     "type": "number",
@@ -48,7 +49,7 @@
                     "md": 6,
                     "lg": 4,
                     "xl": 4,
-                    "label": "Kanal"
+                    "label": "Channel"
                 },
                 "cameraUser": {
                     "newLine": true,
@@ -58,7 +59,7 @@
                     "md": 6,
                     "lg": 4,
                     "xl": 4,
-                    "label": "Benutzer"
+                    "label": "User"
                 },
                 "cameraPassword": {
                     "type": "password",
@@ -69,22 +70,22 @@
                     "md": 6,
                     "lg": 4,
                     "xl": 4,
-                    "label": "Passwort"
+                    "label": "Password"
                 },
-                "UriEncodedPassword":{
+                "UriEncodedPassword": {
                     "type": "checkbox",
                     "xs": 12,
                     "sm": 12,
                     "md": 6,
                     "lg": 4,
                     "xl": 4,
-                    "label": "Uri encode password"
+                    "label": "URI Encode password"
                 }
             }
         },
         "_advanced": {
             "type": "panel",
-            "label": "Erweitert",
+            "label": "Advanced settings",
             "items": {
                 "apiRefreshInterval": {
                     "type": "number",
@@ -95,8 +96,8 @@
                     "md": 6,
                     "lg": 4,
                     "xl": 4,
-                    "label": "Abfragezyklus der Kamera",
-                    "help": "in Sekunden"
+                    "label": "Polling interval",
+                    "help": "in seconds"
                 }
             }
         }
