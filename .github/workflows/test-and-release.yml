@@ -66,6 +66,7 @@ jobs:
         # Write permissions are required to create GitHub releases
         permissions:
             contents: write
+            id-token: write
 
         steps:
             - uses: ioBroker/testing-action-deploy@v1
