@@ -104,7 +104,7 @@ sendTo("reolink.0",{action: "snap"}, function(result){
     Placeholder for the next version (at the beginning of the line):
     ### **WORK IN PROGRESS**
 -->
-### **WORK IN PROGRESS**
+### 1.3.0 (2025-12-20)
 * (agross) AiCfg config
 * (oelison) bump some libs #202
 * (bluefox) migration to ts
