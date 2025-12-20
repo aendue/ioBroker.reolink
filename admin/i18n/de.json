@@ -1,0 +1,14 @@
+{
+  "Advanced settings": "Erweiterte Einstellungen",
+  "Camera type": "Kameratyp",
+  "Channel": "Kanal",
+  "IP Address": "IP-Adresse",
+  "Kamera": "Kamera",
+  "Password": "Passwort",
+  "Polling interval": "Abstimmungsintervall",
+  "Protocol": "Protokoll",
+  "URI Encode password": "URI-kodiertes Passwort",
+  "User": "Benutzer",
+  "Validate SSL certificate": "SSL-Zertifikat validieren",
+  "in seconds": "in Sekunden"
+}

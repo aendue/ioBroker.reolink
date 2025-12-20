@@ -1,0 +1,14 @@
+{
+  "Advanced settings": "高级设置",
+  "Camera type": "相机类型",
+  "Channel": "渠道",
+  "IP Address": "IP地址",
+  "Kamera": "相机",
+  "Password": "密码",
+  "Polling interval": "轮询间隔",
+  "Protocol": "协议",
+  "URI Encode password": "URI编码密码",
+  "User": "用户",
+  "Validate SSL certificate": "验证 SSL 证书",
+  "in seconds": "只需几秒钟"
+}
