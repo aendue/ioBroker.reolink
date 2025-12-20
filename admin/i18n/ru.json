@@ -1,0 +1,14 @@
+{
+  "Advanced settings": "Расширенные настройки",
+  "Camera type": "Тип камеры",
+  "Channel": "Канал",
+  "IP Address": "IP-адрес",
+  "Kamera": "Камера",
+  "Password": "Пароль",
+  "Polling interval": "Интервал опроса",
+  "Protocol": "Протокол",
+  "URI Encode password": "Пароль URI Encode",
+  "User": "Пользователь",
+  "Validate SSL certificate": "Проверить SSL-сертификат",
+  "in seconds": "за секунды"
+}

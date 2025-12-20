@@ -28,7 +28,7 @@ jobs:
         steps:
             - uses: ioBroker/testing-action-check@v1
               with:
-                  node-version: "18.x"
+                  node-version: "22.x"
                   # Uncomment the following line if your adapter cannot be installed using 'npm ci'
                   # install-command: 'npm install'
                   lint: true
@@ -50,7 +50,7 @@ jobs:
                   os: ${{ matrix.os }}
                   # Uncomment the following line if your adapter cannot be installed using 'npm ci'
                   # install-command: 'npm install'
-                  build: false
+                  build: true
     # Deploys the final package to NPM
     deploy:
         needs: [check-and-lint, adapter-tests]
@@ -63,16 +63,16 @@ jobs:
 
         runs-on: ubuntu-latest
 
-        # Write permissions are required to create Github releases
+        # Write permissions are required to create GitHub releases
         permissions:
             contents: write
 
         steps:
             - uses: ioBroker/testing-action-deploy@v1
               with:
-                  node-version: "18.x"
+                  node-version: "22.x"
                   # Uncomment the following line if your adapter cannot be installed using 'npm ci'
                   # install-command: 'npm install'
-                  build: false
+                  build: true
                   npm-token: ${{ secrets.NPM_TOKEN }}
                   github-token: ${{ secrets.GITHUB_TOKEN }}

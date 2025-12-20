@@ -1,0 +1,14 @@
+{
+  "Advanced settings": "Geavanceerde instellingen",
+  "Camera type": "Cameratype",
+  "Channel": "Kanaal",
+  "IP Address": "IP-adres",
+  "Kamera": "Camera",
+  "Password": "Wachtwoord",
+  "Polling interval": "Polling-interval",
+  "Protocol": "Protocol",
+  "URI Encode password": "URI Encode-wachtwoord",
+  "User": "Gebruiker",
+  "Validate SSL certificate": "SSL-certificaat valideren",
+  "in seconds": "in seconden"
+}
