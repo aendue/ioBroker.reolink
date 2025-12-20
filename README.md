@@ -106,7 +106,10 @@ sendTo("reolink.0",{action: "snap"}, function(result){
 -->
 ### **WORK IN PROGRESS**
 * (agross) AiCfg config
-* (oelison) bump some libs
+* (oelison) bump some libs #202
+* (bluefox) migration to ts
+* (bot) revoking classic token #204
+* (oelison) state changes from info log to debug #206
 
 ### 1.2.3 (2025-06-30)
 * (oelison) settings email notification #170
