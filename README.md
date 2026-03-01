@@ -140,8 +140,15 @@ The adapter creates these control datapoints:
 - **`streams.enable`** (boolean) - Enable/Disable RTSP streaming
   - ⚠️ **Default: `false`** (battery saving)
   - Set to `true` when you want to view the stream
-  - Set to `false` immediately after viewing to save battery
+  - **Auto-disables after timeout** (configurable, default 30s)
+  - Set to `false` immediately after viewing to save battery (or wait for auto-disable)
   - Stream auto-pauses when no client connected (even when enabled)
+  - Timer is cancelled if manually disabled before timeout
+
+**Auto-Disable Timer:**
+- Configurable in adapter settings: `streamAutoDisableSeconds` (default: 30, range: 10-3600)
+- Prevents accidental battery drain if you forget to disable
+- Logs warning when auto-disabling: `⏱️ Auto-disabling stream after Xs (battery protection)`
 
 #### MQTT Control (Motion & Battery without Streaming!)
 
@@ -160,6 +167,7 @@ The adapter creates these control datapoints:
 ✅ **RTSP Live Streams** (Main + Sub Stream)  
 ✅ **Battery Saving Mode** (auto-pause, idle disconnect)  
 ✅ **Stream Control** (`streams.enable` datapoint)  
+✅ **Auto-Disable Timer** (configurable, default 30s)  
 ✅ **MQTT Motion Detection** (without streaming)  
 ✅ **MQTT Battery Level** (% remaining)  
 ✅ **Camera UID Display**  
@@ -260,11 +268,12 @@ This adapter leverages all battery-saving features from neolink:
   - Added support for Reolink battery-powered cameras (Argus 3 Pro, B400, D400, E1 Outdoor)
   - Integrated neolink v0.6.2 (Rust RTSP bridge for Baichuan protocol)
   - Bundled neolink binaries for Linux x64, macOS, Windows x64 (~67MB)
-  - New config options: `isBatteryCam` checkbox, `cameraUID` field
+  - New config options: `isBatteryCam` checkbox, `cameraUID` field, `streamAutoDisableSeconds`
   - Automatic neolink process spawning for battery cameras
   - RTSP stream URLs exposed: `rtsp://127.0.0.1:8554/<InstanceName>/mainStream`
   - **Battery Saving Features:**
     - Streams DISABLED by default (enable via `streams.enable` datapoint)
+    - **Auto-disable timer** - Stream automatically disables after timeout (default 30s, configurable 10-3600s)
     - Auto-pause when no RTSP client connected
     - Idle disconnect after 2.1s of inactivity
     - MQTT support for motion/battery monitoring WITHOUT streaming

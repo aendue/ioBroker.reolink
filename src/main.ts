@@ -117,6 +117,7 @@ class ReoLinkCamAdapter extends Adapter {
     private reolinkApiClient: AxiosInstance | null = null;
     private refreshStateTimeout: ioBroker.Timeout | undefined = undefined;
     private neolinkManager: NeolinkManager | null = null;
+    private streamAutoDisableTimer: ioBroker.Timeout | undefined = undefined;
 
     constructor(options?: Partial<AdapterOptions>) {
         super({
@@ -1461,6 +1462,10 @@ class ReoLinkCamAdapter extends Adapter {
                 this.log.debug('refreshStateTimeout: UNLOAD');
                 this.clearTimeout(this.refreshStateTimeout);
             }
+            if (this.streamAutoDisableTimer) {
+                this.log.debug('streamAutoDisableTimer: UNLOAD');
+                this.clearTimeout(this.streamAutoDisableTimer);
+            }
         } catch (error) {
             this.log.error(`onUnload: ${error}`);
         }
@@ -1788,9 +1793,26 @@ class ReoLinkCamAdapter extends Adapter {
             return;
         }
 
+        // Clear existing timer
+        if (this.streamAutoDisableTimer) {
+            this.clearTimeout(this.streamAutoDisableTimer);
+            this.streamAutoDisableTimer = undefined;
+        }
+
         if (enable) {
-            this.log.warn('⚠️ BATTERY DRAIN: Streaming enabled! Remember to disable when not viewing.');
+            // Get auto-disable timeout from config (default: 30s)
+            const autoDisableSeconds = this.config.streamAutoDisableSeconds || 30;
+            
+            this.log.warn(`⚠️ BATTERY DRAIN: Streaming enabled! Auto-disabling in ${autoDisableSeconds}s to save battery.`);
             await this.setStateAsync('streams.enable', true, true);
+            
+            // Set auto-disable timer
+            this.streamAutoDisableTimer = this.setTimeout(async () => {
+                this.log.warn(`⏱️ Auto-disabling stream after ${autoDisableSeconds}s (battery protection)`);
+                await this.setStateAsync('streams.enable', false, false);
+                this.streamAutoDisableTimer = undefined;
+            }, autoDisableSeconds * 1000);
+            
             // Neolink auto-pauses on no client, but stream is "available"
         } else {
             this.log.info('Streaming disabled - battery saving mode');
