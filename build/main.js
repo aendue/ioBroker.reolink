@@ -1,4 +1,37 @@
 "use strict";
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || (function () {
+    var ownKeys = function(o) {
+        ownKeys = Object.getOwnPropertyNames || function (o) {
+            var ar = [];
+            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
+            return ar;
+        };
+        return ownKeys(o);
+    };
+    return function (mod) {
+        if (mod && mod.__esModule) return mod;
+        var result = {};
+        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
+        __setModuleDefault(result, mod);
+        return result;
+    };
+})();
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -8,6 +41,8 @@ exports.getReolinkErrorMessage = getReolinkErrorMessage;
 const adapter_core_1 = require("@iobroker/adapter-core");
 const axios_1 = __importDefault(require("axios"));
 const node_https_1 = __importDefault(require("node:https"));
+const node_path_1 = __importDefault(require("node:path"));
+const utils = __importStar(require("@iobroker/adapter-core"));
 const neolink_manager_1 = require("./neolink-manager");
 const dependency_check_1 = require("./dependency-check");
 const snapshot_helper_1 = require("./snapshot-helper");
@@ -1517,7 +1552,8 @@ class ReoLinkCamAdapter extends adapter_core_1.Adapter {
                 this.ffmpegAvailable = true;
             }
             // Initialize neolink manager
-            const dataDir = this.namespace.replace(/\./g, '_'); // Use instance namespace as dir name
+            // Use absolute path in ioBroker data directory
+            const dataDir = node_path_1.default.join(utils.getAbsoluteDefaultDataDir(), this.namespace.replace(/\./g, '_'));
             this.neolinkManager = new neolink_manager_1.NeolinkManager(dataDir, (cameraName, level, message) => {
                 // Log callback
                 switch (level) {
