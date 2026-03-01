@@ -131,6 +131,55 @@
                     "xl": 4,
                     "label": "Stream pause timeout (seconds)",
                     "help": "How long to wait before pausing stream when no RTSP client connected (default: 2.1s, neolink setting)"
+                },
+                "mqttBroker": {
+                    "hidden": "!data.isBatteryCam",
+                    "newLine": true,
+                    "type": "text",
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 6,
+                    "lg": 4,
+                    "xl": 4,
+                    "label": "MQTT Broker Host",
+                    "help": "MQTT broker for motion detection and floodlight control (default: 127.0.0.1)"
+                },
+                "mqttPort": {
+                    "hidden": "!data.isBatteryCam",
+                    "type": "number",
+                    "min": 1,
+                    "max": 65535,
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 6,
+                    "lg": 4,
+                    "xl": 4,
+                    "label": "MQTT Broker Port",
+                    "help": "MQTT broker port (default: 1883)"
+                },
+                "mqttUsername": {
+                    "hidden": "!data.isBatteryCam",
+                    "type": "text",
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 6,
+                    "lg": 4,
+                    "xl": 4,
+                    "label": "MQTT Username (optional)",
+                    "help": "Leave empty if no authentication required"
+                },
+                "mqttPassword": {
+                    "hidden": "!data.isBatteryCam",
+                    "type": "password",
+                    "repeat": false,
+                    "visible": false,
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 6,
+                    "lg": 4,
+                    "xl": 4,
+                    "label": "MQTT Password (optional)",
+                    "help": "Leave empty if no authentication required"
                 }
             }
         },
