@@ -1448,20 +1448,19 @@ class ReoLinkCamAdapter extends Adapter {
             // Stop neolink if running
             if (this.neolinkManager) {
                 this.log.info('Stopping neolink processes...');
-                
+
                 // Also disconnect MQTT
                 const mqttPromise = this.mqttHelper ? this.mqttHelper.disconnect() : Promise.resolve();
-                
-                Promise.all([
-                    this.neolinkManager.stopAll(),
-                    mqttPromise
-                ]).then(() => {
-                    this.log.info('Neolink and MQTT stopped');
-                    callback();
-                }).catch((err) => {
-                    this.log.error(`Failed to stop services: ${err.message}`);
-                    callback();
-                });
+
+                Promise.all([this.neolinkManager.stopAll(), mqttPromise])
+                    .then(() => {
+                        this.log.info('Neolink and MQTT stopped');
+                        callback();
+                    })
+                    .catch(err => {
+                        this.log.error(`Failed to stop services: ${err.message}`);
+                        callback();
+                    });
                 return;
             }
 
@@ -1605,7 +1604,7 @@ class ReoLinkCamAdapter extends Adapter {
             // Check system dependencies
             this.log.info('Checking system dependencies for battery camera...');
             const deps = await checkAllDependencies();
-            
+
             // GStreamer check (critical for neolink RTSP server)
             if (!deps.gstreamer.available) {
                 this.log.error('❌ CRITICAL: GStreamer RTSP library NOT FOUND!');
@@ -1615,10 +1614,9 @@ class ReoLinkCamAdapter extends Adapter {
                 this.log.error('Adapter will not start battery camera without this dependency.');
                 await this.setStateAsync('info.connection', false, true);
                 return;
-            } else {
-                this.log.info(`✅ GStreamer RTSP library found (${deps.gstreamer.version})`);
             }
-            
+            this.log.info(`✅ GStreamer RTSP library found (${deps.gstreamer.version})`);
+
             // ffmpeg check (optional, for snapshot feature)
             if (!deps.ffmpeg.available) {
                 this.log.warn('⚠️ Optional: ffmpeg NOT FOUND');
@@ -1633,22 +1631,19 @@ class ReoLinkCamAdapter extends Adapter {
 
             // Initialize neolink manager
             const dataDir = this.namespace.replace(/\./g, '_'); // Use instance namespace as dir name
-            this.neolinkManager = new NeolinkManager(
-                dataDir,
-                (cameraName, level, message) => {
-                    // Log callback
-                    switch (level) {
-                        case 'error':
-                            this.log.error(`[${cameraName}] ${message}`);
-                            break;
-                        case 'warn':
-                            this.log.warn(`[${cameraName}] ${message}`);
-                            break;
-                        default:
-                            this.log.info(`[${cameraName}] ${message}`);
-                    }
+            this.neolinkManager = new NeolinkManager(dataDir, (cameraName, level, message) => {
+                // Log callback
+                switch (level) {
+                    case 'error':
+                        this.log.error(`[${cameraName}] ${message}`);
+                        break;
+                    case 'warn':
+                        this.log.warn(`[${cameraName}] ${message}`);
+                        break;
+                    default:
+                        this.log.info(`[${cameraName}] ${message}`);
                 }
-            );
+            });
 
             // Prepare neolink config
             const neolinkConfig: NeolinkConfig = {
@@ -1657,7 +1652,7 @@ class ReoLinkCamAdapter extends Adapter {
                 password: this.config.cameraPassword,
                 uid: this.config.cameraUID,
                 address: this.config.cameraIp,
-                pauseTimeout: this.config.pauseTimeout || 2.1
+                pauseTimeout: this.config.pauseTimeout || 2.1,
             };
 
             // Start neolink
@@ -1689,7 +1684,6 @@ class ReoLinkCamAdapter extends Adapter {
 
             this.log.info('Battery camera ready!');
             this.log.warn('⚠️ Streaming is DISABLED by default to save battery. Enable via streams.enable datapoint.');
-
         } catch (error) {
             this.log.error(`Failed to start battery camera: ${error instanceof Error ? error.message : error}`);
             await this.setStateAsync('info.neolink_status', 'error', true);
@@ -1709,9 +1703,9 @@ class ReoLinkCamAdapter extends Adapter {
                 type: 'string',
                 role: 'info',
                 read: true,
-                write: false
+                write: false,
             },
-            native: {}
+            native: {},
         });
         await this.setStateAsync('info.uid', this.config.cameraUID, true);
 
@@ -1724,21 +1718,21 @@ class ReoLinkCamAdapter extends Adapter {
                 read: true,
                 write: false,
                 states: {
-                    'running': 'Running',
-                    'stopped': 'Stopped',
-                    'error': 'Error'
-                }
+                    running: 'Running',
+                    stopped: 'Stopped',
+                    error: 'Error',
+                },
             },
-            native: {}
+            native: {},
         });
 
         // Stream URLs
         await this.setObjectNotExistsAsync('streams', {
             type: 'channel',
             common: {
-                name: 'RTSP Streams'
+                name: 'RTSP Streams',
             },
-            native: {}
+            native: {},
         });
 
         await this.setObjectNotExistsAsync('streams.mainStream', {
@@ -1748,9 +1742,9 @@ class ReoLinkCamAdapter extends Adapter {
                 type: 'string',
                 role: 'text.url',
                 read: true,
-                write: false
+                write: false,
             },
-            native: {}
+            native: {},
         });
 
         await this.setObjectNotExistsAsync('streams.subStream', {
@@ -1760,9 +1754,9 @@ class ReoLinkCamAdapter extends Adapter {
                 type: 'string',
                 role: 'text.url',
                 read: true,
-                write: false
+                write: false,
             },
-            native: {}
+            native: {},
         });
 
         // Stream control (battery saving!)
@@ -1775,9 +1769,9 @@ class ReoLinkCamAdapter extends Adapter {
                 read: true,
                 write: true,
                 def: false,
-                desc: 'Enable RTSP streaming. WARNING: Drains battery quickly! Only enable when actively viewing.'
+                desc: 'Enable RTSP streaming. WARNING: Drains battery quickly! Only enable when actively viewing.',
             },
-            native: {}
+            native: {},
         });
         await this.setStateAsync('streams.enable', false, true);
 
@@ -1785,9 +1779,9 @@ class ReoLinkCamAdapter extends Adapter {
         await this.setObjectNotExistsAsync('mqtt', {
             type: 'channel',
             common: {
-                name: 'MQTT Motion & Battery'
+                name: 'MQTT Motion & Battery',
             },
-            native: {}
+            native: {},
         });
 
         await this.setObjectNotExistsAsync('mqtt.enable', {
@@ -1799,9 +1793,9 @@ class ReoLinkCamAdapter extends Adapter {
                 read: true,
                 write: true,
                 def: false,
-                desc: 'Enable MQTT for motion detection and battery level monitoring'
+                desc: 'Enable MQTT for motion detection and battery level monitoring',
             },
-            native: {}
+            native: {},
         });
         await this.setStateAsync('mqtt.enable', false, true);
 
@@ -1813,9 +1807,9 @@ class ReoLinkCamAdapter extends Adapter {
                 role: 'text',
                 read: true,
                 write: true,
-                def: '127.0.0.1'
+                def: '127.0.0.1',
             },
-            native: {}
+            native: {},
         });
         await this.setStateAsync('mqtt.broker', '127.0.0.1', true);
 
@@ -1827,9 +1821,9 @@ class ReoLinkCamAdapter extends Adapter {
                 role: 'value',
                 read: true,
                 write: true,
-                def: 1883
+                def: 1883,
             },
-            native: {}
+            native: {},
         });
         await this.setStateAsync('mqtt.port', 1883, true);
 
@@ -1842,9 +1836,9 @@ class ReoLinkCamAdapter extends Adapter {
                 role: 'button',
                 read: false,
                 write: true,
-                desc: 'Set to true to capture snapshot from mainStream (requires ffmpeg)'
+                desc: 'Set to true to capture snapshot from mainStream (requires ffmpeg)',
             },
-            native: {}
+            native: {},
         });
 
         await this.setObjectNotExistsAsync('snapshotImage', {
@@ -1855,9 +1849,9 @@ class ReoLinkCamAdapter extends Adapter {
                 role: 'image',
                 read: true,
                 write: false,
-                desc: 'Base64-encoded JPEG snapshot'
+                desc: 'Base64-encoded JPEG snapshot',
             },
-            native: {}
+            native: {},
         });
 
         await this.setObjectNotExistsAsync('snapshotStatus', {
@@ -1869,13 +1863,13 @@ class ReoLinkCamAdapter extends Adapter {
                 read: true,
                 write: false,
                 states: {
-                    'idle': 'Idle',
-                    'capturing': 'Capturing...',
-                    'success': 'Success',
-                    'error': 'Error'
-                }
+                    idle: 'Idle',
+                    capturing: 'Capturing...',
+                    success: 'Success',
+                    error: 'Error',
+                },
             },
-            native: {}
+            native: {},
         });
         await this.setStateAsync('snapshotStatus', 'idle', true);
 
@@ -1889,9 +1883,9 @@ class ReoLinkCamAdapter extends Adapter {
                 read: true,
                 write: true,
                 def: false,
-                desc: 'Control camera floodlight (requires MQTT enabled)'
+                desc: 'Control camera floodlight (requires MQTT enabled)',
             },
-            native: {}
+            native: {},
         });
         await this.setStateAsync('floodlight', false, true);
 
@@ -1916,17 +1910,19 @@ class ReoLinkCamAdapter extends Adapter {
         if (enable) {
             // Get auto-disable timeout from config (default: 30s)
             const autoDisableSeconds = this.config.streamAutoDisableSeconds || 30;
-            
-            this.log.warn(`⚠️ BATTERY DRAIN: Streaming enabled! Auto-disabling in ${autoDisableSeconds}s to save battery.`);
+
+            this.log.warn(
+                `⚠️ BATTERY DRAIN: Streaming enabled! Auto-disabling in ${autoDisableSeconds}s to save battery.`,
+            );
             await this.setStateAsync('streams.enable', true, true);
-            
+
             // Set auto-disable timer
             this.streamAutoDisableTimer = this.setTimeout(async () => {
                 this.log.warn(`⏱️ Auto-disabling stream after ${autoDisableSeconds}s (battery protection)`);
                 await this.setStateAsync('streams.enable', false, false);
                 this.streamAutoDisableTimer = undefined;
             }, autoDisableSeconds * 1000);
-            
+
             // Neolink auto-pauses on no client, but stream is "available"
         } else {
             this.log.info('Streaming disabled - battery saving mode');
@@ -1955,14 +1951,14 @@ class ReoLinkCamAdapter extends Adapter {
         if (mqttEnable.val) {
             this.log.info(`Enabling MQTT: ${mqttBroker.val}:${mqttPort.val}`);
             this.log.info('MQTT topics: neolink/<camera>/motion, neolink/<camera>/battery');
-            
+
             // Initialize MQTT helper for floodlight control
             if (!this.mqttHelper) {
                 try {
                     this.mqttHelper = new MqttHelper(
                         {
                             broker: mqttBroker.val as string,
-                            port: mqttPort.val as number
+                            port: mqttPort.val as number,
                         },
                         (level, message) => {
                             switch (level) {
@@ -1975,23 +1971,22 @@ class ReoLinkCamAdapter extends Adapter {
                                 default:
                                     this.log.info(`[MQTT] ${message}`);
                             }
-                        }
+                        },
                     );
-                    
+
                     await this.mqttHelper.connect();
                     this.log.info('✅ MQTT client connected - Floodlight control available');
-                    
                 } catch (error) {
                     this.log.error(`Failed to connect MQTT client: ${error instanceof Error ? error.message : error}`);
                     this.mqttHelper = null;
                 }
             }
-            
+
             // Note: Requires neolink restart to apply MQTT config
             this.log.warn('⚠️ MQTT config change requires adapter restart to take effect!');
         } else {
             this.log.info('MQTT disabled');
-            
+
             // Disconnect MQTT helper
             if (this.mqttHelper) {
                 await this.mqttHelper.disconnect();
@@ -2026,12 +2021,11 @@ class ReoLinkCamAdapter extends Adapter {
 
             // Convert to base64
             const base64Image = `data:image/jpeg;base64,${imageBuffer.toString('base64')}`;
-            
+
             await this.setStateAsync('snapshotImage', base64Image, true);
             await this.setStateAsync('snapshotStatus', 'success', true);
-            
-            this.log.info(`Snapshot captured successfully (${imageBuffer.length} bytes)`);
 
+            this.log.info(`Snapshot captured successfully (${imageBuffer.length} bytes)`);
         } catch (error) {
             this.log.error(`Snapshot failed: ${error instanceof Error ? error.message : error}`);
             await this.setStateAsync('snapshotStatus', 'error', true);
@@ -2053,7 +2047,6 @@ class ReoLinkCamAdapter extends Adapter {
             this.log.info(`Setting floodlight: ${enabled ? 'ON' : 'OFF'}`);
             await this.mqttHelper.setFloodlight(this.name, enabled);
             await this.setStateAsync('floodlight', enabled, true);
-            
         } catch (error) {
             this.log.error(`Floodlight control failed: ${error instanceof Error ? error.message : error}`);
             await this.setStateAsync('floodlight', !enabled, true); // Revert on error

@@ -1339,13 +1339,12 @@ class ReoLinkCamAdapter extends adapter_core_1.Adapter {
                 this.log.info('Stopping neolink processes...');
                 // Also disconnect MQTT
                 const mqttPromise = this.mqttHelper ? this.mqttHelper.disconnect() : Promise.resolve();
-                Promise.all([
-                    this.neolinkManager.stopAll(),
-                    mqttPromise
-                ]).then(() => {
+                Promise.all([this.neolinkManager.stopAll(), mqttPromise])
+                    .then(() => {
                     this.log.info('Neolink and MQTT stopped');
                     callback();
-                }).catch((err) => {
+                })
+                    .catch(err => {
                     this.log.error(`Failed to stop services: ${err.message}`);
                     callback();
                 });
@@ -1504,9 +1503,7 @@ class ReoLinkCamAdapter extends adapter_core_1.Adapter {
                 await this.setStateAsync('info.connection', false, true);
                 return;
             }
-            else {
-                this.log.info(`✅ GStreamer RTSP library found (${deps.gstreamer.version})`);
-            }
+            this.log.info(`✅ GStreamer RTSP library found (${deps.gstreamer.version})`);
             // ffmpeg check (optional, for snapshot feature)
             if (!deps.ffmpeg.available) {
                 this.log.warn('⚠️ Optional: ffmpeg NOT FOUND');
@@ -1541,7 +1538,7 @@ class ReoLinkCamAdapter extends adapter_core_1.Adapter {
                 password: this.config.cameraPassword,
                 uid: this.config.cameraUID,
                 address: this.config.cameraIp,
-                pauseTimeout: this.config.pauseTimeout || 2.1
+                pauseTimeout: this.config.pauseTimeout || 2.1,
             };
             // Start neolink
             this.log.info(`Starting neolink for battery camera: ${neolinkConfig.name}`);
@@ -1585,9 +1582,9 @@ class ReoLinkCamAdapter extends adapter_core_1.Adapter {
                 type: 'string',
                 role: 'info',
                 read: true,
-                write: false
+                write: false,
             },
-            native: {}
+            native: {},
         });
         await this.setStateAsync('info.uid', this.config.cameraUID, true);
         await this.setObjectNotExistsAsync('info.neolink_status', {
@@ -1599,20 +1596,20 @@ class ReoLinkCamAdapter extends adapter_core_1.Adapter {
                 read: true,
                 write: false,
                 states: {
-                    'running': 'Running',
-                    'stopped': 'Stopped',
-                    'error': 'Error'
-                }
+                    running: 'Running',
+                    stopped: 'Stopped',
+                    error: 'Error',
+                },
             },
-            native: {}
+            native: {},
         });
         // Stream URLs
         await this.setObjectNotExistsAsync('streams', {
             type: 'channel',
             common: {
-                name: 'RTSP Streams'
+                name: 'RTSP Streams',
             },
-            native: {}
+            native: {},
         });
         await this.setObjectNotExistsAsync('streams.mainStream', {
             type: 'state',
@@ -1621,9 +1618,9 @@ class ReoLinkCamAdapter extends adapter_core_1.Adapter {
                 type: 'string',
                 role: 'text.url',
                 read: true,
-                write: false
+                write: false,
             },
-            native: {}
+            native: {},
         });
         await this.setObjectNotExistsAsync('streams.subStream', {
             type: 'state',
@@ -1632,9 +1629,9 @@ class ReoLinkCamAdapter extends adapter_core_1.Adapter {
                 type: 'string',
                 role: 'text.url',
                 read: true,
-                write: false
+                write: false,
             },
-            native: {}
+            native: {},
         });
         // Stream control (battery saving!)
         await this.setObjectNotExistsAsync('streams.enable', {
@@ -1646,18 +1643,18 @@ class ReoLinkCamAdapter extends adapter_core_1.Adapter {
                 read: true,
                 write: true,
                 def: false,
-                desc: 'Enable RTSP streaming. WARNING: Drains battery quickly! Only enable when actively viewing.'
+                desc: 'Enable RTSP streaming. WARNING: Drains battery quickly! Only enable when actively viewing.',
             },
-            native: {}
+            native: {},
         });
         await this.setStateAsync('streams.enable', false, true);
         // MQTT control
         await this.setObjectNotExistsAsync('mqtt', {
             type: 'channel',
             common: {
-                name: 'MQTT Motion & Battery'
+                name: 'MQTT Motion & Battery',
             },
-            native: {}
+            native: {},
         });
         await this.setObjectNotExistsAsync('mqtt.enable', {
             type: 'state',
@@ -1668,9 +1665,9 @@ class ReoLinkCamAdapter extends adapter_core_1.Adapter {
                 read: true,
                 write: true,
                 def: false,
-                desc: 'Enable MQTT for motion detection and battery level monitoring'
+                desc: 'Enable MQTT for motion detection and battery level monitoring',
             },
-            native: {}
+            native: {},
         });
         await this.setStateAsync('mqtt.enable', false, true);
         await this.setObjectNotExistsAsync('mqtt.broker', {
@@ -1681,9 +1678,9 @@ class ReoLinkCamAdapter extends adapter_core_1.Adapter {
                 role: 'text',
                 read: true,
                 write: true,
-                def: '127.0.0.1'
+                def: '127.0.0.1',
             },
-            native: {}
+            native: {},
         });
         await this.setStateAsync('mqtt.broker', '127.0.0.1', true);
         await this.setObjectNotExistsAsync('mqtt.port', {
@@ -1694,9 +1691,9 @@ class ReoLinkCamAdapter extends adapter_core_1.Adapter {
                 role: 'value',
                 read: true,
                 write: true,
-                def: 1883
+                def: 1883,
             },
-            native: {}
+            native: {},
         });
         await this.setStateAsync('mqtt.port', 1883, true);
         // Snapshot (requires ffmpeg)
@@ -1708,9 +1705,9 @@ class ReoLinkCamAdapter extends adapter_core_1.Adapter {
                 role: 'button',
                 read: false,
                 write: true,
-                desc: 'Set to true to capture snapshot from mainStream (requires ffmpeg)'
+                desc: 'Set to true to capture snapshot from mainStream (requires ffmpeg)',
             },
-            native: {}
+            native: {},
         });
         await this.setObjectNotExistsAsync('snapshotImage', {
             type: 'state',
@@ -1720,9 +1717,9 @@ class ReoLinkCamAdapter extends adapter_core_1.Adapter {
                 role: 'image',
                 read: true,
                 write: false,
-                desc: 'Base64-encoded JPEG snapshot'
+                desc: 'Base64-encoded JPEG snapshot',
             },
-            native: {}
+            native: {},
         });
         await this.setObjectNotExistsAsync('snapshotStatus', {
             type: 'state',
@@ -1733,13 +1730,13 @@ class ReoLinkCamAdapter extends adapter_core_1.Adapter {
                 read: true,
                 write: false,
                 states: {
-                    'idle': 'Idle',
-                    'capturing': 'Capturing...',
-                    'success': 'Success',
-                    'error': 'Error'
-                }
+                    idle: 'Idle',
+                    capturing: 'Capturing...',
+                    success: 'Success',
+                    error: 'Error',
+                },
             },
-            native: {}
+            native: {},
         });
         await this.setStateAsync('snapshotStatus', 'idle', true);
         // Floodlight control (requires MQTT)
@@ -1752,9 +1749,9 @@ class ReoLinkCamAdapter extends adapter_core_1.Adapter {
                 read: true,
                 write: true,
                 def: false,
-                desc: 'Control camera floodlight (requires MQTT enabled)'
+                desc: 'Control camera floodlight (requires MQTT enabled)',
             },
-            native: {}
+            native: {},
         });
         await this.setStateAsync('floodlight', false, true);
         this.log.debug('Battery camera states created');
@@ -1813,7 +1810,7 @@ class ReoLinkCamAdapter extends adapter_core_1.Adapter {
                 try {
                     this.mqttHelper = new mqtt_helper_1.MqttHelper({
                         broker: mqttBroker.val,
-                        port: mqttPort.val
+                        port: mqttPort.val,
                     }, (level, message) => {
                         switch (level) {
                             case 'error':

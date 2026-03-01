@@ -67,12 +67,12 @@ class NeolinkManager {
         const binary = (0, neolink_binary_1.getNeolinkBinary)();
         this.log(config.name, 'info', `Using neolink binary: ${binary.path} (${binary.platform}/${binary.arch})`);
         // Generate config file
-        const configPath = await this.generateConfig(config);
+        const configPath = this.generateConfig(config);
         // Spawn neolink process
         const args = ['rtsp', '--config', configPath];
         const proc = (0, child_process_1.spawn)(binary.path, args, {
             cwd: this.dataDir,
-            stdio: ['ignore', 'pipe', 'pipe']
+            stdio: ['ignore', 'pipe', 'pipe'],
         });
         // Handle stdout
         proc.stdout?.on('data', (data) => {
@@ -98,7 +98,7 @@ class NeolinkManager {
             this.processes.delete(config.name);
         });
         // Handle process error
-        proc.on('error', (err) => {
+        proc.on('error', err => {
             this.log(config.name, 'error', `Neolink process error: ${err.message}`);
             this.processes.delete(config.name);
         });
@@ -107,7 +107,7 @@ class NeolinkManager {
             process: proc,
             config,
             configPath,
-            startedAt: new Date()
+            startedAt: new Date(),
         });
         this.log(config.name, 'info', `Neolink started (PID: ${proc.pid})`);
         // Wait for RTSP server to be ready (give it 5 seconds)
@@ -125,7 +125,7 @@ class NeolinkManager {
         // Kill process
         procInfo.process.kill('SIGTERM');
         // Wait for exit (with timeout)
-        await new Promise((resolve) => {
+        await new Promise(resolve => {
             const timeout = setTimeout(() => {
                 // Force kill if not exited
                 if (procInfo.process.exitCode === null) {
@@ -168,7 +168,7 @@ class NeolinkManager {
     /**
      * Generate neolink config file (TOML format)
      */
-    async generateConfig(config) {
+    generateConfig(config) {
         const configPath = path.join(this.dataDir, `neolink-${config.name}.toml`);
         // MQTT section (optional)
         let mqttSection = '';
