@@ -1,6 +1,8 @@
 import { Adapter, type AdapterOptions } from '@iobroker/adapter-core';
 import axios, { type AxiosError, type AxiosInstance } from 'axios';
 import https from 'node:https';
+import path from 'node:path';
+import * as utils from '@iobroker/adapter-core';
 import { NeolinkManager, type NeolinkConfig } from './neolink-manager';
 import { checkAllDependencies } from './dependency-check';
 import { captureSnapshot } from './snapshot-helper';
@@ -1630,7 +1632,8 @@ class ReoLinkCamAdapter extends Adapter {
             }
 
             // Initialize neolink manager
-            const dataDir = this.namespace.replace(/\./g, '_'); // Use instance namespace as dir name
+            // Use absolute path in ioBroker data directory
+            const dataDir = path.join(utils.getAbsoluteDefaultDataDir(), this.namespace.replace(/\./g, '_'));
             this.neolinkManager = new NeolinkManager(dataDir, (cameraName, level, message) => {
                 // Log callback
                 switch (level) {
