@@ -2035,7 +2035,9 @@ class ReoLinkCamAdapter extends Adapter {
 
                     await this.mqttHelper.connect();
                     this.log.info('✅ MQTT client connected - Ready for floodlight control');
-                    this.log.info(`Neolink will publish to: neolink/${this.name}/status/{motion,battery_level,floodlight,preview}`);
+                    this.log.info(
+                        `Neolink will publish to: neolink/${this.name}/status/{motion,battery_level,floodlight,preview}`,
+                    );
                 } catch (error) {
                     this.log.error(`Failed to connect MQTT client: ${error instanceof Error ? error.message : error}`);
                     this.log.error(`Check MQTT broker settings: ${broker}:${port}`);
