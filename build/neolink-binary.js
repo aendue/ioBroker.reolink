@@ -50,8 +50,20 @@ function getNeolinkBinary() {
     const platform = os.platform();
     const arch = os.arch();
     let binaryName;
-    if (platform === 'linux' && arch === 'x64') {
-        binaryName = 'neolink-linux-x64';
+    if (platform === 'linux') {
+        if (arch === 'x64') {
+            binaryName = 'neolink-linux-x64';
+        }
+        else if (arch === 'arm64') {
+            binaryName = 'neolink-linux-arm64';
+        }
+        else if (arch === 'arm') {
+            binaryName = 'neolink-linux-arm';
+        }
+        else {
+            throw new Error(`Unsupported Linux architecture: ${arch}. ` +
+                `Battery camera support requires x64, arm64, or arm.`);
+        }
     }
     else if (platform === 'darwin' && (arch === 'x64' || arch === 'arm64')) {
         // macOS universal binary works for both Intel and Apple Silicon
@@ -62,7 +74,7 @@ function getNeolinkBinary() {
     }
     else {
         throw new Error(`Unsupported platform: ${platform} ${arch}. ` +
-            `Battery camera support requires Linux x64, macOS x64/arm64, or Windows x64.`);
+            `Battery camera support requires Linux (x64/arm64/arm), macOS (x64/arm64), or Windows (x64).`);
     }
     const binaryPath = path.join(__dirname, '..', 'lib', binaryName);
     // Verify binary exists

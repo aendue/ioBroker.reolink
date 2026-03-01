@@ -23,7 +23,8 @@
   },
   "dependencies": {
     "@iobroker/adapter-core": "^3.3.2",
-    "axios": "^1.13.2"
+    "axios": "^1.13.2",
+    "mqtt": "^5.15.0"
   },
   "devDependencies": {
     "@alcalzone/release-script": "^5.0.0",

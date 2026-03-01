@@ -20,6 +20,8 @@ export interface NeolinkConfig {
     mqttPort?: number;
     mqttUser?: string;
     mqttPassword?: string;
+    pauseTimeout?: number;
+    enableFloodlight?: boolean;
 }
 
 export interface NeolinkProcess {
@@ -193,7 +195,7 @@ export class NeolinkManager {
   enable_motion = true
   enable_battery = true
   enable_preview = false
-  enable_floodlight = false
+  enable_floodlight = ${config.enableFloodlight ? 'true' : 'false'}
 `;
         } else {
             mqttSection = `
@@ -222,7 +224,7 @@ idle_disconnect = true
 [cameras.pause]
   on_motion = true
   on_client = true
-  timeout = 2.1
+  timeout = ${config.pauseTimeout || 2.1}
 ${mqttSection}
 `.trim();
 

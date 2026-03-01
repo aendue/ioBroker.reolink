@@ -182,7 +182,7 @@ class NeolinkManager {
   enable_motion = true
   enable_battery = true
   enable_preview = false
-  enable_floodlight = false
+  enable_floodlight = ${config.enableFloodlight ? 'true' : 'false'}
 `;
         }
         else {
@@ -211,7 +211,7 @@ idle_disconnect = true
 [cameras.pause]
   on_motion = true
   on_client = true
-  timeout = 2.1
+  timeout = ${config.pauseTimeout || 2.1}
 ${mqttSection}
 `.trim();
         // Write config with restrictive permissions
