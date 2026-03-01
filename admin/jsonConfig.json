@@ -82,6 +82,28 @@
                     "lg": 4,
                     "xl": 4,
                     "label": "URI Encode password"
+                },
+                "isBatteryCam": {
+                    "newLine": true,
+                    "type": "checkbox",
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 6,
+                    "lg": 4,
+                    "xl": 4,
+                    "label": "Battery-powered camera (uses neolink)",
+                    "help": "Enable for Argus 3 Pro, B400, D400, E1, and similar battery cameras"
+                },
+                "cameraUID": {
+                    "hidden": "!data.isBatteryCam",
+                    "type": "text",
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 6,
+                    "lg": 4,
+                    "xl": 4,
+                    "label": "Camera UID",
+                    "help": "Required for battery cameras (find in Reolink app or camera settings)"
                 }
             }
         },
