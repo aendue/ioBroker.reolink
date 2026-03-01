@@ -167,10 +167,12 @@
     ]
   },
   "encryptedNative": [
-    "cameraPassword"
+    "cameraPassword",
+    "mqttPassword"
   ],
   "protectedNative": [
-    "cameraPassword"
+    "cameraPassword",
+    "mqttPassword"
   ],
   "native": {
     "cameraType": "",
@@ -181,7 +183,11 @@
     "cameraPassword": "",
     "apiRefreshInterval": "10",
     "sslvalid": false,
-    "UriEncodedPassword": true
+    "UriEncodedPassword": true,
+    "mqttBroker": "127.0.0.1",
+    "mqttPort": 1883,
+    "mqttUsername": "",
+    "mqttPassword": ""
   },
   "objects": [],
   "instanceObjects": [
