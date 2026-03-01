@@ -1575,9 +1575,18 @@ class ReoLinkCamAdapter extends adapter_core_1.Adapter {
                 uid: this.config.cameraUID,
                 address: this.config.cameraIp,
                 pauseTimeout: this.config.pauseTimeout || 2.1,
+                // MQTT config (optional, from adapter settings)
+                enableMqtt: true, // Always include MQTT config in neolink
+                mqttBroker: this.config.mqttBroker || '127.0.0.1',
+                mqttPort: this.config.mqttPort || 1883,
+                mqttUser: this.config.mqttUsername,
+                mqttPassword: this.config.mqttPassword,
             };
             // Start neolink
             this.log.info(`Starting neolink for battery camera: ${neolinkConfig.name}`);
+            if (neolinkConfig.mqttBroker) {
+                this.log.info(`MQTT enabled: ${neolinkConfig.mqttBroker}:${neolinkConfig.mqttPort}`);
+            }
             await this.neolinkManager.start(neolinkConfig);
             // Create battery cam states
             await this.createBatteryCamStates();
