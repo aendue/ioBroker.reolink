@@ -8,6 +8,7 @@ exports.getReolinkErrorMessage = getReolinkErrorMessage;
 const adapter_core_1 = require("@iobroker/adapter-core");
 const axios_1 = __importDefault(require("axios"));
 const node_https_1 = __importDefault(require("node:https"));
+const neolink_manager_1 = require("./neolink-manager");
 // typescript
 exports.ReolinkErrorMessages = {
     [-1]: 'Missing parameters',
@@ -97,6 +98,7 @@ class ReoLinkCamAdapter extends adapter_core_1.Adapter {
     apiConnected = false;
     reolinkApiClient = null;
     refreshStateTimeout = undefined;
+    neolinkManager = null;
     constructor(options) {
         super({
             ...options,
@@ -140,6 +142,12 @@ class ReoLinkCamAdapter extends adapter_core_1.Adapter {
         if (!this.config.cameraUser || !this.config.cameraPassword) {
             this.log.error('Username and/or password not set properly - please check instance!');
             return;
+        }
+        // Check if this is a battery-powered camera
+        if (this.config.isBatteryCam) {
+            this.log.info('Battery-powered camera detected - using neolink');
+            await this.startBatteryCam();
+            return; // Don't continue with HTTP API
         }
         if (!this.config.cameraProtocol) {
             this.log.error('no protocol (http/https) set!');
@@ -1320,6 +1328,18 @@ class ReoLinkCamAdapter extends adapter_core_1.Adapter {
      */
     onUnload(callback) {
         try {
+            // Stop neolink if running
+            if (this.neolinkManager) {
+                this.log.info('Stopping neolink processes...');
+                this.neolinkManager.stopAll().then(() => {
+                    this.log.info('Neolink stopped');
+                    callback();
+                }).catch((err) => {
+                    this.log.error(`Failed to stop neolink: ${err.message}`);
+                    callback();
+                });
+                return;
+            }
             // Here you must clear all timeouts or intervals that may still be active
             // clearTimeout(timeout1);
             // clearTimeout(timeout2);
@@ -1428,6 +1448,126 @@ class ReoLinkCamAdapter extends adapter_core_1.Adapter {
                 }
             }
         }
+    }
+    /**
+     * Start battery camera with neolink
+     */
+    async startBatteryCam() {
+        // Validate battery cam config
+        if (!this.config.cameraUID) {
+            this.log.error('Battery camera requires Camera UID - please set it in adapter config!');
+            return;
+        }
+        try {
+            // Initialize neolink manager
+            const dataDir = this.namespace.replace(/\./g, '_'); // Use instance namespace as dir name
+            this.neolinkManager = new neolink_manager_1.NeolinkManager(dataDir, (cameraName, level, message) => {
+                // Log callback
+                switch (level) {
+                    case 'error':
+                        this.log.error(`[${cameraName}] ${message}`);
+                        break;
+                    case 'warn':
+                        this.log.warn(`[${cameraName}] ${message}`);
+                        break;
+                    default:
+                        this.log.info(`[${cameraName}] ${message}`);
+                }
+            });
+            // Prepare neolink config
+            const neolinkConfig = {
+                name: this.name, // Use adapter instance name as camera name
+                username: this.config.cameraUser,
+                password: this.config.cameraPassword,
+                uid: this.config.cameraUID,
+                address: this.config.cameraIp
+            };
+            // Start neolink
+            this.log.info(`Starting neolink for battery camera: ${neolinkConfig.name}`);
+            await this.neolinkManager.start(neolinkConfig);
+            // Create battery cam states
+            await this.createBatteryCamStates();
+            // Get RTSP URLs
+            const mainStreamUrl = this.neolinkManager.getRtspUrl(this.name, 'mainStream');
+            const subStreamUrl = this.neolinkManager.getRtspUrl(this.name, 'subStream');
+            this.log.info(`RTSP Main Stream: ${mainStreamUrl}`);
+            this.log.info(`RTSP Sub Stream: ${subStreamUrl}`);
+            await this.setStateAsync('streams.mainStream', mainStreamUrl, true);
+            await this.setStateAsync('streams.subStream', subStreamUrl, true);
+            await this.setStateAsync('info.neolink_status', 'running', true);
+            await this.setStateAsync('info.connection', true, true);
+            this.log.info('Battery camera ready!');
+        }
+        catch (error) {
+            this.log.error(`Failed to start battery camera: ${error instanceof Error ? error.message : error}`);
+            await this.setStateAsync('info.neolink_status', 'error', true);
+            await this.setStateAsync('info.connection', false, true);
+        }
+    }
+    /**
+     * Create state objects for battery cameras
+     */
+    async createBatteryCamStates() {
+        // Info states
+        await this.setObjectNotExistsAsync('info.uid', {
+            type: 'state',
+            common: {
+                name: 'Camera UID',
+                type: 'string',
+                role: 'info',
+                read: true,
+                write: false
+            },
+            native: {}
+        });
+        await this.setStateAsync('info.uid', this.config.cameraUID, true);
+        await this.setObjectNotExistsAsync('info.neolink_status', {
+            type: 'state',
+            common: {
+                name: 'Neolink Status',
+                type: 'string',
+                role: 'info.status',
+                read: true,
+                write: false,
+                states: {
+                    'running': 'Running',
+                    'stopped': 'Stopped',
+                    'error': 'Error'
+                }
+            },
+            native: {}
+        });
+        // Stream URLs
+        await this.setObjectNotExistsAsync('streams', {
+            type: 'channel',
+            common: {
+                name: 'RTSP Streams'
+            },
+            native: {}
+        });
+        await this.setObjectNotExistsAsync('streams.mainStream', {
+            type: 'state',
+            common: {
+                name: 'Main Stream RTSP URL',
+                type: 'string',
+                role: 'text.url',
+                read: true,
+                write: false
+            },
+            native: {}
+        });
+        await this.setObjectNotExistsAsync('streams.subStream', {
+            type: 'state',
+            common: {
+                name: 'Sub Stream RTSP URL',
+                type: 'string',
+                role: 'text.url',
+                read: true,
+                write: false
+            },
+            native: {}
+        });
+        this.log.debug('Battery camera states created');
     }
 }
 if (require.main !== module) {
