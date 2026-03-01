@@ -14,16 +14,22 @@ async function captureSnapshot(options) {
     const { rtspUrl, timeoutMs = 10000 } = options;
     return new Promise((resolve, reject) => {
         const args = [
-            '-rtsp_transport', 'tcp', // Use TCP for reliable connection
-            '-i', rtspUrl, // Input RTSP stream
-            '-frames:v', '1', // Capture single frame
-            '-f', 'image2pipe', // Output as image pipe
-            '-vcodec', 'mjpeg', // JPEG codec
-            '-q:v', '2', // Quality (2 = high)
-            '-' // Output to stdout
+            '-rtsp_transport',
+            'tcp', // Use TCP for reliable connection
+            '-i',
+            rtspUrl, // Input RTSP stream
+            '-frames:v',
+            '1', // Capture single frame
+            '-f',
+            'image2pipe', // Output as image pipe
+            '-vcodec',
+            'mjpeg', // JPEG codec
+            '-q:v',
+            '2', // Quality (2 = high)
+            '-', // Output to stdout
         ];
         const ffmpeg = (0, child_process_1.spawn)('ffmpeg', args, {
-            stdio: ['ignore', 'pipe', 'pipe']
+            stdio: ['ignore', 'pipe', 'pipe'],
         });
         const chunks = [];
         let errorOutput = '';

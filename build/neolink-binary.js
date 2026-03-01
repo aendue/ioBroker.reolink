@@ -61,8 +61,7 @@ function getNeolinkBinary() {
             binaryName = 'neolink-linux-arm';
         }
         else {
-            throw new Error(`Unsupported Linux architecture: ${arch}. ` +
-                `Battery camera support requires x64, arm64, or arm.`);
+            throw new Error(`Unsupported Linux architecture: ${arch}. ` + `Battery camera support requires x64, arm64, or arm.`);
         }
     }
     else if (platform === 'darwin' && (arch === 'x64' || arch === 'arm64')) {
@@ -79,23 +78,21 @@ function getNeolinkBinary() {
     const binaryPath = path.join(__dirname, '..', 'lib', binaryName);
     // Verify binary exists
     if (!fs.existsSync(binaryPath)) {
-        throw new Error(`Neolink binary not found: ${binaryPath}. ` +
-            `Please reinstall the adapter or report this issue.`);
+        throw new Error(`Neolink binary not found: ${binaryPath}. ` + `Please reinstall the adapter or report this issue.`);
     }
     // Verify binary is executable (Unix only)
     if (platform !== 'win32') {
         try {
             fs.accessSync(binaryPath, fs.constants.X_OK);
         }
-        catch (err) {
-            throw new Error(`Neolink binary is not executable: ${binaryPath}. ` +
-                `Try running: chmod +x ${binaryPath}`);
+        catch {
+            throw new Error(`Neolink binary is not executable: ${binaryPath}. ` + `Try running: chmod +x ${binaryPath}`);
         }
     }
     return {
         path: binaryPath,
         platform,
-        arch
+        arch,
     };
 }
 /**
@@ -103,6 +100,7 @@ function getNeolinkBinary() {
  */
 function getNeolinkVersion(binaryPath) {
     return new Promise((resolve, reject) => {
+        // eslint-disable-next-line @typescript-eslint/no-require-imports
         const { spawn } = require('child_process');
         const proc = spawn(binaryPath, ['--version']);
         let output = '';

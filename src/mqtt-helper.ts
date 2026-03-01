@@ -1,6 +1,6 @@
 /**
  * MQTT Helper for Battery Camera Features
- * 
+ *
  * Provides MQTT client for floodlight control via neolink.
  */
 
@@ -29,11 +29,11 @@ export class MqttHelper {
     public async connect(): Promise<void> {
         return new Promise((resolve, reject) => {
             const url = `mqtt://${this.config.broker}:${this.config.port || 1883}`;
-            
+
             this.client = mqtt.connect(url, {
                 username: this.config.username,
                 password: this.config.password,
-                reconnectPeriod: 5000
+                reconnectPeriod: 5000,
             });
 
             this.client.on('connect', () => {
@@ -61,7 +61,7 @@ export class MqttHelper {
      */
     public async disconnect(): Promise<void> {
         if (this.client) {
-            return new Promise((resolve) => {
+            return new Promise(resolve => {
                 this.client!.end(false, () => {
                     this.log('info', 'MQTT client disconnected');
                     resolve();
@@ -79,7 +79,7 @@ export class MqttHelper {
         }
 
         return new Promise((resolve, reject) => {
-            this.client!.publish(topic, message, (err) => {
+            this.client!.publish(topic, message, err => {
                 if (err) {
                     reject(err);
                 } else {

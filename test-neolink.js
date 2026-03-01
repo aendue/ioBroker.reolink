@@ -5,7 +5,6 @@
  */
 
 const { NeolinkManager } = require('./build/neolink-manager');
-const path = require('path');
 const fs = require('fs');
 
 async function test() {
@@ -28,7 +27,7 @@ async function test() {
         username: 'admin',
         password: 'fcdkxezn',
         uid: '95270005ODHZABIH',
-        address: '192.168.30.24'
+        address: '192.168.30.24',
     };
 
     try {
@@ -41,7 +40,7 @@ async function test() {
         console.log('  Sub:', manager.getRtspUrl(config.name, 'subStream'));
 
         console.log('\nPress Ctrl+C to stop...');
-        
+
         // Keep running
         process.on('SIGINT', async () => {
             console.log('\n\n🛑 Stopping neolink...');
@@ -49,7 +48,6 @@ async function test() {
             console.log('✅ Stopped. Cleanup done.');
             process.exit(0);
         });
-
     } catch (error) {
         console.error('❌ Error:', error.message);
         process.exit(1);

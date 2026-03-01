@@ -1,10 +1,11 @@
 /**
  * Neolink Process Manager
- * 
+ *
  * Spawns and manages neolink processes for battery-powered cameras.
  */
 
-import { ChildProcess, spawn } from 'child_process';
+import type { ChildProcess } from 'child_process';
+import { spawn } from 'child_process';
 import * as fs from 'fs';
 import * as path from 'path';
 import { getNeolinkBinary } from './neolink-binary';
@@ -60,13 +61,13 @@ export class NeolinkManager {
         this.log(config.name, 'info', `Using neolink binary: ${binary.path} (${binary.platform}/${binary.arch})`);
 
         // Generate config file
-        const configPath = await this.generateConfig(config);
+        const configPath = this.generateConfig(config);
 
         // Spawn neolink process
         const args = ['rtsp', '--config', configPath];
         const proc = spawn(binary.path, args, {
             cwd: this.dataDir,
-            stdio: ['ignore', 'pipe', 'pipe']
+            stdio: ['ignore', 'pipe', 'pipe'],
         });
 
         // Handle stdout
@@ -96,7 +97,7 @@ export class NeolinkManager {
         });
 
         // Handle process error
-        proc.on('error', (err) => {
+        proc.on('error', err => {
             this.log(config.name, 'error', `Neolink process error: ${err.message}`);
             this.processes.delete(config.name);
         });
@@ -106,7 +107,7 @@ export class NeolinkManager {
             process: proc,
             config,
             configPath,
-            startedAt: new Date()
+            startedAt: new Date(),
         });
 
         this.log(config.name, 'info', `Neolink started (PID: ${proc.pid})`);
@@ -130,7 +131,7 @@ export class NeolinkManager {
         procInfo.process.kill('SIGTERM');
 
         // Wait for exit (with timeout)
-        await new Promise<void>((resolve) => {
+        await new Promise<void>(resolve => {
             const timeout = setTimeout(() => {
                 // Force kill if not exited
                 if (procInfo.process.exitCode === null) {
@@ -180,7 +181,7 @@ export class NeolinkManager {
     /**
      * Generate neolink config file (TOML format)
      */
-    private async generateConfig(config: NeolinkConfig): Promise<string> {
+    private generateConfig(config: NeolinkConfig): string {
         const configPath = path.join(this.dataDir, `neolink-${config.name}.toml`);
 
         // MQTT section (optional)
@@ -239,7 +240,7 @@ ${mqttSection}
      */
     private async waitForReady(cameraName: string, timeoutMs: number): Promise<void> {
         const startTime = Date.now();
-        
+
         while (Date.now() - startTime < timeoutMs) {
             // Check if process still running
             const procInfo = this.processes.get(cameraName);

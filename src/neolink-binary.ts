@@ -1,6 +1,6 @@
 /**
  * Neolink Binary Manager
- * 
+ *
  * Selects and manages the appropriate neolink binary for the current platform.
  */
 
@@ -32,8 +32,7 @@ export function getNeolinkBinary(): NeolinkBinary {
             binaryName = 'neolink-linux-arm';
         } else {
             throw new Error(
-                `Unsupported Linux architecture: ${arch}. ` +
-                `Battery camera support requires x64, arm64, or arm.`
+                `Unsupported Linux architecture: ${arch}. ` + `Battery camera support requires x64, arm64, or arm.`,
             );
         }
     } else if (platform === 'darwin' && (arch === 'x64' || arch === 'arm64')) {
@@ -44,7 +43,7 @@ export function getNeolinkBinary(): NeolinkBinary {
     } else {
         throw new Error(
             `Unsupported platform: ${platform} ${arch}. ` +
-            `Battery camera support requires Linux (x64/arm64/arm), macOS (x64/arm64), or Windows (x64).`
+                `Battery camera support requires Linux (x64/arm64/arm), macOS (x64/arm64), or Windows (x64).`,
         );
     }
 
@@ -53,8 +52,7 @@ export function getNeolinkBinary(): NeolinkBinary {
     // Verify binary exists
     if (!fs.existsSync(binaryPath)) {
         throw new Error(
-            `Neolink binary not found: ${binaryPath}. ` +
-            `Please reinstall the adapter or report this issue.`
+            `Neolink binary not found: ${binaryPath}. ` + `Please reinstall the adapter or report this issue.`,
         );
     }
 
@@ -62,10 +60,9 @@ export function getNeolinkBinary(): NeolinkBinary {
     if (platform !== 'win32') {
         try {
             fs.accessSync(binaryPath, fs.constants.X_OK);
-        } catch (err) {
+        } catch {
             throw new Error(
-                `Neolink binary is not executable: ${binaryPath}. ` +
-                `Try running: chmod +x ${binaryPath}`
+                `Neolink binary is not executable: ${binaryPath}. ` + `Try running: chmod +x ${binaryPath}`,
             );
         }
     }
@@ -73,7 +70,7 @@ export function getNeolinkBinary(): NeolinkBinary {
     return {
         path: binaryPath,
         platform,
-        arch
+        arch,
     };
 }
 
@@ -82,6 +79,7 @@ export function getNeolinkBinary(): NeolinkBinary {
  */
 export function getNeolinkVersion(binaryPath: string): Promise<string> {
     return new Promise((resolve, reject) => {
+        // eslint-disable-next-line @typescript-eslint/no-require-imports
         const { spawn } = require('child_process');
         const proc = spawn(binaryPath, ['--version']);
 

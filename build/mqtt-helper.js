@@ -57,7 +57,7 @@ class MqttHelper {
             this.client = mqtt.connect(url, {
                 username: this.config.username,
                 password: this.config.password,
-                reconnectPeriod: 5000
+                reconnectPeriod: 5000,
             });
             this.client.on('connect', () => {
                 this.log('info', `Connected to MQTT broker: ${url}`);
@@ -80,7 +80,7 @@ class MqttHelper {
      */
     async disconnect() {
         if (this.client) {
-            return new Promise((resolve) => {
+            return new Promise(resolve => {
                 this.client.end(false, () => {
                     this.log('info', 'MQTT client disconnected');
                     resolve();
@@ -96,7 +96,7 @@ class MqttHelper {
             throw new Error('MQTT client not connected');
         }
         return new Promise((resolve, reject) => {
-            this.client.publish(topic, message, (err) => {
+            this.client.publish(topic, message, err => {
                 if (err) {
                     reject(err);
                 }
