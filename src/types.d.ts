@@ -8,6 +8,10 @@ export type ReoLinkCamAdapterConfig = {
     apiRefreshInterval: string | number;
     sslvalid: boolean;
     UriEncodedPassword: boolean;
+    isBatteryCam: boolean;
+    cameraUID: string;
+    streamAutoDisableSeconds: number;
+    pauseTimeout: number;
 };
 
 export type ReolinkCommandName =
