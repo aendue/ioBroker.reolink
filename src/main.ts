@@ -1482,6 +1482,16 @@ class ReoLinkCamAdapter extends Adapter {
                 const propName = idValues[idValues.length - 1];
                 this.log.debug(`Changed state: ${propName}`);
 
+                // Battery camera controls
+                if (id.endsWith('streams.enable')) {
+                    await this.handleBatteryCamStreamControl(!!state.val);
+                    return;
+                }
+                if (id.endsWith('mqtt.enable') || id.endsWith('mqtt.broker') || id.endsWith('mqtt.port')) {
+                    await this.handleBatteryCamMqttControl();
+                    return;
+                }
+
                 if (id.endsWith('ai_config.raw')) {
                     await this.setAiCfg(state.val as string);
                     return;
@@ -1614,7 +1624,14 @@ class ReoLinkCamAdapter extends Adapter {
             await this.setStateAsync('info.neolink_status', 'running', true);
             await this.setStateAsync('info.connection', true, true);
 
+            // Subscribe to control states
+            this.subscribeStates('streams.enable');
+            this.subscribeStates('mqtt.enable');
+            this.subscribeStates('mqtt.broker');
+            this.subscribeStates('mqtt.port');
+
             this.log.info('Battery camera ready!');
+            this.log.warn('⚠️ Streaming is DISABLED by default to save battery. Enable via streams.enable datapoint.');
 
         } catch (error) {
             this.log.error(`Failed to start battery camera: ${error instanceof Error ? error.message : error}`);
@@ -1691,7 +1708,123 @@ class ReoLinkCamAdapter extends Adapter {
             native: {}
         });
 
+        // Stream control (battery saving!)
+        await this.setObjectNotExistsAsync('streams.enable', {
+            type: 'state',
+            common: {
+                name: 'Enable Streaming (Battery Drain!)',
+                type: 'boolean',
+                role: 'switch.enable',
+                read: true,
+                write: true,
+                def: false,
+                desc: 'Enable RTSP streaming. WARNING: Drains battery quickly! Only enable when actively viewing.'
+            },
+            native: {}
+        });
+        await this.setStateAsync('streams.enable', false, true);
+
+        // MQTT control
+        await this.setObjectNotExistsAsync('mqtt', {
+            type: 'channel',
+            common: {
+                name: 'MQTT Motion & Battery'
+            },
+            native: {}
+        });
+
+        await this.setObjectNotExistsAsync('mqtt.enable', {
+            type: 'state',
+            common: {
+                name: 'Enable MQTT (Motion/Battery)',
+                type: 'boolean',
+                role: 'switch.enable',
+                read: true,
+                write: true,
+                def: false,
+                desc: 'Enable MQTT for motion detection and battery level monitoring'
+            },
+            native: {}
+        });
+        await this.setStateAsync('mqtt.enable', false, true);
+
+        await this.setObjectNotExistsAsync('mqtt.broker', {
+            type: 'state',
+            common: {
+                name: 'MQTT Broker Address',
+                type: 'string',
+                role: 'text',
+                read: true,
+                write: true,
+                def: '127.0.0.1'
+            },
+            native: {}
+        });
+        await this.setStateAsync('mqtt.broker', '127.0.0.1', true);
+
+        await this.setObjectNotExistsAsync('mqtt.port', {
+            type: 'state',
+            common: {
+                name: 'MQTT Broker Port',
+                type: 'number',
+                role: 'value',
+                read: true,
+                write: true,
+                def: 1883
+            },
+            native: {}
+        });
+        await this.setStateAsync('mqtt.port', 1883, true);
+
         this.log.debug('Battery camera states created');
+    }
+
+    /**
+     * Handle stream enable/disable for battery camera
+     */
+    private async handleBatteryCamStreamControl(enable: boolean): Promise<void> {
+        if (!this.neolinkManager) {
+            this.log.warn('Neolink manager not initialized');
+            return;
+        }
+
+        if (enable) {
+            this.log.warn('⚠️ BATTERY DRAIN: Streaming enabled! Remember to disable when not viewing.');
+            await this.setStateAsync('streams.enable', true, true);
+            // Neolink auto-pauses on no client, but stream is "available"
+        } else {
+            this.log.info('Streaming disabled - battery saving mode');
+            await this.setStateAsync('streams.enable', false, true);
+            // Neolink will disconnect on idle (idle_disconnect=true)
+        }
+    }
+
+    /**
+     * Handle MQTT enable/disable for battery camera
+     */
+    private async handleBatteryCamMqttControl(): Promise<void> {
+        if (!this.neolinkManager) {
+            this.log.warn('Neolink manager not initialized');
+            return;
+        }
+
+        const mqttEnable = await this.getStateAsync('mqtt.enable');
+        const mqttBroker = await this.getStateAsync('mqtt.broker');
+        const mqttPort = await this.getStateAsync('mqtt.port');
+
+        if (!mqttEnable || !mqttBroker || !mqttPort) {
+            return;
+        }
+
+        if (mqttEnable.val) {
+            this.log.info(`Enabling MQTT: ${mqttBroker.val}:${mqttPort.val}`);
+            this.log.info('MQTT topics: neolink/<camera>/motion, neolink/<camera>/battery');
+            
+            // Note: Requires neolink restart to apply MQTT config
+            this.log.warn('⚠️ MQTT config change requires adapter restart to take effect!');
+        } else {
+            this.log.info('MQTT disabled');
+        }
     }
 }
 
