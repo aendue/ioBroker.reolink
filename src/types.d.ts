@@ -11,6 +11,7 @@ export type ReoLinkCamAdapterConfig = {
     isBatteryCam: boolean;
     cameraUID: string;
     streamAutoDisableSeconds: number;
+    mqttAutoDisableSeconds: number;
     pauseTimeout: number;
     mqttBroker?: string;
     mqttPort?: number;
