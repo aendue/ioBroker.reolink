@@ -88,6 +88,17 @@ sendTo("reolink.0",{action: "snap"}, function(result){
 
 **Reolink battery-powered cameras** (Argus 3 Pro, B400, D400, E1 Outdoor, etc.) use a proprietary "Baichuan" protocol instead of the HTTP API. This adapter now supports these cameras via **neolink** integration!
 
+### ⚠️ IMPORTANT: Battery Saving
+
+**Battery cameras DRAIN QUICKLY when streaming!** This adapter includes battery-saving features:
+
+✅ **Streams disabled by default** - Must be explicitly enabled  
+✅ **Auto-pause when no client** - Stream pauses when nobody is watching  
+✅ **Idle disconnect** - Connection drops after 2.1s of inactivity  
+✅ **MQTT for motion** - Get motion alerts without keeping stream active  
+
+**Best Practice:** Only enable streaming when actively viewing, then disable immediately after!
+
 ### Setup Instructions for Battery Cameras
 
 1. **Enable Battery Camera Mode:**
@@ -103,19 +114,71 @@ sendTo("reolink.0",{action: "snap"}, function(result){
    - **Username/Password:** Camera credentials (usually `admin` / your password)
    - **Protocol:** Not used for battery cameras (ignored)
 
-4. **Start Adapter:**
+4. **Install System Dependency (Linux only):**
+   ```bash
+   # Debian/Ubuntu/Proxmox
+   sudo apt update && sudo apt install gstreamer1.0-rtsp
+   
+   # Fedora/RHEL
+   sudo dnf install gstreamer1-rtsp-server
+   
+   # Arch Linux
+   sudo pacman -S gst-rtsp-server
+   ```
+
+5. **Start Adapter:**
    - The adapter will automatically spawn a neolink process
    - RTSP streams will be available at `rtsp://127.0.0.1:8554/<InstanceName>/mainStream`
+   - **Streaming is DISABLED by default** (battery saving)
+
+### Controlling Battery Camera Streams
+
+The adapter creates these control datapoints:
+
+#### Stream Control (Critical for Battery Life!)
+
+- **`streams.enable`** (boolean) - Enable/Disable RTSP streaming
+  - ⚠️ **Default: `false`** (battery saving)
+  - Set to `true` when you want to view the stream
+  - Set to `false` immediately after viewing to save battery
+  - Stream auto-pauses when no client connected (even when enabled)
+
+#### MQTT Control (Motion & Battery without Streaming!)
+
+- **`mqtt.enable`** (boolean) - Enable MQTT for motion/battery monitoring
+  - Allows motion detection WITHOUT keeping stream active
+  - Battery level updates via MQTT
+  - Topics: `neolink/<camera>/motion`, `neolink/<camera>/battery`
+  
+- **`mqtt.broker`** (string) - MQTT broker address (default: `127.0.0.1`)
+- **`mqtt.port`** (number) - MQTT broker port (default: `1883`)
+
+**Note:** MQTT config changes require adapter restart to take effect.
 
 ### What Works with Battery Cameras
 
 ✅ **RTSP Live Streams** (Main + Sub Stream)  
+✅ **Battery Saving Mode** (auto-pause, idle disconnect)  
+✅ **Stream Control** (`streams.enable` datapoint)  
+✅ **MQTT Motion Detection** (without streaming)  
+✅ **MQTT Battery Level** (% remaining)  
 ✅ **Camera UID Display**  
 ✅ **Connection Status**  
 
 ❌ **PTZ Control** (not supported by battery cameras)  
-❌ **Motion Detection** (not yet implemented - coming soon)  
-❌ **Battery Level** (not yet implemented - coming soon)
+❌ **Email/FTP settings** (not applicable to battery cams)  
+❌ **Snapshots via HTTP** (use RTSP + ffmpeg instead)
+
+### Neolink Features Supported
+
+This adapter leverages all battery-saving features from neolink:
+
+- ✅ **`pause_on_client`** - Stream pauses when no RTSP client connected
+- ✅ **`pause_on_motion`** - Wake camera on motion
+- ✅ **`idle_disconnect`** - Disconnect after timeout
+- ✅ **MQTT motion** - Get motion events without streaming
+- ✅ **MQTT battery** - Battery percentage monitoring
+- ✅ **Local discovery** - Finds camera on local network
 
 ### Technical Details
 
@@ -123,6 +186,7 @@ sendTo("reolink.0",{action: "snap"}, function(result){
 - **Supported Platforms:** Linux x64, macOS (Intel + Apple Silicon), Windows x64
 - **RTSP Port:** 8554 (localhost only, not exposed to network)
 - **Config Storage:** Adapter data directory with restrictive permissions (chmod 600)
+- **System Dependency:** GStreamer RTSP Server library required (Linux/BSD)
 
 ### Troubleshooting Battery Cameras
 
@@ -132,11 +196,35 @@ sendTo("reolink.0",{action: "snap"}, function(result){
 **Problem:** Neolink process dies during startup
 - **Solution:** Check camera IP/credentials, ensure camera is online and accessible
 
+**Problem:** Error "libgstrtspserver-1.0.so.0: cannot open shared object file"
+- **Solution:** Install GStreamer RTSP library:
+  ```bash
+  sudo apt install gstreamer1.0-rtsp
+  ```
+
 **Problem:** Cannot connect to RTSP stream
-- **Solution:** Wait 5-10 seconds after adapter start, verify stream URL: `rtsp://127.0.0.1:8554/<InstanceName>/mainStream`
+- **Solution:** 
+  1. Check if `streams.enable` is set to `true`
+  2. Wait 5-10 seconds after adapter start
+  3. Verify stream URL: `rtsp://127.0.0.1:8554/<InstanceName>/mainStream`
+  4. Camera might be sleeping - try triggering motion
+
+**Problem:** Battery drains too fast
+- **Solution:** 
+  1. Disable streaming when not viewing: `streams.enable = false`
+  2. Use MQTT for motion detection instead of continuous streaming
+  3. Neolink auto-pauses, but camera wakes on connection attempts
+  4. Consider increasing `timeout` in neolink config (requires manual edit)
 
 **Problem:** "Unsupported platform" error
 - **Solution:** Battery camera support requires Linux x64, macOS, or Windows x64. ARM (Raspberry Pi) not yet supported.
+
+**Problem:** MQTT not working
+- **Solution:** 
+  1. Check MQTT broker is running and accessible
+  2. Verify `mqtt.broker` and `mqtt.port` settings
+  3. Restart adapter after changing MQTT config
+  4. Check MQTT broker logs for connections from neolink
 
 ---
 
@@ -175,8 +263,17 @@ sendTo("reolink.0",{action: "snap"}, function(result){
   - New config options: `isBatteryCam` checkbox, `cameraUID` field
   - Automatic neolink process spawning for battery cameras
   - RTSP stream URLs exposed: `rtsp://127.0.0.1:8554/<InstanceName>/mainStream`
+  - **Battery Saving Features:**
+    - Streams DISABLED by default (enable via `streams.enable` datapoint)
+    - Auto-pause when no RTSP client connected
+    - Idle disconnect after 2.1s of inactivity
+    - MQTT support for motion/battery monitoring WITHOUT streaming
+  - **MQTT Integration:**
+    - Motion detection via MQTT (no streaming needed)
+    - Battery level monitoring via MQTT
+    - Configurable MQTT broker (`mqtt.enable`, `mqtt.broker`, `mqtt.port`)
+  - **System Dependency:** GStreamer RTSP library required on Linux (`gstreamer1.0-rtsp`)
   - Zero breaking changes - HTTP API cameras work as before
-  - **Note:** PTZ/Motion/Battery level not yet supported for battery cams (coming soon)
 
 ### 1.3.0 (2025-12-20)
 * (agross) AiCfg config
