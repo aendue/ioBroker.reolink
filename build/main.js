@@ -1423,7 +1423,7 @@ class ReoLinkCamAdapter extends adapter_core_1.Adapter {
                     await this.handleBatteryCamStreamControl(!!state.val);
                     return;
                 }
-                if (id.endsWith('mqtt.enable') || id.endsWith('mqtt.broker') || id.endsWith('mqtt.port')) {
+                if (id.endsWith('mqtt.enable')) {
                     await this.handleBatteryCamMqttControl();
                     return;
                 }
@@ -1593,8 +1593,6 @@ class ReoLinkCamAdapter extends adapter_core_1.Adapter {
             // Subscribe to control states
             this.subscribeStates('streams.enable');
             this.subscribeStates('mqtt.enable');
-            this.subscribeStates('mqtt.broker');
-            this.subscribeStates('mqtt.port');
             this.subscribeStates('snapshot');
             this.subscribeStates('floodlight');
             this.log.info('Battery camera ready!');
@@ -1701,37 +1699,11 @@ class ReoLinkCamAdapter extends adapter_core_1.Adapter {
                 read: true,
                 write: true,
                 def: false,
-                desc: 'Enable MQTT for motion detection and battery level monitoring',
+                desc: 'Enable MQTT for motion detection and battery level monitoring (configure broker in adapter settings)',
             },
             native: {},
         });
         await this.setStateAsync('mqtt.enable', false, true);
-        await this.setObjectNotExistsAsync('mqtt.broker', {
-            type: 'state',
-            common: {
-                name: 'MQTT Broker Address',
-                type: 'string',
-                role: 'text',
-                read: true,
-                write: true,
-                def: '127.0.0.1',
-            },
-            native: {},
-        });
-        await this.setStateAsync('mqtt.broker', '127.0.0.1', true);
-        await this.setObjectNotExistsAsync('mqtt.port', {
-            type: 'state',
-            common: {
-                name: 'MQTT Broker Port',
-                type: 'number',
-                role: 'value',
-                read: true,
-                write: true,
-                def: 1883,
-            },
-            native: {},
-        });
-        await this.setStateAsync('mqtt.port', 1883, true);
         // Snapshot (requires ffmpeg)
         await this.setObjectNotExistsAsync('snapshot', {
             type: 'state',
@@ -1833,20 +1805,25 @@ class ReoLinkCamAdapter extends adapter_core_1.Adapter {
             return;
         }
         const mqttEnable = await this.getStateAsync('mqtt.enable');
-        const mqttBroker = await this.getStateAsync('mqtt.broker');
-        const mqttPort = await this.getStateAsync('mqtt.port');
-        if (!mqttEnable || !mqttBroker || !mqttPort) {
+        if (!mqttEnable) {
             return;
         }
         if (mqttEnable.val) {
-            this.log.info(`Enabling MQTT: ${mqttBroker.val}:${mqttPort.val}`);
+            // Get MQTT config from adapter settings
+            const broker = this.config.mqttBroker || '127.0.0.1';
+            const port = this.config.mqttPort || 1883;
+            const username = this.config.mqttUsername;
+            const password = this.config.mqttPassword;
+            this.log.info(`Enabling MQTT: ${broker}:${port}`);
             this.log.info('MQTT topics: neolink/<camera>/motion, neolink/<camera>/battery');
             // Initialize MQTT helper for floodlight control
             if (!this.mqttHelper) {
                 try {
                     this.mqttHelper = new mqtt_helper_1.MqttHelper({
-                        broker: mqttBroker.val,
-                        port: mqttPort.val,
+                        broker,
+                        port,
+                        username,
+                        password,
                     }, (level, message) => {
                         switch (level) {
                             case 'error':
@@ -1864,6 +1841,7 @@ class ReoLinkCamAdapter extends adapter_core_1.Adapter {
                 }
                 catch (error) {
                     this.log.error(`Failed to connect MQTT client: ${error instanceof Error ? error.message : error}`);
+                    this.log.error(`Check MQTT broker settings: ${broker}:${port}`);
                     this.mqttHelper = null;
                 }
             }

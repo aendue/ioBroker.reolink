@@ -12,6 +12,10 @@ export type ReoLinkCamAdapterConfig = {
     cameraUID: string;
     streamAutoDisableSeconds: number;
     pauseTimeout: number;
+    mqttBroker?: string;
+    mqttPort?: number;
+    mqttUsername?: string;
+    mqttPassword?: string;
 };
 
 export type ReolinkCommandName =
