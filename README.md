@@ -152,15 +152,21 @@ The adapter creates these control datapoints:
 
 #### MQTT Control (Motion & Battery without Streaming!)
 
-- **`mqtt.enable`** (boolean) - Enable MQTT for motion/battery monitoring
+**Configure in Adapter Settings (under "Battery Camera" tab):**
+
+- **`MQTT Broker Host`** - MQTT broker address (default: `127.0.0.1`)
+- **`MQTT Broker Port`** - MQTT broker port (default: `1883`)
+- **`MQTT Username`** - Optional authentication
+- **`MQTT Password`** - Optional authentication
+
+**Runtime Control:**
+
+- **`mqtt.enable`** (boolean) - Enable/disable MQTT features
   - Allows motion detection WITHOUT keeping stream active
   - Battery level updates via MQTT
   - Topics: `neolink/<camera>/motion`, `neolink/<camera>/battery`
-  
-- **`mqtt.broker`** (string) - MQTT broker address (default: `127.0.0.1`)
-- **`mqtt.port`** (number) - MQTT broker port (default: `1883`)
 
-**Note:** MQTT config changes require adapter restart to take effect.
+**Note:** MQTT broker settings require adapter restart. Enable/disable can be toggled at runtime.
 
 ### What Works with Battery Cameras
 
