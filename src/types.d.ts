@@ -11,6 +11,7 @@ export type ReoLinkCamAdapterConfig = {
     isBatteryCam: boolean;
     cameraUID: string;
     streamAutoDisableSeconds: number;
+    pauseTimeout: number;
 };
 
 export type ReolinkCommandName =

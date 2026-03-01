@@ -9,6 +9,9 @@ const adapter_core_1 = require("@iobroker/adapter-core");
 const axios_1 = __importDefault(require("axios"));
 const node_https_1 = __importDefault(require("node:https"));
 const neolink_manager_1 = require("./neolink-manager");
+const dependency_check_1 = require("./dependency-check");
+const snapshot_helper_1 = require("./snapshot-helper");
+const mqtt_helper_1 = require("./mqtt-helper");
 // typescript
 exports.ReolinkErrorMessages = {
     [-1]: 'Missing parameters',
@@ -100,6 +103,8 @@ class ReoLinkCamAdapter extends adapter_core_1.Adapter {
     refreshStateTimeout = undefined;
     neolinkManager = null;
     streamAutoDisableTimer = undefined;
+    ffmpegAvailable = false;
+    mqttHelper = null;
     constructor(options) {
         super({
             ...options,
@@ -1332,11 +1337,16 @@ class ReoLinkCamAdapter extends adapter_core_1.Adapter {
             // Stop neolink if running
             if (this.neolinkManager) {
                 this.log.info('Stopping neolink processes...');
-                this.neolinkManager.stopAll().then(() => {
-                    this.log.info('Neolink stopped');
+                // Also disconnect MQTT
+                const mqttPromise = this.mqttHelper ? this.mqttHelper.disconnect() : Promise.resolve();
+                Promise.all([
+                    this.neolinkManager.stopAll(),
+                    mqttPromise
+                ]).then(() => {
+                    this.log.info('Neolink and MQTT stopped');
                     callback();
                 }).catch((err) => {
-                    this.log.error(`Failed to stop neolink: ${err.message}`);
+                    this.log.error(`Failed to stop services: ${err.message}`);
                     callback();
                 });
                 return;
@@ -1381,6 +1391,14 @@ class ReoLinkCamAdapter extends adapter_core_1.Adapter {
                 }
                 if (id.endsWith('mqtt.enable') || id.endsWith('mqtt.broker') || id.endsWith('mqtt.port')) {
                     await this.handleBatteryCamMqttControl();
+                    return;
+                }
+                if (id.endsWith('snapshot')) {
+                    await this.handleBatteryCamSnapshot();
+                    return;
+                }
+                if (id.endsWith('floodlight')) {
+                    await this.handleBatteryCamFloodlight(!!state.val);
                     return;
                 }
                 if (id.endsWith('ai_config.raw')) {
@@ -1473,6 +1491,34 @@ class ReoLinkCamAdapter extends adapter_core_1.Adapter {
             return;
         }
         try {
+            // Check system dependencies
+            this.log.info('Checking system dependencies for battery camera...');
+            const deps = await (0, dependency_check_1.checkAllDependencies)();
+            // GStreamer check (critical for neolink RTSP server)
+            if (!deps.gstreamer.available) {
+                this.log.error('❌ CRITICAL: GStreamer RTSP library NOT FOUND!');
+                this.log.error('Battery camera requires GStreamer RTSP server library to function.');
+                this.log.error('📖 Installation instructions:');
+                this.log.error(deps.gstreamer.installCommand || 'See README.md Battery Camera section');
+                this.log.error('Adapter will not start battery camera without this dependency.');
+                await this.setStateAsync('info.connection', false, true);
+                return;
+            }
+            else {
+                this.log.info(`✅ GStreamer RTSP library found (${deps.gstreamer.version})`);
+            }
+            // ffmpeg check (optional, for snapshot feature)
+            if (!deps.ffmpeg.available) {
+                this.log.warn('⚠️ Optional: ffmpeg NOT FOUND');
+                this.log.warn('Snapshot feature will not be available without ffmpeg.');
+                this.log.warn('📖 To enable snapshots, install ffmpeg:');
+                this.log.warn(deps.ffmpeg.installCommand || 'See README.md');
+                this.ffmpegAvailable = false;
+            }
+            else {
+                this.log.info(`✅ ffmpeg found (${deps.ffmpeg.version}) - Snapshot feature available`);
+                this.ffmpegAvailable = true;
+            }
             // Initialize neolink manager
             const dataDir = this.namespace.replace(/\./g, '_'); // Use instance namespace as dir name
             this.neolinkManager = new neolink_manager_1.NeolinkManager(dataDir, (cameraName, level, message) => {
@@ -1494,7 +1540,8 @@ class ReoLinkCamAdapter extends adapter_core_1.Adapter {
                 username: this.config.cameraUser,
                 password: this.config.cameraPassword,
                 uid: this.config.cameraUID,
-                address: this.config.cameraIp
+                address: this.config.cameraIp,
+                pauseTimeout: this.config.pauseTimeout || 2.1
             };
             // Start neolink
             this.log.info(`Starting neolink for battery camera: ${neolinkConfig.name}`);
@@ -1515,6 +1562,8 @@ class ReoLinkCamAdapter extends adapter_core_1.Adapter {
             this.subscribeStates('mqtt.enable');
             this.subscribeStates('mqtt.broker');
             this.subscribeStates('mqtt.port');
+            this.subscribeStates('snapshot');
+            this.subscribeStates('floodlight');
             this.log.info('Battery camera ready!');
             this.log.warn('⚠️ Streaming is DISABLED by default to save battery. Enable via streams.enable datapoint.');
         }
@@ -1650,6 +1699,64 @@ class ReoLinkCamAdapter extends adapter_core_1.Adapter {
             native: {}
         });
         await this.setStateAsync('mqtt.port', 1883, true);
+        // Snapshot (requires ffmpeg)
+        await this.setObjectNotExistsAsync('snapshot', {
+            type: 'state',
+            common: {
+                name: 'Snapshot (trigger capture)',
+                type: 'boolean',
+                role: 'button',
+                read: false,
+                write: true,
+                desc: 'Set to true to capture snapshot from mainStream (requires ffmpeg)'
+            },
+            native: {}
+        });
+        await this.setObjectNotExistsAsync('snapshotImage', {
+            type: 'state',
+            common: {
+                name: 'Latest Snapshot Image',
+                type: 'string',
+                role: 'image',
+                read: true,
+                write: false,
+                desc: 'Base64-encoded JPEG snapshot'
+            },
+            native: {}
+        });
+        await this.setObjectNotExistsAsync('snapshotStatus', {
+            type: 'state',
+            common: {
+                name: 'Snapshot Status',
+                type: 'string',
+                role: 'info.status',
+                read: true,
+                write: false,
+                states: {
+                    'idle': 'Idle',
+                    'capturing': 'Capturing...',
+                    'success': 'Success',
+                    'error': 'Error'
+                }
+            },
+            native: {}
+        });
+        await this.setStateAsync('snapshotStatus', 'idle', true);
+        // Floodlight control (requires MQTT)
+        await this.setObjectNotExistsAsync('floodlight', {
+            type: 'state',
+            common: {
+                name: 'Floodlight On/Off',
+                type: 'boolean',
+                role: 'switch.light',
+                read: true,
+                write: true,
+                def: false,
+                desc: 'Control camera floodlight (requires MQTT enabled)'
+            },
+            native: {}
+        });
+        await this.setStateAsync('floodlight', false, true);
         this.log.debug('Battery camera states created');
     }
     /**
@@ -1701,11 +1808,93 @@ class ReoLinkCamAdapter extends adapter_core_1.Adapter {
         if (mqttEnable.val) {
             this.log.info(`Enabling MQTT: ${mqttBroker.val}:${mqttPort.val}`);
             this.log.info('MQTT topics: neolink/<camera>/motion, neolink/<camera>/battery');
+            // Initialize MQTT helper for floodlight control
+            if (!this.mqttHelper) {
+                try {
+                    this.mqttHelper = new mqtt_helper_1.MqttHelper({
+                        broker: mqttBroker.val,
+                        port: mqttPort.val
+                    }, (level, message) => {
+                        switch (level) {
+                            case 'error':
+                                this.log.error(`[MQTT] ${message}`);
+                                break;
+                            case 'warn':
+                                this.log.warn(`[MQTT] ${message}`);
+                                break;
+                            default:
+                                this.log.info(`[MQTT] ${message}`);
+                        }
+                    });
+                    await this.mqttHelper.connect();
+                    this.log.info('✅ MQTT client connected - Floodlight control available');
+                }
+                catch (error) {
+                    this.log.error(`Failed to connect MQTT client: ${error instanceof Error ? error.message : error}`);
+                    this.mqttHelper = null;
+                }
+            }
             // Note: Requires neolink restart to apply MQTT config
             this.log.warn('⚠️ MQTT config change requires adapter restart to take effect!');
         }
         else {
             this.log.info('MQTT disabled');
+            // Disconnect MQTT helper
+            if (this.mqttHelper) {
+                await this.mqttHelper.disconnect();
+                this.mqttHelper = null;
+            }
+        }
+    }
+    /**
+     * Handle snapshot capture for battery camera
+     */
+    async handleBatteryCamSnapshot() {
+        if (!this.neolinkManager) {
+            this.log.warn('Neolink manager not initialized');
+            await this.setStateAsync('snapshotStatus', 'error', true);
+            return;
+        }
+        if (!this.ffmpegAvailable) {
+            this.log.error('Snapshot failed: ffmpeg not available');
+            this.log.error('Install ffmpeg to enable snapshot feature (see README.md)');
+            await this.setStateAsync('snapshotStatus', 'error', true);
+            return;
+        }
+        try {
+            await this.setStateAsync('snapshotStatus', 'capturing', true);
+            this.log.info('Capturing snapshot from mainStream...');
+            const rtspUrl = this.neolinkManager.getRtspUrl(this.name, 'mainStream');
+            const imageBuffer = await (0, snapshot_helper_1.captureSnapshot)({ rtspUrl, timeoutMs: 15000 });
+            // Convert to base64
+            const base64Image = `data:image/jpeg;base64,${imageBuffer.toString('base64')}`;
+            await this.setStateAsync('snapshotImage', base64Image, true);
+            await this.setStateAsync('snapshotStatus', 'success', true);
+            this.log.info(`Snapshot captured successfully (${imageBuffer.length} bytes)`);
+        }
+        catch (error) {
+            this.log.error(`Snapshot failed: ${error instanceof Error ? error.message : error}`);
+            await this.setStateAsync('snapshotStatus', 'error', true);
+        }
+    }
+    /**
+     * Handle floodlight control for battery camera
+     */
+    async handleBatteryCamFloodlight(enabled) {
+        if (!this.mqttHelper) {
+            this.log.error('Floodlight control failed: MQTT not connected');
+            this.log.error('Enable MQTT in adapter settings (mqtt.enable = true)');
+            await this.setStateAsync('floodlight', !enabled, true); // Revert state
+            return;
+        }
+        try {
+            this.log.info(`Setting floodlight: ${enabled ? 'ON' : 'OFF'}`);
+            await this.mqttHelper.setFloodlight(this.name, enabled);
+            await this.setStateAsync('floodlight', enabled, true);
+        }
+        catch (error) {
+            this.log.error(`Floodlight control failed: ${error instanceof Error ? error.message : error}`);
+            await this.setStateAsync('floodlight', !enabled, true); // Revert on error
         }
     }
 }

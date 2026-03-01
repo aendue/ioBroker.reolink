@@ -165,13 +165,20 @@ The adapter creates these control datapoints:
 ### What Works with Battery Cameras
 
 ✅ **RTSP Live Streams** (Main + Sub Stream)  
-✅ **Battery Saving Mode** (auto-pause, idle disconnect)  
-✅ **Stream Control** (`streams.enable` datapoint)  
-✅ **Auto-Disable Timer** (configurable, default 30s)  
+✅ **Battery Saving Mode** (auto-pause, idle disconnect, auto-disable timer)  
+✅ **Stream Control** (`streams.enable` datapoint with auto-disable)  
+✅ **Configurable Timeouts** (auto-disable timer, pause timeout)  
 ✅ **MQTT Motion Detection** (without streaming)  
 ✅ **MQTT Battery Level** (% remaining)  
+✅ **Snapshot** (via ffmpeg + RTSP, `snapshot` button)  
+✅ **Floodlight Control** (via MQTT, `floodlight` switch)  
 ✅ **Camera UID Display**  
 ✅ **Connection Status**  
+✅ **Multi-Platform** (Linux x64/ARM64/ARM32, macOS, Windows)  
+✅ **Raspberry Pi Support** (ARM binaries included)  
+
+❌ **PTZ Control** (not supported by battery cameras)  
+❌ **Email/FTP settings** (not applicable to battery cams)  
 
 ❌ **PTZ Control** (not supported by battery cameras)  
 ❌ **Email/FTP settings** (not applicable to battery cams)  
@@ -264,24 +271,38 @@ This adapter leverages all battery-saving features from neolink:
     ### **WORK IN PROGRESS**
 -->
 ### **WORK IN PROGRESS**
-* (bloop-herbert-bot) 🔋 **Battery Camera Support via Neolink**
+* (bloop-herbert-bot) 🔋 **Battery Camera Support via Neolink - COMPLETE**
   - Added support for Reolink battery-powered cameras (Argus 3 Pro, B400, D400, E1 Outdoor)
   - Integrated neolink v0.6.2 (Rust RTSP bridge for Baichuan protocol)
-  - Bundled neolink binaries for Linux x64, macOS, Windows x64 (~67MB)
-  - New config options: `isBatteryCam` checkbox, `cameraUID` field, `streamAutoDisableSeconds`
+  - Bundled neolink binaries for Linux (x64/ARM64/ARM32), macOS, Windows x64 (~100MB)
+  - **NEW:** ARM support - Raspberry Pi compatible! (ARM64 + ARM32 binaries)
+  - New config options: `isBatteryCam`, `cameraUID`, `streamAutoDisableSeconds`, `pauseTimeout`
   - Automatic neolink process spawning for battery cameras
   - RTSP stream URLs exposed: `rtsp://127.0.0.1:8554/<InstanceName>/mainStream`
   - **Battery Saving Features:**
     - Streams DISABLED by default (enable via `streams.enable` datapoint)
     - **Auto-disable timer** - Stream automatically disables after timeout (default 30s, configurable 10-3600s)
+    - **Configurable pause timeout** - Adjust stream pause delay (default 2.1s, range 1-10s)
     - Auto-pause when no RTSP client connected
-    - Idle disconnect after 2.1s of inactivity
+    - Idle disconnect after timeout
     - MQTT support for motion/battery monitoring WITHOUT streaming
   - **MQTT Integration:**
     - Motion detection via MQTT (no streaming needed)
     - Battery level monitoring via MQTT
     - Configurable MQTT broker (`mqtt.enable`, `mqtt.broker`, `mqtt.port`)
-  - **System Dependency:** GStreamer RTSP library required on Linux (`gstreamer1.0-rtsp`)
+    - **Floodlight control** - Turn camera floodlight on/off via MQTT
+  - **Snapshot Feature:**
+    - Capture snapshots from RTSP stream using ffmpeg
+    - `snapshot` button datapoint triggers capture
+    - `snapshotImage` datapoint contains base64 JPEG
+    - `snapshotStatus` shows capture status (idle/capturing/success/error)
+  - **Dependency Checking:**
+    - Automatic check for GStreamer RTSP library (required, Linux only)
+    - Automatic check for ffmpeg (optional, for snapshots)
+    - Clear error messages with installation instructions in adapter log
+  - **System Dependencies:** 
+    - **Required:** GStreamer RTSP library on Linux (`gstreamer1.0-rtsp`)
+    - **Optional:** ffmpeg for snapshot feature
   - Zero breaking changes - HTTP API cameras work as before
 
 ### 1.3.0 (2025-12-20)

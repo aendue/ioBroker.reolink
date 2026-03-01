@@ -117,6 +117,20 @@
                     "xl": 4,
                     "label": "Auto-disable stream after (seconds)",
                     "help": "Stream will automatically disable after this timeout to save battery (default: 30s)"
+                },
+                "pauseTimeout": {
+                    "hidden": "!data.isBatteryCam",
+                    "type": "number",
+                    "min": 1.0,
+                    "max": 10.0,
+                    "step": 0.1,
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 6,
+                    "lg": 4,
+                    "xl": 4,
+                    "label": "Stream pause timeout (seconds)",
+                    "help": "How long to wait before pausing stream when no RTSP client connected (default: 2.1s, neolink setting)"
                 }
             }
         },
