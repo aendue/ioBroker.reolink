@@ -10,6 +10,7 @@ export type ReoLinkCamAdapterConfig = {
     UriEncodedPassword: boolean;
     isBatteryCam: boolean;
     cameraUID: string;
+    streamAutoDisableSeconds: number;
 };
 
 export type ReolinkCommandName =

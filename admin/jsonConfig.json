@@ -104,6 +104,19 @@
                     "xl": 4,
                     "label": "Camera UID",
                     "help": "Required for battery cameras (find in Reolink app or camera settings)"
+                },
+                "streamAutoDisableSeconds": {
+                    "hidden": "!data.isBatteryCam",
+                    "type": "number",
+                    "min": 10,
+                    "max": 3600,
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 6,
+                    "lg": 4,
+                    "xl": 4,
+                    "label": "Auto-disable stream after (seconds)",
+                    "help": "Stream will automatically disable after this timeout to save battery (default: 30s)"
                 }
             }
         },

@@ -1,5 +1,6 @@
 {
     "Advanced settings": "Advanced settings",
+    "Auto-disable stream after (seconds)": "Auto-disable stream after (seconds)",
     "Battery-powered camera (uses neolink)": "Battery-powered camera (uses neolink)",
     "Camera UID": "Camera UID",
     "Camera type": "Camera type",
@@ -11,6 +12,7 @@
     "Polling interval": "Polling interval",
     "Protocol": "Protocol",
     "Required for battery cameras (find in Reolink app or camera settings)": "Required for battery cameras (find in Reolink app or camera settings)",
+    "Stream will automatically disable after this timeout to save battery (default: 30s)": "Stream will automatically disable after this timeout to save battery (default: 30s)",
     "URI Encode password": "URI Encode password",
     "User": "User",
     "Validate SSL certificate": "Validate SSL certificate",
