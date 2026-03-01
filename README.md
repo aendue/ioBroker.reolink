@@ -84,26 +84,100 @@ sendTo("reolink.0",{action: "snap"}, function(result){
 });
 ```
 
+## Battery-Powered Cameras (NEW in v1.4.0)
+
+**Reolink battery-powered cameras** (Argus 3 Pro, B400, D400, E1 Outdoor, etc.) use a proprietary "Baichuan" protocol instead of the HTTP API. This adapter now supports these cameras via **neolink** integration!
+
+### Setup Instructions for Battery Cameras
+
+1. **Enable Battery Camera Mode:**
+   - In adapter configuration, check ✅ **"Battery-powered camera (uses neolink)"**
+   
+2. **Enter Camera UID:**
+   - Find your camera's UID in the Reolink app:
+     - Open Reolink app → Select camera → Settings → Device Info → UID
+   - Enter the UID (format: `95270005ODHZABIH`)
+
+3. **Configure Camera:**
+   - **IP Address:** Your camera's local IP (e.g., `192.168.30.24`)
+   - **Username/Password:** Camera credentials (usually `admin` / your password)
+   - **Protocol:** Not used for battery cameras (ignored)
+
+4. **Start Adapter:**
+   - The adapter will automatically spawn a neolink process
+   - RTSP streams will be available at `rtsp://127.0.0.1:8554/<InstanceName>/mainStream`
+
+### What Works with Battery Cameras
+
+✅ **RTSP Live Streams** (Main + Sub Stream)  
+✅ **Camera UID Display**  
+✅ **Connection Status**  
+
+❌ **PTZ Control** (not supported by battery cameras)  
+❌ **Motion Detection** (not yet implemented - coming soon)  
+❌ **Battery Level** (not yet implemented - coming soon)
+
+### Technical Details
+
+- **Neolink Version:** v0.6.2 (bundled with adapter)
+- **Supported Platforms:** Linux x64, macOS (Intel + Apple Silicon), Windows x64
+- **RTSP Port:** 8554 (localhost only, not exposed to network)
+- **Config Storage:** Adapter data directory with restrictive permissions (chmod 600)
+
+### Troubleshooting Battery Cameras
+
+**Problem:** Adapter fails to start with "Battery camera requires Camera UID"
+- **Solution:** Enter the camera UID in adapter configuration (find in Reolink app)
+
+**Problem:** Neolink process dies during startup
+- **Solution:** Check camera IP/credentials, ensure camera is online and accessible
+
+**Problem:** Cannot connect to RTSP stream
+- **Solution:** Wait 5-10 seconds after adapter start, verify stream URL: `rtsp://127.0.0.1:8554/<InstanceName>/mainStream`
+
+**Problem:** "Unsupported platform" error
+- **Solution:** Battery camera support requires Linux x64, macOS, or Windows x64. ARM (Raspberry Pi) not yet supported.
+
+---
+
 ## Known working cameras (firmware out of year 2023)
 
+### HTTP API Cameras (Standard)
 - RLC-420-5MP
-- E1 Outdoor
 - E1 Zoom
 - RLC-522
 - RLC-810A
 - RLC-823A
 - Duo 3 PoE
 
+### Battery Cameras (via Neolink)
+- ✅ Argus 3 Pro
+- ✅ E1 Outdoor (battery model)
+- ✅ B400
+- ✅ D400
+- ⚠️ Other battery-powered models (should work but untested)
+
 ## Known *NOT* working cameras
 
-- E1 Pro
-- Argus 4 (maybe all Argus are not working)
+- E1 Pro (requires specific API commands not yet implemented)
+- Argus 4 (battery camera - testing needed)
 
 ## Changelog
 <!--
     Placeholder for the next version (at the beginning of the line):
     ### **WORK IN PROGRESS**
 -->
+### **WORK IN PROGRESS**
+* (bloop-herbert-bot) 🔋 **Battery Camera Support via Neolink**
+  - Added support for Reolink battery-powered cameras (Argus 3 Pro, B400, D400, E1 Outdoor)
+  - Integrated neolink v0.6.2 (Rust RTSP bridge for Baichuan protocol)
+  - Bundled neolink binaries for Linux x64, macOS, Windows x64 (~67MB)
+  - New config options: `isBatteryCam` checkbox, `cameraUID` field
+  - Automatic neolink process spawning for battery cameras
+  - RTSP stream URLs exposed: `rtsp://127.0.0.1:8554/<InstanceName>/mainStream`
+  - Zero breaking changes - HTTP API cameras work as before
+  - **Note:** PTZ/Motion/Battery level not yet supported for battery cams (coming soon)
+
 ### 1.3.0 (2025-12-20)
 * (agross) AiCfg config
 * (oelison) bump some libs #202
