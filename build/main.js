@@ -142,6 +142,7 @@ class ReoLinkCamAdapter extends adapter_core_1.Adapter {
     mqttAutoDisableTimer = undefined;
     ffmpegAvailable = false;
     mqttHelper = null;
+    mqttBatteryQueryInterval = undefined;
     constructor(options) {
         super({
             ...options,
@@ -1945,6 +1946,12 @@ class ReoLinkCamAdapter extends adapter_core_1.Adapter {
                     await this.mqttHelper.subscribe(`neolink/${cameraName}/status/battery_level`);
                     await this.mqttHelper.subscribe(`neolink/${cameraName}/status/floodlight`);
                     await this.mqttHelper.subscribe(`neolink/${cameraName}/status/preview`);
+                    // Send initial battery query via CLI (not MQTT - subprocess doesn't respond to MQTT queries)
+                    void this.queryBatteryStatus();
+                    // Start periodic battery query via CLI (every 30s)
+                    this.mqttBatteryQueryInterval = this.setInterval(() => {
+                        void this.queryBatteryStatus();
+                    }, 30000);
                     this.log.info(`✅ Subscribed to status topics for ${cameraName}`);
                 }
                 catch (error) {
@@ -1963,6 +1970,11 @@ class ReoLinkCamAdapter extends adapter_core_1.Adapter {
         }
         else {
             this.log.info('MQTT disabled - battery saving mode');
+            // Clear battery query interval
+            if (this.mqttBatteryQueryInterval) {
+                this.clearInterval(this.mqttBatteryQueryInterval);
+                this.mqttBatteryQueryInterval = undefined;
+            }
             // Stop MQTT process
             try {
                 await this.neolinkManager.stopMqtt();
@@ -2011,7 +2023,32 @@ class ReoLinkCamAdapter extends adapter_core_1.Adapter {
         }
     }
     /**
-     
+     * Query battery status via CLI and update state
+     */
+    async queryBatteryStatus() {
+        if (!this.neolinkManager) {
+            this.log.warn('[Battery Query] Neolink manager not available');
+            return;
+        }
+        try {
+            this.log.debug('[Battery Query] Requesting battery status via CLI...');
+            const xmlOutput = await this.neolinkManager.queryBatteryStatus();
+            // Parse XML output to extract battery level
+            // Expected format: <battery><batteryPercent>87</batteryPercent>...</battery>
+            const match = xmlOutput.match(/<batteryPercent>(\d+)<\/batteryPercent>/);
+            if (match && match[1]) {
+                const batteryLevel = parseInt(match[1], 10);
+                await this.setStateAsync('status.battery_level', batteryLevel, true);
+                this.log.info(`[Battery Query] Battery level: ${batteryLevel}%`);
+            }
+            else {
+                this.log.warn(`[Battery Query] Could not parse battery level from response: ${xmlOutput.substring(0, 200)}`);
+            }
+        }
+        catch (error) {
+            this.log.error(`[Battery Query] Failed: ${error instanceof Error ? error.message : error}`);
+        }
+    }
     /**
      * Handle MQTT messages from neolink
      */

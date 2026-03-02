@@ -2074,16 +2074,12 @@ class ReoLinkCamAdapter extends Adapter {
                     await this.mqttHelper.subscribe(`neolink/${cameraName}/status/floodlight`);
                     await this.mqttHelper.subscribe(`neolink/${cameraName}/status/preview`);
 
-                    // Send initial queries to get current status
-                    await this.mqttHelper.publish(`neolink/${cameraName}/query/battery`, '');
-                    this.log.debug(`[MQTT] Sent initial battery query`);
+                    // Send initial battery query via CLI (not MQTT - subprocess doesn't respond to MQTT queries)
+                    void this.queryBatteryStatus();
 
-                    // Start periodic battery query (every 30s)
-                    this.mqttBatteryQueryInterval = this.setInterval(async () => {
-                        if (this.mqttHelper) {
-                            await this.mqttHelper.publish(`neolink/${cameraName}/query/battery`, '');
-                            this.log.debug(`[MQTT] Sent battery query`);
-                        }
+                    // Start periodic battery query via CLI (every 30s)
+                    this.mqttBatteryQueryInterval = this.setInterval(() => {
+                        void this.queryBatteryStatus();
                     }, 30000);
 
                     this.log.info(`✅ Subscribed to status topics for ${cameraName}`);
@@ -2167,7 +2163,36 @@ class ReoLinkCamAdapter extends Adapter {
     }
 
     /**
-     
+     * Query battery status via CLI and update state
+     */
+    private async queryBatteryStatus(): Promise<void> {
+        if (!this.neolinkManager) {
+            this.log.warn('[Battery Query] Neolink manager not available');
+            return;
+        }
+
+        try {
+            this.log.debug('[Battery Query] Requesting battery status via CLI...');
+            const xmlOutput = await this.neolinkManager.queryBatteryStatus();
+
+            // Parse XML output to extract battery level
+            // Expected format: <battery><batteryPercent>87</batteryPercent>...</battery>
+            const match = xmlOutput.match(/<batteryPercent>(\d+)<\/batteryPercent>/);
+
+            if (match && match[1]) {
+                const batteryLevel = parseInt(match[1], 10);
+                await this.setStateAsync('status.battery_level', batteryLevel, true);
+                this.log.info(`[Battery Query] Battery level: ${batteryLevel}%`);
+            } else {
+                this.log.warn(
+                    `[Battery Query] Could not parse battery level from response: ${xmlOutput.substring(0, 200)}`,
+                );
+            }
+        } catch (error) {
+            this.log.error(`[Battery Query] Failed: ${error instanceof Error ? error.message : error}`);
+        }
+    }
+
     /**
      * Handle MQTT messages from neolink
      */
