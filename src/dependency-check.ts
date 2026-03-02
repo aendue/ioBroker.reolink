@@ -24,7 +24,9 @@ export async function checkGStreamer(): Promise<DependencyCheckResult> {
         // Linux: Check for libgstrtspserver-1.0.so.0
         if (process.platform === 'linux') {
             // Try with full path first (ldconfig might not be in PATH)
-            const { stdout } = await execAsync('/sbin/ldconfig -p 2>/dev/null | grep libgstrtspserver-1.0.so.0 || ldconfig -p | grep libgstrtspserver-1.0.so.0');
+            const { stdout } = await execAsync(
+                '/sbin/ldconfig -p 2>/dev/null | grep libgstrtspserver-1.0.so.0 || ldconfig -p | grep libgstrtspserver-1.0.so.0',
+            );
 
             if (stdout.includes('libgstrtspserver')) {
                 return {
