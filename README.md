@@ -84,192 +84,78 @@ sendTo("reolink.0",{action: "snap"}, function(result){
 });
 ```
 
-## Battery-Powered Cameras (NEW in v1.4.0)
+## Battery-Powered Cameras (v1.4.0+)
 
-**Reolink battery-powered cameras** (Argus 3 Pro, B400, D400, E1 Outdoor, etc.) use a proprietary "Baichuan" protocol instead of the HTTP API. This adapter now supports these cameras via **neolink** integration!
+Battery cameras (Argus 3 Pro, B400, D400, E1 Outdoor) use a proprietary protocol. This adapter supports them via **neolink**.
 
-### ⚠️ IMPORTANT: Battery Saving
+### Quick Setup
 
-**Battery cameras DRAIN QUICKLY when streaming!** This adapter includes battery-saving features:
-
-✅ **Streams disabled by default** - Must be explicitly enabled  
-✅ **Auto-pause when no client** - Stream pauses when nobody is watching  
-✅ **Idle disconnect** - Connection drops after 2.1s of inactivity  
-✅ **MQTT for motion** - Get motion alerts without keeping stream active  
-
-**Best Practice:** Only enable streaming when actively viewing, then disable immediately after!
-
-### Setup Instructions for Battery Cameras
-
-1. **Enable Battery Camera Mode:**
-   - In adapter configuration, check ✅ **"Battery-powered camera (uses neolink)"**
-   
-2. **Enter Camera UID:**
-   - Find your camera's UID in the Reolink app:
-     - Open Reolink app → Select camera → Settings → Device Info → UID
-   - Enter the UID (format: `95270005ODHZABIH`)
-
-3. **Configure Camera:**
-   - **IP Address:** Your camera's local IP (e.g., `192.168.30.24`)
-   - **Username/Password:** Camera credentials (usually `admin` / your password)
-   - **Protocol:** Not used for battery cameras (ignored)
-
-4. **Install System Dependency (Linux only):**
+1. **Enable in Config:** ✅ "Battery-powered camera"
+2. **Enter Camera UID:** Find in Reolink app → Device Info
+3. **Install Dependency (Linux):**
    ```bash
-   # Debian/Ubuntu/Proxmox
-   sudo apt update && sudo apt install gstreamer1.0-rtsp
-   
-   # Fedora/RHEL
-   sudo dnf install gstreamer1-rtsp-server
-   
-   # Arch Linux
-   sudo pacman -S gst-rtsp-server
+   sudo apt install gstreamer1.0-rtsp
    ```
+4. **Start Adapter** → RTSP streams at `rtsp://127.0.0.1:8554/<InstanceName>/mainStream`
 
-5. **Start Adapter:**
-   - The adapter will automatically spawn a neolink process
-   - RTSP streams will be available at `rtsp://127.0.0.1:8554/<InstanceName>/mainStream`
-   - **Streaming is DISABLED by default** (battery saving)
+### ⚠️ Battery Saving
 
-### Controlling Battery Camera Streams
+**Battery drains fast when active!** Use these controls:
 
-The adapter creates these control datapoints:
+- **`streams.enable`** (boolean) - Enable/disable streaming
+  - Default: `false` (battery saving)
+  - Auto-disables after 30s (configurable)
+  - Pauses when no client connected
+  
+- **`mqtt.enable`** (boolean) - Motion/battery via MQTT
+  - No streaming needed for motion detection
+  - Auto-disables after 30s
+  - Configure broker in adapter settings
 
-#### Stream Control (Critical for Battery Life!)
+**Best Practice:** Enable only when viewing, then disable immediately!
 
-- **`streams.enable`** (boolean) - Enable/Disable RTSP streaming
-  - ⚠️ **Default: `false`** (battery saving)
-  - Set to `true` when you want to view the stream
-  - **Auto-disables after timeout** (configurable, default 30s)
-  - Set to `false` immediately after viewing to save battery (or wait for auto-disable)
-  - Stream auto-pauses when no client connected (even when enabled)
-  - Timer is cancelled if manually disabled before timeout
+### Features
 
-**Auto-Disable Timer:**
-- Configurable in adapter settings: `streamAutoDisableSeconds` (default: 30, range: 10-3600)
-- Prevents accidental battery drain if you forget to disable
-- Logs warning when auto-disabling: `⏱️ Auto-disabling stream after Xs (battery protection)`
+✅ RTSP streams (main + sub)  
+✅ Snapshot (requires ffmpeg)  
+✅ Floodlight control (via MQTT)  
+✅ Motion detection (via MQTT)  
+✅ Battery level (via MQTT)  
+✅ Multi-platform (Linux x64/ARM, macOS, Windows)  
 
-#### MQTT Control (Motion & Battery without Streaming!)
+❌ PTZ control  
+❌ HTTP API features  
 
-**Configure in Adapter Settings (under "Battery Camera" tab):**
+### MQTT Setup
 
-- **`MQTT Broker Host`** - MQTT broker address (default: `127.0.0.1`)
-- **`MQTT Broker Port`** - MQTT broker port (default: `1883`)
-- **`MQTT Username`** - Optional authentication
-- **`MQTT Password`** - Optional authentication
+Configure in adapter settings:
+- **Broker Host** (default: 127.0.0.1)
+- **Broker Port** (default: 1883)
+- **Username/Password** (optional)
 
-**Runtime Control:**
+Topics:
+- `neolink/<camera>/status/motion`
+- `neolink/<camera>/status/battery_level`
+- `neolink/<camera>/control/floodlight`
 
-- **`mqtt.enable`** (boolean) - Enable/disable MQTT features
-  - Allows motion detection WITHOUT keeping stream active
-  - Battery level updates via MQTT
-  - Topics: `neolink/<camera>/motion`, `neolink/<camera>/battery`
+### Troubleshooting
 
-**Note:** MQTT broker settings require adapter restart. Enable/disable can be toggled at runtime.
-
-### What Works with Battery Cameras
-
-✅ **RTSP Live Streams** (Main + Sub Stream)  
-✅ **Battery Saving Mode** (auto-pause, idle disconnect, auto-disable timer)  
-✅ **Stream Control** (`streams.enable` datapoint with auto-disable)  
-✅ **Configurable Timeouts** (auto-disable timer, pause timeout)  
-✅ **MQTT Motion Detection** (without streaming)  
-✅ **MQTT Battery Level** (% remaining)  
-✅ **Snapshot** (via ffmpeg + RTSP, `snapshot` button)  
-✅ **Floodlight Control** (via MQTT, `floodlight` switch)  
-✅ **Camera UID Display**  
-✅ **Connection Status**  
-✅ **Multi-Platform** (Linux x64/ARM64/ARM32, macOS, Windows)  
-✅ **Raspberry Pi Support** (ARM binaries included)  
-
-❌ **PTZ Control** (not supported by battery cameras)  
-❌ **Email/FTP settings** (not applicable to battery cams)  
-
-❌ **PTZ Control** (not supported by battery cameras)  
-❌ **Email/FTP settings** (not applicable to battery cams)  
-❌ **Snapshots via HTTP** (use RTSP + ffmpeg instead)
-
-### Neolink Features Supported
-
-This adapter leverages all battery-saving features from neolink:
-
-- ✅ **`pause_on_client`** - Stream pauses when no RTSP client connected
-- ✅ **`pause_on_motion`** - Wake camera on motion
-- ✅ **`idle_disconnect`** - Disconnect after timeout
-- ✅ **MQTT motion** - Get motion events without streaming
-- ✅ **MQTT battery** - Battery percentage monitoring
-- ✅ **Local discovery** - Finds camera on local network
-
-### Technical Details
-
-- **Neolink Version:** v0.6.2 (bundled with adapter)
-- **Supported Platforms:** Linux x64, macOS (Intel + Apple Silicon), Windows x64
-- **RTSP Port:** 8554 (localhost only, not exposed to network)
-- **Config Storage:** Adapter data directory with restrictive permissions (chmod 600)
-- **System Dependency:** GStreamer RTSP Server library required (Linux/BSD)
-
-### Troubleshooting Battery Cameras
-
-**Problem:** Adapter fails to start with "Battery camera requires Camera UID"
-- **Solution:** Enter the camera UID in adapter configuration (find in Reolink app)
-
-**Problem:** Neolink process dies during startup
-- **Solution:** Check camera IP/credentials, ensure camera is online and accessible
-
-**Problem:** Error "libgstrtspserver-1.0.so.0: cannot open shared object file"
-- **Solution:** Install GStreamer RTSP library:
-  ```bash
-  sudo apt install gstreamer1.0-rtsp
-  ```
-
-**Problem:** Cannot connect to RTSP stream
-- **Solution:** 
-  1. Check if `streams.enable` is set to `true`
-  2. Wait 5-10 seconds after adapter start
-  3. Verify stream URL: `rtsp://127.0.0.1:8554/<InstanceName>/mainStream`
-  4. Camera might be sleeping - try triggering motion
-
-**Problem:** Battery drains too fast
-- **Solution:** 
-  1. Disable streaming when not viewing: `streams.enable = false`
-  2. Use MQTT for motion detection instead of continuous streaming
-  3. Neolink auto-pauses, but camera wakes on connection attempts
-  4. Consider increasing `timeout` in neolink config (requires manual edit)
-
-**Problem:** "Unsupported platform" error
-- **Solution:** Battery camera support requires Linux x64, macOS, or Windows x64. ARM (Raspberry Pi) not yet supported.
-
-**Problem:** MQTT not working
-- **Solution:** 
-  1. Check MQTT broker is running and accessible
-  2. Verify `mqtt.broker` and `mqtt.port` settings
-  3. Restart adapter after changing MQTT config
-  4. Check MQTT broker logs for connections from neolink
+**"Camera UID required"** → Enter UID from Reolink app  
+**"libgstrtspserver not found"** → `sudo apt install gstreamer1.0-rtsp`  
+**Stream won't connect** → Enable `streams.enable`, wait 5s  
+**Battery drains fast** → Disable streaming when not viewing, use MQTT for motion  
 
 ---
 
-## Known working cameras (firmware out of year 2023)
+## Known Working Cameras
 
-### HTTP API Cameras (Standard)
-- RLC-420-5MP
-- E1 Zoom
-- RLC-522
-- RLC-810A
-- RLC-823A
-- Duo 3 PoE
+### HTTP API (Standard)
+RLC-420-5MP, E1 Zoom, RLC-522, RLC-810A, RLC-823A, Duo 3 PoE
 
 ### Battery Cameras (via Neolink)
-- ✅ Argus 3 Pro
-- ✅ E1 Outdoor (battery model)
-- ✅ B400
-- ✅ D400
-- ⚠️ Other battery-powered models (should work but untested)
+✅ Argus 3 Pro, E1 Outdoor, B400, D400
 
-## Known *NOT* working cameras
-
-- E1 Pro (requires specific API commands not yet implemented)
-- Argus 4 (battery camera - testing needed)
+---
 
 ## Changelog
 <!--
@@ -277,13 +163,12 @@ This adapter leverages all battery-saving features from neolink:
     ### **WORK IN PROGRESS**
 -->
 ### **WORK IN PROGRESS**
-* (bloop-herbert-bot) 🔋 **Battery Camera Support via Neolink - COMPLETE**
-  - Added support for Reolink battery-powered cameras (Argus 3 Pro, B400, D400, E1 Outdoor)
-  - Integrated neolink v0.6.2 (Rust RTSP bridge for Baichuan protocol)
-  - Bundled neolink binaries for Linux (x64/ARM64/ARM32), macOS, Windows x64 (~100MB)
-  - **NEW:** ARM support - Raspberry Pi compatible! (ARM64 + ARM32 binaries)
-  - New config options: `isBatteryCam`, `cameraUID`, `streamAutoDisableSeconds`, `pauseTimeout`
-  - Automatic neolink process spawning for battery cameras
+* (bloop-herbert-bot) 🔋 **Battery Camera Support via Neolink**
+  - Support for Reolink battery cameras (Argus 3 Pro, B400, D400, E1 Outdoor)
+  - Integrated neolink v0.6.2 (RTSP bridge for Baichuan protocol)
+  - ARM support - Raspberry Pi compatible!
+  - Runtime MQTT + Stream control with auto-disable (30s default)
+  - Config fields: `isBatteryCam`, `cameraUID`, `mqttAutoDisableSeconds`, `streamAutoDisableSeconds`
   - RTSP stream URLs exposed: `rtsp://127.0.0.1:8554/<InstanceName>/mainStream`
   - **Battery Saving Features:**
     - Streams DISABLED by default (enable via `streams.enable` datapoint)
