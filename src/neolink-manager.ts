@@ -7,7 +7,7 @@
  */
 
 import type { ChildProcess } from 'child_process';
-import { spawn } from 'child_process';
+import { spawn, exec } from 'child_process';
 import * as fs from 'fs';
 import * as path from 'path';
 import { getNeolinkBinary } from './neolink-binary';
@@ -37,6 +37,7 @@ export interface NeolinkProcess {
 export class NeolinkManager {
     private rtspProcess: NeolinkProcess | null = null;
     private mqttProcess: NeolinkProcess | null = null;
+    private currentConfig: NeolinkConfig | null = null;
     private dataDir: string;
     private logCallback?: (cameraName: string, level: string, message: string) => void;
 
@@ -80,6 +81,9 @@ export class NeolinkManager {
             mode: 'rtsp',
         };
 
+        // Store config for battery queries
+        this.currentConfig = config;
+
         this.log(config.name, 'info', `RTSP process started (PID: ${proc.pid})`);
         await this.waitForReady(config.name, 'rtsp', 5000);
     }
@@ -113,6 +117,9 @@ export class NeolinkManager {
             startedAt: new Date(),
             mode: 'mqtt',
         };
+
+        // Store config for battery queries
+        this.currentConfig = config;
 
         this.log(config.name, 'info', `MQTT process started (PID: ${proc.pid})`);
         await this.waitForReady(config.name, 'mqtt', 3000);
@@ -334,5 +341,43 @@ discovery = "local"
         if (this.logCallback) {
             this.logCallback(cameraName, level, message);
         }
+    }
+
+    /**
+     * Query battery status via CLI (while MQTT subprocess is running)
+     */
+    public async queryBatteryStatus(): Promise<string> {
+        if (!this.currentConfig) {
+            throw new Error('Neolink not configured');
+        }
+
+        const configPath = path.join(this.dataDir, `neolink-mqtt-${this.currentConfig.name}.toml`);
+
+        if (!fs.existsSync(configPath)) {
+            throw new Error('MQTT config not found - start MQTT first');
+        }
+
+        const neolinkBin = getNeolinkBinary().path;
+        const cmd = `"${neolinkBin}" battery --config="${configPath}" ${this.currentConfig.name}`;
+
+        this.log(this.currentConfig.name, 'debug', `Querying battery status: ${cmd}`);
+
+        return new Promise((resolve, reject) => {
+            exec(cmd, { timeout: 15000 }, (error: any, stdout: any, stderr: any) => {
+                if (error) {
+                    this.log(this.currentConfig!.name, 'error', `Battery query failed: ${error.message}`);
+                    reject(new Error(`Battery query failed: ${error.message}`));
+                    return;
+                }
+
+                if (stderr) {
+                    this.log(this.currentConfig!.name, 'debug', `Battery query stderr: ${stderr.trim()}`);
+                }
+
+                const output = stdout.trim();
+                this.log(this.currentConfig!.name, 'debug', `Battery query response: ${output}`);
+                resolve(output);
+            });
+        });
     }
 }

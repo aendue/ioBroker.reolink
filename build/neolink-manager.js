@@ -48,6 +48,7 @@ const neolink_binary_1 = require("./neolink-binary");
 class NeolinkManager {
     rtspProcess = null;
     mqttProcess = null;
+    currentConfig = null;
     dataDir;
     logCallback;
     constructor(dataDir, logCallback) {
@@ -82,6 +83,8 @@ class NeolinkManager {
             startedAt: new Date(),
             mode: 'rtsp',
         };
+        // Store config for battery queries
+        this.currentConfig = config;
         this.log(config.name, 'info', `RTSP process started (PID: ${proc.pid})`);
         await this.waitForReady(config.name, 'rtsp', 5000);
     }
@@ -109,6 +112,8 @@ class NeolinkManager {
             startedAt: new Date(),
             mode: 'mqtt',
         };
+        // Store config for battery queries
+        this.currentConfig = config;
         this.log(config.name, 'info', `MQTT process started (PID: ${proc.pid})`);
         await this.waitForReady(config.name, 'mqtt', 3000);
     }
@@ -300,6 +305,36 @@ discovery = "local"
         if (this.logCallback) {
             this.logCallback(cameraName, level, message);
         }
+    }
+    /**
+     * Query battery status via CLI (while MQTT subprocess is running)
+     */
+    async queryBatteryStatus() {
+        if (!this.currentConfig) {
+            throw new Error('Neolink not configured');
+        }
+        const configPath = path.join(this.dataDir, `neolink-mqtt-${this.currentConfig.name}.toml`);
+        if (!fs.existsSync(configPath)) {
+            throw new Error('MQTT config not found - start MQTT first');
+        }
+        const neolinkBin = (0, neolink_binary_1.getNeolinkBinary)().path;
+        const cmd = `"${neolinkBin}" battery --config="${configPath}" ${this.currentConfig.name}`;
+        this.log(this.currentConfig.name, 'debug', `Querying battery status: ${cmd}`);
+        return new Promise((resolve, reject) => {
+            (0, child_process_1.exec)(cmd, { timeout: 15000 }, (error, stdout, stderr) => {
+                if (error) {
+                    this.log(this.currentConfig.name, 'error', `Battery query failed: ${error.message}`);
+                    reject(new Error(`Battery query failed: ${error.message}`));
+                    return;
+                }
+                if (stderr) {
+                    this.log(this.currentConfig.name, 'debug', `Battery query stderr: ${stderr.trim()}`);
+                }
+                const output = stdout.trim();
+                this.log(this.currentConfig.name, 'debug', `Battery query response: ${output}`);
+                resolve(output);
+            });
+        });
     }
 }
 exports.NeolinkManager = NeolinkManager;
