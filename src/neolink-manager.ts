@@ -226,23 +226,15 @@ discovery = "local"
   enable_battery = true
   enable_floodlight = ${config.enableFloodlight !== false}
   enable_preview = true
-
-# Status topics that neolink will publish to
-[[cameras.mqtt.discovery]]
-topic = "neolink/${config.name}/status/motion"
-
-[[cameras.mqtt.discovery]]
-topic = "neolink/${config.name}/status/battery_level"
-
-[[cameras.mqtt.discovery]]
-topic = "neolink/${config.name}/status/floodlight"
-
-[[cameras.mqtt.discovery]]
-topic = "neolink/${config.name}/status/preview"
-
-# Control topics that neolink will subscribe to
-[[cameras.mqtt.control]]
-topic = "neolink/${config.name}/floodlight/set"
+  # Status topics that neolink will publish to
+  discovery = [
+    "neolink/${config.name}/status/motion",
+    "neolink/${config.name}/status/battery_level",
+    "neolink/${config.name}/status/floodlight",
+    "neolink/${config.name}/status/preview"
+  ]
+  # Control topics that neolink will subscribe to  
+  control = ["neolink/${config.name}/floodlight/set"]
 `.trim();
 
         fs.writeFileSync(configPath, tomlContent, { mode: 0o600 });
