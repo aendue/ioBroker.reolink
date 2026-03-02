@@ -193,6 +193,8 @@ class ReoLinkCamAdapter extends adapter_core_1.Adapter {
             await this.startBatteryCam();
             return; // Don't continue with HTTP API
         }
+        // HTTP API camera mode - clean up any battery cam states
+        await this.cleanupBatteryCamStates();
         if (!this.config.cameraProtocol) {
             this.log.error('no protocol (http/https) set!');
             return;
@@ -1837,6 +1839,43 @@ class ReoLinkCamAdapter extends adapter_core_1.Adapter {
         });
         await this.setStateAsync('floodlight', false, true);
         this.log.debug('Battery camera states created');
+    }
+    /**
+     * Cleanup battery camera states when switching to HTTP API mode
+     */
+    async cleanupBatteryCamStates() {
+        this.log.debug('Cleaning up battery camera states...');
+        const batteryCamStates = [
+            'streams',
+            'streams.mainStream',
+            'streams.subStream',
+            'streams.enable',
+            'mqtt',
+            'mqtt.enable',
+            'status',
+            'status.motion',
+            'status.battery_level',
+            'status.floodlight',
+            'status.preview',
+            'snapshotImage',
+            'snapshotStatus',
+            'floodlight',
+            'info.uid',
+            'info.neolink_status',
+        ];
+        for (const stateId of batteryCamStates) {
+            try {
+                const obj = await this.getObjectAsync(stateId);
+                if (obj) {
+                    await this.delObjectAsync(stateId);
+                    this.log.debug(`Deleted battery cam state: ${stateId}`);
+                }
+            }
+            catch {
+                // Ignore - state might not exist
+            }
+        }
+        this.log.debug('Battery camera states cleanup complete');
     }
     /**
      * Handle stream enable/disable for battery camera
