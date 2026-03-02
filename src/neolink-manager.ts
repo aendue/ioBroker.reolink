@@ -226,6 +226,9 @@ discovery = "local"
   enable_battery = true
   enable_floodlight = ${config.enableFloodlight !== false}
   enable_preview = true
+  battery_update = 10000
+  preview_update = 10000
+  floodlight_update = 10000
 `.trim();
 
         fs.writeFileSync(configPath, tomlContent, { mode: 0o600 });
