@@ -1574,8 +1574,9 @@ class ReoLinkCamAdapter extends adapter_core_1.Adapter {
                 }
             });
             // Prepare neolink config
+            const cameraName = this.config.cameraBatteryName || 'Camera01';
             this.neolinkConfig = {
-                name: this.name, // Use adapter instance name as camera name
+                name: cameraName, // Friendly camera name for MQTT topics
                 username: this.config.cameraUser,
                 password: this.config.cameraPassword,
                 uid: this.config.cameraUID,
@@ -1589,7 +1590,8 @@ class ReoLinkCamAdapter extends adapter_core_1.Adapter {
                 enableFloodlight: true,
             };
             // Start RTSP process (always running)
-            this.log.info(`Starting RTSP process for battery camera: ${this.neolinkConfig.name}`);
+            this.log.info(`Starting RTSP process for battery camera: ${cameraName}`);
+            this.log.info(`MQTT topics will use camera name: ${cameraName}`);
             await this.neolinkManager.startRtsp(this.neolinkConfig);
             // Create battery cam states
             await this.createBatteryCamStates();
@@ -1839,8 +1841,8 @@ class ReoLinkCamAdapter extends adapter_core_1.Adapter {
             const autoDisableSeconds = this.config.mqttAutoDisableSeconds || 30;
             this.log.warn(`⚠️ BATTERY DRAIN: MQTT enabled! Auto-disabling in ${autoDisableSeconds}s to save battery.`);
             this.log.info(`MQTT Broker: ${broker}:${port}`);
-            this.log.info('MQTT topics: neolink/<camera>/status/{motion,battery_level,floodlight,preview}');
-            this.log.info('Control topic: neolink/<camera>/control/floodlight');
+            this.log.info(`MQTT topics: neolink/${this.neolinkConfig.name}/status/{motion,battery_level,floodlight,preview}`);
+            this.log.info(`Control topic: neolink/${this.neolinkConfig.name}/control/floodlight`);
             // Start MQTT process
             try {
                 await this.neolinkManager.startMqtt(this.neolinkConfig);
@@ -1949,7 +1951,7 @@ class ReoLinkCamAdapter extends adapter_core_1.Adapter {
         }
         try {
             this.log.info(`Setting floodlight: ${enabled ? 'ON' : 'OFF'}`);
-            await this.mqttHelper.setFloodlight(this.name, enabled);
+            await this.mqttHelper.setFloodlight(this.neolinkConfig.name, enabled);
             await this.setStateAsync('floodlight', enabled, true);
         }
         catch (error) {
