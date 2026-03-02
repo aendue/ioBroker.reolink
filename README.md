@@ -84,9 +84,9 @@ sendTo("reolink.0",{action: "snap"}, function(result){
 });
 ```
 
-## Battery-Powered Cameras (v1.4.0+)
+## Battery-Powered Cameras 
 
-Battery cameras (Argus 3 Pro, B400, D400, E1 Outdoor) use a proprietary protocol. This adapter supports them via **neolink**.
+Battery cameras (Argus 3 Pro,...) use a proprietary protocol. This adapter supports them via **neolink**.
 
 ### Quick Setup
 
@@ -98,7 +98,7 @@ Battery cameras (Argus 3 Pro, B400, D400, E1 Outdoor) use a proprietary protocol
    ```
 4. **Start Adapter** → RTSP streams at `rtsp://127.0.0.1:8554/<InstanceName>/mainStream`
 
-### ⚠️ Battery Saving
+### Battery Saving
 
 **Battery drains fast when active!** Use these controls:
 
@@ -153,8 +153,7 @@ Topics:
 RLC-420-5MP, E1 Zoom, RLC-522, RLC-810A, RLC-823A, Duo 3 PoE
 
 ### Battery Cameras (via Neolink)
-✅ Argus 3 Pro, E1 Outdoor, B400, D400
-
+✅ Argus 3 Pro
 ---
 
 ## Changelog
@@ -164,7 +163,7 @@ RLC-420-5MP, E1 Zoom, RLC-522, RLC-810A, RLC-823A, Duo 3 PoE
 -->
 ### **WORK IN PROGRESS**
 * (bloop-herbert-bot) 🔋 **Battery Camera Support via Neolink**
-  - Support for Reolink battery cameras (Argus 3 Pro, B400, D400, E1 Outdoor)
+  - Support for Reolink battery cameras (Argus 3 Pro)
   - Integrated neolink v0.6.2 (RTSP bridge for Baichuan protocol)
   - ARM support - Raspberry Pi compatible!
   - Runtime MQTT + Stream control with auto-disable (30s default)
