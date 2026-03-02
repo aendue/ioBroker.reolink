@@ -1814,16 +1814,30 @@ class ReoLinkCamAdapter extends Adapter {
         });
         await this.setStateAsync('mqtt.enable', false, true);
 
-        // Battery level (updated via MQTT subscription)
-        await this.setObjectNotExistsAsync('battery', {
+        // Status channel (MQTT feedback from camera)
+        await this.setObjectNotExistsAsync('status', {
             type: 'channel',
             common: {
-                name: 'Battery',
+                name: 'Camera Status (MQTT)',
             },
             native: {},
         });
 
-        await this.setObjectNotExistsAsync('battery.level', {
+        await this.setObjectNotExistsAsync('status.motion', {
+            type: 'state',
+            common: {
+                name: 'Motion Detection',
+                type: 'boolean',
+                role: 'sensor.motion',
+                read: true,
+                write: false,
+                desc: 'Motion detection from camera (requires mqtt.enable = true)',
+            },
+            native: {},
+        });
+        await this.setStateAsync('status.motion', false, true);
+
+        await this.setObjectNotExistsAsync('status.battery_level', {
             type: 'state',
             common: {
                 name: 'Battery Level',
@@ -1834,44 +1848,33 @@ class ReoLinkCamAdapter extends Adapter {
                 write: false,
                 min: 0,
                 max: 100,
-                desc: 'Battery level from MQTT (requires mqtt.enable = true)',
+                desc: 'Battery level from camera (requires mqtt.enable = true)',
             },
             native: {},
         });
 
-        // Motion detection (updated via MQTT subscription)
-        await this.setObjectNotExistsAsync('motion', {
-            type: 'channel',
-            common: {
-                name: 'Motion Detection',
-            },
-            native: {},
-        });
-
-        await this.setObjectNotExistsAsync('motion.detected', {
+        await this.setObjectNotExistsAsync('status.floodlight', {
             type: 'state',
             common: {
-                name: 'Motion Detected',
-                type: 'boolean',
-                role: 'sensor.motion',
-                read: true,
-                write: false,
-                desc: 'Motion detection from MQTT (requires mqtt.enable = true)',
-            },
-            native: {},
-        });
-        await this.setStateAsync('motion.detected', false, true);
-
-        // Floodlight status feedback (updated via MQTT subscription)
-        await this.setObjectNotExistsAsync('floodlight.status', {
-            type: 'state',
-            common: {
-                name: 'Floodlight Status (Feedback)',
+                name: 'Floodlight Status',
                 type: 'boolean',
                 role: 'indicator.status',
                 read: true,
                 write: false,
-                desc: 'Floodlight state from MQTT feedback (requires mqtt.enable = true)',
+                desc: 'Floodlight state from camera (requires mqtt.enable = true)',
+            },
+            native: {},
+        });
+
+        await this.setObjectNotExistsAsync('status.preview', {
+            type: 'state',
+            common: {
+                name: 'Preview Image',
+                type: 'string',
+                role: 'text',
+                read: true,
+                write: false,
+                desc: 'Base64-encoded preview image from camera (requires mqtt.enable = true)',
             },
             native: {},
         });
@@ -2063,6 +2066,7 @@ class ReoLinkCamAdapter extends Adapter {
                     await this.mqttHelper.subscribe(`neolink/${cameraName}/status/motion`);
                     await this.mqttHelper.subscribe(`neolink/${cameraName}/status/battery_level`);
                     await this.mqttHelper.subscribe(`neolink/${cameraName}/status/floodlight`);
+                    await this.mqttHelper.subscribe(`neolink/${cameraName}/status/preview`);
 
                     // Register message handler
                     this.mqttHelper.onMessage((topic, message) => {
@@ -2173,7 +2177,7 @@ class ReoLinkCamAdapter extends Adapter {
                 await this.handleFloodlightStatusMessage(payload);
                 break;
             case 'preview':
-                // Ignore preview images for now (base64 encoded)
+                await this.handlePreviewMessage(payload);
                 break;
             default:
                 this.log.debug(`[MQTT] Unknown message type: ${messageType}`);
@@ -2186,14 +2190,14 @@ class ReoLinkCamAdapter extends Adapter {
     private async handleMotionMessage(payload: string): Promise<void> {
         if (payload === 'triggered') {
             this.log.info('Motion detected!');
-            await this.setStateAsync('motion.detected', true, true);
+            await this.setStateAsync('status.motion', true, true);
 
             // Clear motion after 5 seconds
             this.setTimeout(async () => {
-                await this.setStateAsync('motion.detected', false, true);
+                await this.setStateAsync('status.motion', false, true);
             }, 5000);
         } else if (payload === 'clear') {
-            await this.setStateAsync('motion.detected', false, true);
+            await this.setStateAsync('status.motion', false, true);
         }
     }
 
@@ -2208,7 +2212,7 @@ class ReoLinkCamAdapter extends Adapter {
         }
 
         this.log.info(`Battery level: ${batteryLevel}%`);
-        await this.setStateAsync('battery.level', batteryLevel, true);
+        await this.setStateAsync('status.battery_level', batteryLevel, true);
     }
 
     /**
@@ -2217,7 +2221,16 @@ class ReoLinkCamAdapter extends Adapter {
     private async handleFloodlightStatusMessage(payload: string): Promise<void> {
         const enabled = payload === 'on';
         this.log.debug(`Floodlight status: ${enabled ? 'ON' : 'OFF'}`);
-        await this.setStateAsync('floodlight.status', enabled, true);
+        await this.setStateAsync('status.floodlight', enabled, true);
+    }
+
+    /**
+     * Handle preview image message
+     */
+    private async handlePreviewMessage(payload: string): Promise<void> {
+        // Base64-encoded image - store as-is
+        this.log.debug('[MQTT] Preview image received');
+        await this.setStateAsync('status.preview', payload, true);
     }
 
     /**
