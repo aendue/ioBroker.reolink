@@ -153,7 +153,9 @@ Topics:
 RLC-420-5MP, E1 Zoom, RLC-522, RLC-810A, RLC-823A, Duo 3 PoE
 
 ### Battery Cameras (via Neolink)
+
 ✅ Argus 3 Pro
+
 ---
 
 ## Changelog
