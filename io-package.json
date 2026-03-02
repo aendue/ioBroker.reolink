@@ -184,6 +184,7 @@
     "apiRefreshInterval": "10",
     "sslvalid": false,
     "UriEncodedPassword": true,
+    "cameraBatteryName": "Camera01",
     "streamAutoDisableSeconds": 30,
     "mqttAutoDisableSeconds": 30,
     "pauseTimeout": 2.1,

@@ -10,6 +10,7 @@ export type ReoLinkCamAdapterConfig = {
     UriEncodedPassword: boolean;
     isBatteryCam: boolean;
     cameraUID: string;
+    cameraBatteryName: string;
     streamAutoDisableSeconds: number;
     mqttAutoDisableSeconds: number;
     pauseTimeout: number;

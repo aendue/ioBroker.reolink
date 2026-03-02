@@ -105,6 +105,17 @@
                     "label": "Camera UID",
                     "help": "Required for battery cameras (find in Reolink app or camera settings)"
                 },
+                "cameraBatteryName": {
+                    "hidden": "!data.isBatteryCam",
+                    "type": "text",
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 6,
+                    "lg": 4,
+                    "xl": 4,
+                    "label": "Camera Name (for MQTT topics)",
+                    "help": "Friendly name used in MQTT topics (e.g., 'Camera01', 'Argus3_Garden'). Default: Camera01"
+                },
                 "streamAutoDisableSeconds": {
                     "hidden": "!data.isBatteryCam",
                     "type": "number",
