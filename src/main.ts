@@ -1814,6 +1814,68 @@ class ReoLinkCamAdapter extends Adapter {
         });
         await this.setStateAsync('mqtt.enable', false, true);
 
+        // Battery level (updated via MQTT subscription)
+        await this.setObjectNotExistsAsync('battery', {
+            type: 'channel',
+            common: {
+                name: 'Battery',
+            },
+            native: {},
+        });
+
+        await this.setObjectNotExistsAsync('battery.level', {
+            type: 'state',
+            common: {
+                name: 'Battery Level',
+                type: 'number',
+                role: 'value.battery',
+                unit: '%',
+                read: true,
+                write: false,
+                min: 0,
+                max: 100,
+                desc: 'Battery level from MQTT (requires mqtt.enable = true)',
+            },
+            native: {},
+        });
+
+        // Motion detection (updated via MQTT subscription)
+        await this.setObjectNotExistsAsync('motion', {
+            type: 'channel',
+            common: {
+                name: 'Motion Detection',
+            },
+            native: {},
+        });
+
+        await this.setObjectNotExistsAsync('motion.detected', {
+            type: 'state',
+            common: {
+                name: 'Motion Detected',
+                type: 'boolean',
+                role: 'sensor.motion',
+                read: true,
+                write: false,
+                desc: 'Motion detection from MQTT (requires mqtt.enable = true)',
+            },
+            native: {},
+        });
+        await this.setStateAsync('motion.detected', false, true);
+
+        // Floodlight status feedback (updated via MQTT subscription)
+        await this.setObjectNotExistsAsync('floodlight.status', {
+            type: 'state',
+            common: {
+                name: 'Floodlight Status (Feedback)',
+                type: 'boolean',
+                role: 'indicator.status',
+                read: true,
+                write: false,
+                desc: 'Floodlight state from MQTT feedback (requires mqtt.enable = true)',
+            },
+            native: {},
+        });
+
         // Snapshot (requires ffmpeg)
         await this.setObjectNotExistsAsync('snapshot', {
             type: 'state',
@@ -1995,6 +2057,19 @@ class ReoLinkCamAdapter extends Adapter {
 
                     await this.mqttHelper.connect();
                     this.log.info('✅ MQTT client connected - Ready for floodlight control');
+
+                    // Subscribe to status topics
+                    const cameraName = this.neolinkConfig.name;
+                    await this.mqttHelper.subscribe(`neolink/${cameraName}/status/motion`);
+                    await this.mqttHelper.subscribe(`neolink/${cameraName}/status/battery_level`);
+                    await this.mqttHelper.subscribe(`neolink/${cameraName}/status/floodlight`);
+
+                    // Register message handler
+                    this.mqttHelper.onMessage((topic, message) => {
+                        void this.handleMqttMessage(topic, message);
+                    });
+
+                    this.log.info(`✅ Subscribed to status topics for ${cameraName}`);
                 } catch (error) {
                     this.log.error(`Failed to connect MQTT client: ${error instanceof Error ? error.message : error}`);
                     this.log.error(`Check MQTT broker settings: ${broker}:${port}`);
@@ -2066,6 +2141,83 @@ class ReoLinkCamAdapter extends Adapter {
             this.log.error(`Snapshot failed: ${error instanceof Error ? error.message : error}`);
             await this.setStateAsync('snapshotStatus', 'error', true);
         }
+    }
+
+    /**
+     
+    /**
+     * Handle MQTT messages from neolink
+     */
+    private async handleMqttMessage(topic: string, message: Buffer): Promise<void> {
+        const payload = message.toString().trim();
+        this.log.debug(`[MQTT] Message received: ${topic} = ${payload}`);
+
+        // Extract camera name and message type from topic
+        // Format: neolink/<camera>/status/<type>
+        const parts = topic.split('/');
+        if (parts.length !== 4 || parts[0] !== 'neolink' || parts[2] !== 'status') {
+            this.log.warn(`[MQTT] Invalid topic format: ${topic}`);
+            return;
+        }
+
+        const messageType = parts[3];
+
+        switch (messageType) {
+            case 'motion':
+                await this.handleMotionMessage(payload);
+                break;
+            case 'battery_level':
+                await this.handleBatteryMessage(payload);
+                break;
+            case 'floodlight':
+                await this.handleFloodlightStatusMessage(payload);
+                break;
+            case 'preview':
+                // Ignore preview images for now (base64 encoded)
+                break;
+            default:
+                this.log.debug(`[MQTT] Unknown message type: ${messageType}`);
+        }
+    }
+
+    /**
+     * Handle motion detection message
+     */
+    private async handleMotionMessage(payload: string): Promise<void> {
+        if (payload === 'triggered') {
+            this.log.info('Motion detected!');
+            await this.setStateAsync('motion.detected', true, true);
+
+            // Clear motion after 5 seconds
+            this.setTimeout(async () => {
+                await this.setStateAsync('motion.detected', false, true);
+            }, 5000);
+        } else if (payload === 'clear') {
+            await this.setStateAsync('motion.detected', false, true);
+        }
+    }
+
+    /**
+     * Handle battery level message
+     */
+    private async handleBatteryMessage(payload: string): Promise<void> {
+        const batteryLevel = parseInt(payload, 10);
+        if (isNaN(batteryLevel) || batteryLevel < 0 || batteryLevel > 100) {
+            this.log.warn(`[MQTT] Invalid battery level: ${payload}`);
+            return;
+        }
+
+        this.log.info(`Battery level: ${batteryLevel}%`);
+        await this.setStateAsync('battery.level', batteryLevel, true);
+    }
+
+    /**
+     * Handle floodlight status message
+     */
+    private async handleFloodlightStatusMessage(payload: string): Promise<void> {
+        const enabled = payload === 'on';
+        this.log.debug(`Floodlight status: ${enabled ? 'ON' : 'OFF'}`);
+        await this.setStateAsync('floodlight.status', enabled, true);
     }
 
     /**

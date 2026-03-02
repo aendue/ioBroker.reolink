@@ -115,6 +115,52 @@ class MqttHelper {
         const message = enabled ? 'on' : 'off';
         await this.publish(topic, message);
     }
+    /**
+     * Subscribe to MQTT topic
+     */
+    async subscribe(topic) {
+        if (!this.client || !this.client.connected) {
+            throw new Error('MQTT client not connected');
+        }
+        return new Promise((resolve, reject) => {
+            this.client.subscribe(topic, err => {
+                if (err) {
+                    reject(err);
+                }
+                else {
+                    this.log('info', `Subscribed to: ${topic}`);
+                    resolve();
+                }
+            });
+        });
+    }
+    /**
+     * Unsubscribe from MQTT topic
+     */
+    async unsubscribe(topic) {
+        if (!this.client || !this.client.connected) {
+            return; // Already disconnected
+        }
+        return new Promise((resolve, reject) => {
+            this.client.unsubscribe(topic, err => {
+                if (err) {
+                    reject(err);
+                }
+                else {
+                    this.log('info', `Unsubscribed from: ${topic}`);
+                    resolve();
+                }
+            });
+        });
+    }
+    /**
+     * Register message handler
+     */
+    onMessage(callback) {
+        if (this.client) {
+            this.client.on('message', callback);
+        }
+    }
     log(level, message) {
         if (this.logCallback) {
             this.logCallback(level, message);
