@@ -168,7 +168,9 @@ class NeolinkManager {
         const configPath = path.join(this.dataDir, `neolink-rtsp-${config.name}.toml`);
         // TOML escaping: backslashes must be doubled
         const escapeTOML = (str) => {
-            return str.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
+            const escaped = str.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
+            this.log(config.name, 'debug', `TOML escape: "${str}" → "${escaped}"`);
+            return escaped;
         };
         const tomlContent = `
 # Neolink RTSP config for ${config.name}
@@ -189,6 +191,7 @@ idle_disconnect = true
   timeout = ${config.pauseTimeout || 2.1}
 `.trim();
         fs.writeFileSync(configPath, tomlContent, { mode: 0o600 });
+        this.log(config.name, 'debug', `RTSP config written to: ${configPath}`);
         return configPath;
     }
     /**
@@ -198,7 +201,9 @@ idle_disconnect = true
         const configPath = path.join(this.dataDir, `neolink-mqtt-${config.name}.toml`);
         // TOML escaping: backslashes must be doubled
         const escapeTOML = (str) => {
-            return str.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
+            const escaped = str.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
+            this.log(config.name, 'debug', `TOML escape: "${str}" → "${escaped}"`);
+            return escaped;
         };
         const tomlContent = `
 # Neolink MQTT config for ${config.name}
@@ -226,6 +231,7 @@ discovery = "local"
   floodlight_update = 10000
 `.trim();
         fs.writeFileSync(configPath, tomlContent, { mode: 0o600 });
+        this.log(config.name, 'debug', `MQTT config written to: ${configPath}`);
         return configPath;
     }
     /**
