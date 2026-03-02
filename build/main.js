@@ -1933,6 +1933,10 @@ class ReoLinkCamAdapter extends adapter_core_1.Adapter {
                                 this.log.info(`[MQTT] ${message}`);
                         }
                     });
+                    // Register message handler BEFORE connect to catch all messages
+                    this.mqttHelper.onMessage((topic, message) => {
+                        void this.handleMqttMessage(topic, message);
+                    });
                     await this.mqttHelper.connect();
                     this.log.info('✅ MQTT client connected - Ready for floodlight control');
                     // Subscribe to status topics
@@ -1941,10 +1945,6 @@ class ReoLinkCamAdapter extends adapter_core_1.Adapter {
                     await this.mqttHelper.subscribe(`neolink/${cameraName}/status/battery_level`);
                     await this.mqttHelper.subscribe(`neolink/${cameraName}/status/floodlight`);
                     await this.mqttHelper.subscribe(`neolink/${cameraName}/status/preview`);
-                    // Register message handler
-                    this.mqttHelper.onMessage((topic, message) => {
-                        void this.handleMqttMessage(topic, message);
-                    });
                     this.log.info(`✅ Subscribed to status topics for ${cameraName}`);
                 }
                 catch (error) {
