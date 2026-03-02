@@ -1590,20 +1590,20 @@ class ReoLinkCamAdapter extends adapter_core_1.Adapter {
                 mqttPassword: this.config.mqttPassword,
                 enableFloodlight: true,
             };
-            // Start RTSP process (always running)
-            this.log.info(`Starting RTSP process for battery camera: ${cameraName}`);
+            // DON'T start RTSP automatically - only when user enables streams!
+            // Store config for later use
+            this.log.info(`Battery camera configured: ${cameraName}`);
             this.log.info(`MQTT topics will use camera name: ${cameraName}`);
-            await this.neolinkManager.startRtsp(this.neolinkConfig);
             // Create battery cam states
             await this.createBatteryCamStates();
-            // Get RTSP URLs
+            // Calculate RTSP URLs (will be available when stream starts)
             const mainStreamUrl = this.neolinkManager.getRtspUrl(this.name, 'mainStream');
             const subStreamUrl = this.neolinkManager.getRtspUrl(this.name, 'subStream');
-            this.log.info(`RTSP Main Stream: ${mainStreamUrl}`);
-            this.log.info(`RTSP Sub Stream: ${subStreamUrl}`);
+            this.log.info(`RTSP Main Stream URL (when enabled): ${mainStreamUrl}`);
+            this.log.info(`RTSP Sub Stream URL (when enabled): ${subStreamUrl}`);
             await this.setStateAsync('streams.mainStream', mainStreamUrl, true);
             await this.setStateAsync('streams.subStream', subStreamUrl, true);
-            await this.setStateAsync('info.neolink_status', 'running', true);
+            await this.setStateAsync('info.neolink_status', 'stopped', true);
             await this.setStateAsync('info.connection', true, true);
             // Subscribe to control states
             this.subscribeStates('streams.enable');
@@ -1611,7 +1611,6 @@ class ReoLinkCamAdapter extends adapter_core_1.Adapter {
             this.subscribeStates('snapshot');
             this.subscribeStates('floodlight');
             this.log.info('Battery camera ready!');
-            this.log.warn('⚠️ Streaming is DISABLED by default to save battery. Enable via streams.enable datapoint.');
         }
         catch (error) {
             this.log.error(`Failed to start battery camera: ${error instanceof Error ? error.message : error}`);
@@ -1845,7 +1844,7 @@ class ReoLinkCamAdapter extends adapter_core_1.Adapter {
      * This only controls the auto-disable timer for battery protection.
      */
     async handleBatteryCamStreamControl(enable) {
-        if (!this.neolinkManager) {
+        if (!this.neolinkManager || !this.neolinkConfig) {
             this.log.warn('Neolink manager not initialized');
             return;
         }
@@ -1855,13 +1854,20 @@ class ReoLinkCamAdapter extends adapter_core_1.Adapter {
             this.streamAutoDisableTimer = undefined;
         }
         if (enable) {
+            // Start RTSP process if not running
+            if (!this.neolinkManager.isRtspRunning()) {
+                this.log.info('Starting RTSP stream for battery camera...');
+                await this.neolinkManager.startRtsp(this.neolinkConfig);
+                await this.setStateAsync('info.neolink_status', 'running', true);
+                this.log.info('✅ RTSP stream started');
+            }
             // Get auto-disable timeout from config (default: 30s)
             const autoDisableSeconds = this.config.streamAutoDisableSeconds || 30;
-            this.log.warn(`⚠️ BATTERY DRAIN: Streaming enabled! Auto-disabling in ${autoDisableSeconds}s to save battery.`);
+            this.log.info(`Streaming enabled - auto-disable in ${autoDisableSeconds}s (battery protection)`);
             await this.setStateAsync('streams.enable', true, true);
             // Set auto-disable timer
             this.streamAutoDisableTimer = this.setTimeout(async () => {
-                this.log.warn(`⏱️ Auto-disabling stream after ${autoDisableSeconds}s (battery protection)`);
+                this.log.info(`Auto-disabling stream after ${autoDisableSeconds}s (battery protection)`);
                 await this.setStateAsync('streams.enable', false, false);
                 this.streamAutoDisableTimer = undefined;
             }, autoDisableSeconds * 1000);
@@ -1869,7 +1875,13 @@ class ReoLinkCamAdapter extends adapter_core_1.Adapter {
             // This timer is an additional battery protection layer
         }
         else {
-            this.log.info('Streaming disabled - battery saving mode');
+            this.log.info('Streaming disabled - stopping RTSP process');
+            // Stop RTSP process
+            if (this.neolinkManager.isRtspRunning()) {
+                await this.neolinkManager.stopRtsp();
+                await this.setStateAsync('info.neolink_status', 'stopped', true);
+                this.log.info('✅ RTSP stream stopped');
+            }
             await this.setStateAsync('streams.enable', false, true);
             // Neolink will disconnect on idle (idle_disconnect=true in config)
         }
@@ -1900,7 +1912,7 @@ class ReoLinkCamAdapter extends adapter_core_1.Adapter {
             const password = this.config.mqttPassword;
             // Get auto-disable timeout from config (default: 30s)
             const autoDisableSeconds = this.config.mqttAutoDisableSeconds || 30;
-            this.log.warn(`⚠️ BATTERY DRAIN: MQTT enabled! Auto-disabling in ${autoDisableSeconds}s to save battery.`);
+            this.log.info(`MQTT enabled - auto-disable in ${autoDisableSeconds}s (battery protection)`);
             this.log.info(`MQTT Broker: ${broker}:${port}`);
             this.log.info(`MQTT topics: neolink/${this.neolinkConfig.name}/status/{motion,battery_level,floodlight,preview}`);
             this.log.info(`Control topic: neolink/${this.neolinkConfig.name}/control/floodlight`);
@@ -1962,7 +1974,7 @@ class ReoLinkCamAdapter extends adapter_core_1.Adapter {
             }
             // Set auto-disable timer
             this.mqttAutoDisableTimer = this.setTimeout(async () => {
-                this.log.warn(`⏱️ Auto-disabling MQTT after ${autoDisableSeconds}s (battery protection)`);
+                this.log.info(`Auto-disabling MQTT after ${autoDisableSeconds}s (battery protection)`);
                 await this.setStateAsync('mqtt.enable', false, false);
                 this.mqttAutoDisableTimer = undefined;
             }, autoDisableSeconds * 1000);
