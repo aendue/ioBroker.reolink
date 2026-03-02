@@ -122,6 +122,7 @@ class ReoLinkCamAdapter extends Adapter {
     private reolinkApiClient: AxiosInstance | null = null;
     private refreshStateTimeout: ioBroker.Timeout | undefined = undefined;
     private neolinkManager: NeolinkManager | null = null;
+    private neolinkConfig: NeolinkConfig | null = null; // Store for MQTT control
     private streamAutoDisableTimer: ioBroker.Timeout | undefined = undefined;
     private mqttAutoDisableTimer: ioBroker.Timeout | undefined = undefined;
     private ffmpegAvailable = false;
@@ -1654,28 +1655,24 @@ class ReoLinkCamAdapter extends Adapter {
             });
 
             // Prepare neolink config
-            const neolinkConfig: NeolinkConfig = {
+            this.neolinkConfig = {
                 name: this.name, // Use adapter instance name as camera name
                 username: this.config.cameraUser,
                 password: this.config.cameraPassword,
                 uid: this.config.cameraUID,
                 address: this.config.cameraIp,
                 pauseTimeout: this.config.pauseTimeout || 2.1,
-                // MQTT config (optional, from adapter settings)
-                // Start with MQTT disabled by default (user must enable via mqtt.enable state)
-                enableMqtt: false,
+                // MQTT config (from adapter settings, used when MQTT is enabled)
                 mqttBroker: this.config.mqttBroker || '127.0.0.1',
                 mqttPort: this.config.mqttPort || 1883,
                 mqttUser: this.config.mqttUsername,
                 mqttPassword: this.config.mqttPassword,
+                enableFloodlight: true,
             };
 
-            // Start neolink
-            this.log.info(`Starting neolink for battery camera: ${neolinkConfig.name}`);
-            if (neolinkConfig.mqttBroker) {
-                this.log.info(`MQTT enabled: ${neolinkConfig.mqttBroker}:${neolinkConfig.mqttPort}`);
-            }
-            await this.neolinkManager.start(neolinkConfig);
+            // Start RTSP process (always running)
+            this.log.info(`Starting RTSP process for battery camera: ${this.neolinkConfig.name}`);
+            await this.neolinkManager.startRtsp(this.neolinkConfig);
 
             // Create battery cam states
             await this.createBatteryCamStates();
@@ -1881,54 +1878,6 @@ class ReoLinkCamAdapter extends Adapter {
     }
 
     /**
-     * Restart neolink with updated MQTT config
-     * Used by handleBatteryCamMqttControl to enable/disable MQTT at runtime
-     */
-    private async restartNeolinkWithMqtt(enableMqtt: boolean): Promise<void> {
-        if (!this.neolinkManager) {
-            this.log.warn('Neolink manager not initialized');
-            return;
-        }
-
-        try {
-            // Stop current neolink process
-            if (this.neolinkManager.isRunning(this.name)) {
-                this.log.info('Stopping neolink for MQTT config update...');
-                await this.neolinkManager.stop(this.name);
-            }
-
-            // Prepare neolink config with updated MQTT setting
-            const neolinkConfig: NeolinkConfig = {
-                name: this.name,
-                username: this.config.cameraUser,
-                password: this.config.cameraPassword,
-                uid: this.config.cameraUID,
-                address: this.config.cameraIp,
-                pauseTimeout: this.config.pauseTimeout || 2.1,
-                // MQTT config - controlled by enableMqtt parameter
-                enableMqtt: enableMqtt,
-                mqttBroker: this.config.mqttBroker || '127.0.0.1',
-                mqttPort: this.config.mqttPort || 1883,
-                mqttUser: this.config.mqttUsername,
-                mqttPassword: this.config.mqttPassword,
-                enableFloodlight: enableMqtt, // Floodlight control requires MQTT
-            };
-
-            // Restart neolink with new config
-            this.log.info(`Restarting neolink (MQTT: ${enableMqtt ? 'enabled' : 'disabled'})...`);
-            await this.neolinkManager.start(neolinkConfig);
-
-            // Update states
-            await this.setStateAsync('info.neolink_status', 'running', true);
-            this.log.info('✅ Neolink restarted successfully');
-        } catch (error) {
-            this.log.error(`Failed to restart neolink: ${error instanceof Error ? error.message : error}`);
-            await this.setStateAsync('info.neolink_status', 'error', true);
-            throw error;
-        }
-    }
-
-    /**
      * Handle stream enable/disable for battery camera
      * Note: Streams are managed by neolink's pause_on_client feature.
      * This only controls the auto-disable timer for battery protection.
@@ -1972,10 +1921,10 @@ class ReoLinkCamAdapter extends Adapter {
 
     /**
      * Handle MQTT enable/disable for battery camera
-     * Restarts neolink with updated MQTT config and manages auto-disable timer
+     * Starts/stops separate MQTT process for publishing topics
      */
     private async handleBatteryCamMqttControl(): Promise<void> {
-        if (!this.neolinkManager) {
+        if (!this.neolinkManager || !this.neolinkConfig) {
             this.log.warn('Neolink manager not initialized');
             return;
         }
@@ -2006,10 +1955,17 @@ class ReoLinkCamAdapter extends Adapter {
             this.log.info('MQTT topics: neolink/<camera>/status/{motion,battery_level,floodlight,preview}');
             this.log.info('Control topic: neolink/<camera>/control/floodlight');
 
-            // Restart neolink with MQTT enabled
-            await this.restartNeolinkWithMqtt(true);
+            // Start MQTT process
+            try {
+                await this.neolinkManager.startMqtt(this.neolinkConfig);
+                this.log.info('✅ MQTT process started - Camera publishing to broker');
+            } catch (error) {
+                this.log.error(`Failed to start MQTT process: ${error instanceof Error ? error.message : error}`);
+                await this.setStateAsync('mqtt.enable', false, true);
+                return;
+            }
 
-            // Initialize MQTT helper for subscribing to topics and floodlight control
+            // Initialize MQTT helper for floodlight control
             if (!this.mqttHelper) {
                 try {
                     this.mqttHelper = new MqttHelper(
@@ -2035,9 +1991,6 @@ class ReoLinkCamAdapter extends Adapter {
 
                     await this.mqttHelper.connect();
                     this.log.info('✅ MQTT client connected - Ready for floodlight control');
-                    this.log.info(
-                        `Neolink will publish to: neolink/${this.name}/status/{motion,battery_level,floodlight,preview}`,
-                    );
                 } catch (error) {
                     this.log.error(`Failed to connect MQTT client: ${error instanceof Error ? error.message : error}`);
                     this.log.error(`Check MQTT broker settings: ${broker}:${port}`);
@@ -2056,8 +2009,13 @@ class ReoLinkCamAdapter extends Adapter {
         } else {
             this.log.info('MQTT disabled - battery saving mode');
 
-            // Restart neolink with MQTT disabled
-            await this.restartNeolinkWithMqtt(false);
+            // Stop MQTT process
+            try {
+                await this.neolinkManager.stopMqtt();
+                this.log.info('MQTT process stopped');
+            } catch (error) {
+                this.log.error(`Failed to stop MQTT process: ${error instanceof Error ? error.message : error}`);
+            }
 
             // Disconnect MQTT helper
             if (this.mqttHelper) {
