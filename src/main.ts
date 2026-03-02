@@ -127,6 +127,7 @@ class ReoLinkCamAdapter extends Adapter {
     private mqttAutoDisableTimer: ioBroker.Timeout | undefined = undefined;
     private ffmpegAvailable = false;
     private mqttHelper: MqttHelper | null = null;
+    private mqttBatteryQueryInterval: ioBroker.Interval | undefined = undefined;
 
     constructor(options?: Partial<AdapterOptions>) {
         super({
@@ -2073,6 +2074,18 @@ class ReoLinkCamAdapter extends Adapter {
                     await this.mqttHelper.subscribe(`neolink/${cameraName}/status/floodlight`);
                     await this.mqttHelper.subscribe(`neolink/${cameraName}/status/preview`);
 
+                    // Send initial queries to get current status
+                    await this.mqttHelper.publish(`neolink/${cameraName}/query/battery`, '');
+                    this.log.debug(`[MQTT] Sent initial battery query`);
+
+                    // Start periodic battery query (every 30s)
+                    this.mqttBatteryQueryInterval = this.setInterval(async () => {
+                        if (this.mqttHelper) {
+                            await this.mqttHelper.publish(`neolink/${cameraName}/query/battery`, '');
+                            this.log.debug(`[MQTT] Sent battery query`);
+                        }
+                    }, 30000);
+
                     this.log.info(`✅ Subscribed to status topics for ${cameraName}`);
                 } catch (error) {
                     this.log.error(`Failed to connect MQTT client: ${error instanceof Error ? error.message : error}`);
@@ -2091,6 +2104,12 @@ class ReoLinkCamAdapter extends Adapter {
             await this.setStateAsync('mqtt.enable', true, true);
         } else {
             this.log.info('MQTT disabled - battery saving mode');
+
+            // Clear battery query interval
+            if (this.mqttBatteryQueryInterval) {
+                this.clearInterval(this.mqttBatteryQueryInterval);
+                this.mqttBatteryQueryInterval = undefined;
+            }
 
             // Stop MQTT process
             try {
