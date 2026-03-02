@@ -308,9 +308,9 @@ discovery = "local"
             });
         });
 
-        if (fs.existsSync(procInfo.configPath)) {
-            fs.unlinkSync(procInfo.configPath);
-        }
+        // DON'T delete config file - battery queries still need it!
+        // Config will be regenerated when process starts again
+        this.log(procInfo.config.name, 'debug', `Config file kept at: ${procInfo.configPath}`);
 
         this.log(procInfo.config.name, 'info', `${procInfo.mode.toUpperCase()} process stopped`);
     }
