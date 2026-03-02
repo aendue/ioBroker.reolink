@@ -185,7 +185,9 @@ export class NeolinkManager {
 
         // TOML escaping: backslashes must be doubled
         const escapeTOML = (str: string): string => {
-            return str.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
+            const escaped = str.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
+            this.log(config.name, 'debug', `TOML escape: "${str}" → "${escaped}"`);
+            return escaped;
         };
 
         const tomlContent = `
@@ -208,6 +210,7 @@ idle_disconnect = true
 `.trim();
 
         fs.writeFileSync(configPath, tomlContent, { mode: 0o600 });
+        this.log(config.name, 'debug', `RTSP config written to: ${configPath}`);
         return configPath;
     }
 
@@ -219,7 +222,9 @@ idle_disconnect = true
 
         // TOML escaping: backslashes must be doubled
         const escapeTOML = (str: string): string => {
-            return str.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
+            const escaped = str.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
+            this.log(config.name, 'debug', `TOML escape: "${str}" → "${escaped}"`);
+            return escaped;
         };
 
         const tomlContent = `
@@ -249,6 +254,7 @@ discovery = "local"
 `.trim();
 
         fs.writeFileSync(configPath, tomlContent, { mode: 0o600 });
+        this.log(config.name, 'debug', `MQTT config written to: ${configPath}`);
         return configPath;
     }
 
