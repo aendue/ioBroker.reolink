@@ -2,7 +2,9 @@
 /**
  * Neolink Process Manager
  *
- * Spawns and manages neolink processes for battery-powered cameras.
+ * Manages TWO separate neolink processes:
+ * 1. RTSP process (always running) - provides RTSP streams
+ * 2. MQTT process (on-demand) - publishes motion/battery/floodlight to MQTT broker
  */
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
@@ -44,7 +46,8 @@ const fs = __importStar(require("fs"));
 const path = __importStar(require("path"));
 const neolink_binary_1 = require("./neolink-binary");
 class NeolinkManager {
-    processes = new Map();
+    rtspProcess = null;
+    mqttProcess = null;
     dataDir;
     logCallback;
     constructor(dataDir, logCallback) {
@@ -56,148 +59,111 @@ class NeolinkManager {
         }
     }
     /**
-     * Start neolink for a camera
+     * Start RTSP process (provides RTSP streams)
      */
-    async start(config) {
-        // Check if already running
-        if (this.processes.has(config.name)) {
-            throw new Error(`Neolink already running for camera: ${config.name}`);
+    async startRtsp(config) {
+        if (this.rtspProcess) {
+            throw new Error(`RTSP process already running for camera: ${config.name}`);
         }
-        // Get binary
         const binary = (0, neolink_binary_1.getNeolinkBinary)();
-        this.log(config.name, 'info', `Using neolink binary: ${binary.path} (${binary.platform}/${binary.arch})`);
-        // Generate config file
-        const configPath = this.generateConfig(config);
-        // Spawn neolink process
-        const args = ['rtsp', '--config', configPath];
-        const proc = (0, child_process_1.spawn)(binary.path, args, {
+        this.log(config.name, 'info', `Starting RTSP process: ${binary.path} (${binary.platform}/${binary.arch})`);
+        // Generate RTSP-only config (no MQTT section)
+        const configPath = this.generateRtspConfig(config);
+        // Spawn neolink RTSP process
+        const proc = (0, child_process_1.spawn)(binary.path, ['rtsp', '--config', configPath], {
             cwd: this.dataDir,
             stdio: ['ignore', 'pipe', 'pipe'],
         });
-        // Handle stdout
-        proc.stdout?.on('data', (data) => {
-            const lines = data.toString().split('\n');
-            lines.forEach(line => {
-                if (line.trim()) {
-                    this.log(config.name, 'info', `[neolink] ${line.trim()}`);
-                }
-            });
-        });
-        // Handle stderr
-        proc.stderr?.on('data', (data) => {
-            const lines = data.toString().split('\n');
-            lines.forEach(line => {
-                if (line.trim()) {
-                    this.log(config.name, 'warn', `[neolink] ${line.trim()}`);
-                }
-            });
-        });
-        // Handle process exit
-        proc.on('exit', (code, signal) => {
-            this.log(config.name, 'warn', `Neolink process exited (code: ${code}, signal: ${signal})`);
-            this.processes.delete(config.name);
-        });
-        // Handle process error
-        proc.on('error', err => {
-            this.log(config.name, 'error', `Neolink process error: ${err.message}`);
-            this.processes.delete(config.name);
-        });
-        // Store process
-        this.processes.set(config.name, {
+        this.setupProcessHandlers(proc, config.name, 'rtsp');
+        this.rtspProcess = {
             process: proc,
             config,
             configPath,
             startedAt: new Date(),
-        });
-        this.log(config.name, 'info', `Neolink started (PID: ${proc.pid})`);
-        // Wait for RTSP server to be ready (give it 5 seconds)
-        await this.waitForReady(config.name, 5000);
+            mode: 'rtsp',
+        };
+        this.log(config.name, 'info', `RTSP process started (PID: ${proc.pid})`);
+        await this.waitForReady(config.name, 'rtsp', 5000);
     }
     /**
-     * Stop neolink for a camera
+     * Start MQTT process (publishes to MQTT broker)
      */
-    async stop(cameraName) {
-        const procInfo = this.processes.get(cameraName);
-        if (!procInfo) {
-            throw new Error(`Neolink not running for camera: ${cameraName}`);
+    async startMqtt(config) {
+        if (this.mqttProcess) {
+            throw new Error(`MQTT process already running for camera: ${config.name}`);
         }
-        this.log(cameraName, 'info', 'Stopping neolink...');
-        // Kill process
-        procInfo.process.kill('SIGTERM');
-        // Wait for exit (with timeout)
-        await new Promise(resolve => {
-            const timeout = setTimeout(() => {
-                // Force kill if not exited
-                if (procInfo.process.exitCode === null) {
-                    this.log(cameraName, 'warn', 'Force killing neolink (SIGKILL)');
-                    procInfo.process.kill('SIGKILL');
-                }
-                resolve();
-            }, 5000);
-            procInfo.process.on('exit', () => {
-                clearTimeout(timeout);
-                resolve();
-            });
+        const binary = (0, neolink_binary_1.getNeolinkBinary)();
+        this.log(config.name, 'info', `Starting MQTT process: ${binary.path}`);
+        // Generate MQTT-only config
+        const configPath = this.generateMqttConfig(config);
+        // Spawn neolink MQTT process
+        const proc = (0, child_process_1.spawn)(binary.path, ['mqtt', '--config', configPath], {
+            cwd: this.dataDir,
+            stdio: ['ignore', 'pipe', 'pipe'],
         });
-        // Clean up config file
-        if (fs.existsSync(procInfo.configPath)) {
-            fs.unlinkSync(procInfo.configPath);
+        this.setupProcessHandlers(proc, config.name, 'mqtt');
+        this.mqttProcess = {
+            process: proc,
+            config,
+            configPath,
+            startedAt: new Date(),
+            mode: 'mqtt',
+        };
+        this.log(config.name, 'info', `MQTT process started (PID: ${proc.pid})`);
+        await this.waitForReady(config.name, 'mqtt', 3000);
+    }
+    /**
+     * Stop RTSP process
+     */
+    async stopRtsp() {
+        if (!this.rtspProcess) {
+            return;
         }
-        this.processes.delete(cameraName);
-        this.log(cameraName, 'info', 'Neolink stopped');
+        await this.stopProcess(this.rtspProcess);
+        this.rtspProcess = null;
+    }
+    /**
+     * Stop MQTT process
+     */
+    async stopMqtt() {
+        if (!this.mqttProcess) {
+            return;
+        }
+        await this.stopProcess(this.mqttProcess);
+        this.mqttProcess = null;
     }
     /**
      * Stop all neolink processes
      */
     async stopAll() {
-        const cameras = Array.from(this.processes.keys());
-        await Promise.all(cameras.map(name => this.stop(name)));
+        await Promise.all([this.stopRtsp(), this.stopMqtt()]);
     }
     /**
-     * Check if neolink is running for a camera
+     * Check if RTSP process is running
      */
-    isRunning(cameraName) {
-        return this.processes.has(cameraName);
+    isRtspRunning() {
+        return this.rtspProcess !== null && this.rtspProcess.process.exitCode === null;
     }
     /**
-     * Get RTSP stream URL for a camera
+     * Check if MQTT process is running
+     */
+    isMqttRunning() {
+        return this.mqttProcess !== null && this.mqttProcess.process.exitCode === null;
+    }
+    /**
+     * Get RTSP stream URL
      */
     getRtspUrl(cameraName, stream = 'mainStream') {
         return `rtsp://127.0.0.1:8554/${cameraName}/${stream}`;
     }
     /**
-     * Generate neolink config file (TOML format)
+     * Generate RTSP-only config (no MQTT)
      */
-    generateConfig(config) {
-        const configPath = path.join(this.dataDir, `neolink-${config.name}.toml`);
-        // MQTT section (optional)
-        let mqttSection = '';
-        if (config.enableMqtt && config.mqttBroker) {
-            mqttSection = `
-[cameras.mqtt]
-  broker_addr = "${config.mqttBroker}"
-  port = ${config.mqttPort || 1883}
-  ${config.mqttUser ? `username = "${config.mqttUser}"` : ''}
-  ${config.mqttPassword ? `password = "${config.mqttPassword}"` : ''}
-  enable_motion = true
-  enable_battery = true
-  enable_preview = false
-  enable_floodlight = ${config.enableFloodlight ? 'true' : 'false'}
-`;
-        }
-        else {
-            mqttSection = `
-[cameras.mqtt]
-  enable_motion = false
-  enable_floodlight = false
-  enable_preview = false
-  enable_battery = false
-`;
-        }
+    generateRtspConfig(config) {
+        const configPath = path.join(this.dataDir, `neolink-rtsp-${config.name}.toml`);
         const tomlContent = `
-# Neolink config for ${config.name}
+# Neolink RTSP config for ${config.name}
 # Generated by ioBroker.reolink adapter
-# Battery Saving Mode: Stream pauses when no client connected
 
 [[cameras]]
 name = "${config.name}"
@@ -212,27 +178,117 @@ idle_disconnect = true
   on_motion = true
   on_client = true
   timeout = ${config.pauseTimeout || 2.1}
-${mqttSection}
 `.trim();
-        // Write config with restrictive permissions
         fs.writeFileSync(configPath, tomlContent, { mode: 0o600 });
         return configPath;
     }
     /**
-     * Wait for neolink to be ready
+     * Generate MQTT-only config
      */
-    async waitForReady(cameraName, timeoutMs) {
+    generateMqttConfig(config) {
+        const configPath = path.join(this.dataDir, `neolink-mqtt-${config.name}.toml`);
+        const tomlContent = `
+# Neolink MQTT config for ${config.name}
+# Generated by ioBroker.reolink adapter
+
+[[cameras]]
+name = "${config.name}"
+username = "${config.username}"
+password = "${config.password}"
+uid = "${config.uid}"
+address = "${config.address}"
+discovery = "local"
+
+[cameras.mqtt]
+  broker_addr = "${config.mqttBroker || '127.0.0.1'}"
+  port = ${config.mqttPort || 1883}
+  ${config.mqttUser ? `username = "${config.mqttUser}"` : ''}
+  ${config.mqttPassword ? `password = "${config.mqttPassword}"` : ''}
+  enable_motion = true
+  enable_battery = true
+  enable_floodlight = ${config.enableFloodlight !== false}
+  enable_preview = false
+`.trim();
+        fs.writeFileSync(configPath, tomlContent, { mode: 0o600 });
+        return configPath;
+    }
+    /**
+     * Setup process handlers (stdout/stderr/exit/error)
+     */
+    setupProcessHandlers(proc, cameraName, mode) {
+        const prefix = mode.toUpperCase();
+        proc.stdout?.on('data', (data) => {
+            const lines = data.toString().split('\n');
+            lines.forEach(line => {
+                if (line.trim()) {
+                    this.log(cameraName, 'info', `[${prefix}] ${line.trim()}`);
+                }
+            });
+        });
+        proc.stderr?.on('data', (data) => {
+            const lines = data.toString().split('\n');
+            lines.forEach(line => {
+                if (line.trim()) {
+                    this.log(cameraName, 'warn', `[${prefix}] ${line.trim()}`);
+                }
+            });
+        });
+        proc.on('exit', (code, signal) => {
+            this.log(cameraName, 'warn', `${prefix} process exited (code: ${code}, signal: ${signal})`);
+            if (mode === 'rtsp') {
+                this.rtspProcess = null;
+            }
+            else {
+                this.mqttProcess = null;
+            }
+        });
+        proc.on('error', err => {
+            this.log(cameraName, 'error', `${prefix} process error: ${err.message}`);
+            if (mode === 'rtsp') {
+                this.rtspProcess = null;
+            }
+            else {
+                this.mqttProcess = null;
+            }
+        });
+    }
+    /**
+     * Stop a process
+     */
+    async stopProcess(procInfo) {
+        this.log(procInfo.config.name, 'info', `Stopping ${procInfo.mode.toUpperCase()} process...`);
+        procInfo.process.kill('SIGTERM');
+        await new Promise(resolve => {
+            const timeout = setTimeout(() => {
+                if (procInfo.process.exitCode === null) {
+                    this.log(procInfo.config.name, 'warn', `Force killing ${procInfo.mode.toUpperCase()} (SIGKILL)`);
+                    procInfo.process.kill('SIGKILL');
+                }
+                resolve();
+            }, 5000);
+            procInfo.process.on('exit', () => {
+                clearTimeout(timeout);
+                resolve();
+            });
+        });
+        if (fs.existsSync(procInfo.configPath)) {
+            fs.unlinkSync(procInfo.configPath);
+        }
+        this.log(procInfo.config.name, 'info', `${procInfo.mode.toUpperCase()} process stopped`);
+    }
+    /**
+     * Wait for process to be ready
+     */
+    async waitForReady(cameraName, mode, timeoutMs) {
         const startTime = Date.now();
         while (Date.now() - startTime < timeoutMs) {
-            // Check if process still running
-            const procInfo = this.processes.get(cameraName);
+            const procInfo = mode === 'rtsp' ? this.rtspProcess : this.mqttProcess;
             if (!procInfo || procInfo.process.exitCode !== null) {
-                throw new Error(`Neolink process died during startup`);
+                throw new Error(`${mode.toUpperCase()} process died during startup`);
             }
-            // Simple delay (in real implementation, could check RTSP port)
             await new Promise(resolve => setTimeout(resolve, 500));
         }
-        this.log(cameraName, 'info', 'Neolink RTSP server ready');
+        this.log(cameraName, 'info', `${mode.toUpperCase()} process ready`);
     }
     /**
      * Log helper
