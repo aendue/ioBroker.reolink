@@ -226,8 +226,6 @@ discovery = "local"
   enable_battery = true
   enable_floodlight = ${config.enableFloodlight !== false}
   enable_preview = true
-  discovery = ["neolink/${config.name}/status/motion", "neolink/${config.name}/status/battery_level", "neolink/${config.name}/status/floodlight", "neolink/${config.name}/status/preview"]
-  control = ["neolink/${config.name}/floodlight/set"]
 `.trim();
 
         fs.writeFileSync(configPath, tomlContent, { mode: 0o600 });
