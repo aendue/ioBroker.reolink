@@ -1485,7 +1485,7 @@ class ReoLinkCamAdapter extends Adapter {
                 this.log.debug('mqttAutoDisableTimer: UNLOAD');
                 this.clearTimeout(this.mqttAutoDisableTimer);
             }
-            
+
             callback();
         } catch (error) {
             this.log.error(`onUnload: ${error}`);
