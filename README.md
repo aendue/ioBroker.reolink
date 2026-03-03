@@ -96,7 +96,7 @@ Battery cameras (Argus 3 Pro,...) use a proprietary protocol. This adapter suppo
    ```bash
    sudo apt install gstreamer1.0-rtsp
    ```
-4. **Start Adapter** → RTSP streams at `rtsp://127.0.0.1:8554/<InstanceName>/mainStream`
+4. **Start Adapter** → RTSP streams at `rtsp://127.0.0.1:8554/<CameraName>/mainStream`
 
 ### Battery Saving
 
@@ -112,6 +112,33 @@ Battery cameras (Argus 3 Pro,...) use a proprietary protocol. This adapter suppo
   - Auto-disables after 30s
   - Configure broker in adapter settings
 
+### Battery Camera Datapoints (quick overview)
+
+- **Control**
+  - `streams.enable` - Start/stop RTSP stream
+  - `mqtt.enable` - Start/stop MQTT integration
+  - `floodlight` - Switch floodlight on/off
+  - `pir` - Switch PIR on/off
+  - `snapshot` - Trigger snapshot capture
+  - `query.battery` / `query.pir` / `query.preview` - Trigger Neolink MQTT queries
+
+- **Status**
+  - `status.motion` - Motion status
+  - `status.battery_level` - Battery level in %
+  - `status.floodlight` - Floodlight status
+  - `status.pir` - PIR status
+  - `status.preview` - Preview image (base64)
+
+### New Datapoints (full IDs)
+
+These are the new datapoints for PIR and Query features (replace `<instance>` with your adapter instance, e.g. `0`):
+
+- `reolink.<instance>.pir`
+- `reolink.<instance>.status.pir`
+- `reolink.<instance>.query.battery`
+- `reolink.<instance>.query.pir`
+- `reolink.<instance>.query.preview`
+
 **Best Practice:** Enable only when viewing, then disable immediately!
 
 ### Features
@@ -119,8 +146,10 @@ Battery cameras (Argus 3 Pro,...) use a proprietary protocol. This adapter suppo
 ✅ RTSP streams (main + sub)  
 ✅ Snapshot (requires ffmpeg)  
 ✅ Floodlight control (via MQTT)  
+✅ PIR control (via MQTT)  
 ✅ Motion detection (via MQTT)  
 ✅ Battery level (via MQTT)  
+✅ Query commands (battery/PIR/preview via MQTT)  
 ✅ Multi-platform (Linux x64/ARM, macOS, Windows)  
 
 ❌ PTZ control  
@@ -136,7 +165,13 @@ Configure in adapter settings:
 Topics:
 - `neolink/<camera>/status/motion`
 - `neolink/<camera>/status/battery_level`
+- `neolink/<camera>/status/floodlight`
+- `neolink/<camera>/status/pir`
 - `neolink/<camera>/control/floodlight`
+- `neolink/<camera>/control/pir`
+- `neolink/<camera>/query/battery`
+- `neolink/<camera>/query/pir`
+- `neolink/<camera>/query/preview`
 
 ### Troubleshooting
 
@@ -183,6 +218,9 @@ RLC-420-5MP, E1 Zoom, RLC-522, RLC-810A, RLC-823A, Duo 3 PoE
     - Battery level monitoring via MQTT
     - Configurable MQTT broker (`mqtt.enable`, `mqtt.broker`, `mqtt.port`)
     - **Floodlight control** - Turn camera floodlight on/off via MQTT
+    - **PIR control** - Turn PIR on/off via MQTT
+    - **Query controls** - Trigger battery/PIR/preview updates via MQTT query topics
+    - Added status datapoint for PIR (`status.pir`)
   - **Snapshot Feature:**
     - Capture snapshots from RTSP stream using ffmpeg
     - `snapshot` button datapoint triggers capture

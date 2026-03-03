@@ -1,9 +1,9 @@
 {
   "common": {
     "name": "reolink",
-    "version": "1.4.0-alpha.1",
+    "version": "2.0.0",
     "news": {
-      "1.4.0-alpha.1": {
+      "2.0.0": {
         "en": "Battery camera support via neolink (Argus 3 Pro, B400, D400, E1 Outdoor)",
         "de": "Akkukamera-Unterstützung via neolink (Argus 3 Pro, B400, D400, E1 Outdoor)"
       },

@@ -58,6 +58,35 @@ describe('MQTT Message Handler', () => {
         expect(parts[3]).to.equal('floodlight');
         expect(payload).to.equal('off');
     });
+
+    it('should parse PIR status message', () => {
+        const topic = 'neolink/Camera01/status/pir';
+        const payload = 'on';
+
+        const parts = topic.split('/');
+        expect(parts[3]).to.equal('pir');
+        expect(payload).to.equal('on');
+    });
+
+    it('should parse PIR control topic', () => {
+        const topic = 'neolink/Camera01/control/pir';
+        const payload = 'off';
+
+        const parts = topic.split('/');
+        expect(parts).to.have.lengthOf(4);
+        expect(parts[2]).to.equal('control');
+        expect(parts[3]).to.equal('pir');
+        expect(payload).to.equal('off');
+    });
+
+    it('should parse query topic for PIR', () => {
+        const topic = 'neolink/Camera01/query/pir';
+
+        const parts = topic.split('/');
+        expect(parts).to.have.lengthOf(4);
+        expect(parts[2]).to.equal('query');
+        expect(parts[3]).to.equal('pir');
+    });
     
     it('should parse preview message (base64)', () => {
         const topic = 'neolink/Camera01/status/preview';
