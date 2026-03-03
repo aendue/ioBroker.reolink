@@ -111,9 +111,24 @@ class MqttHelper {
      * Control floodlight via neolink MQTT
      */
     async setFloodlight(cameraName, enabled) {
-        const topic = `neolink/${cameraName}/floodlight/set`;
+        const topic = `neolink/${cameraName}/control/floodlight`;
         const message = enabled ? 'on' : 'off';
         await this.publish(topic, message);
+    }
+    /**
+     * Control PIR via neolink MQTT
+     */
+    async setPir(cameraName, enabled) {
+        const topic = `neolink/${cameraName}/control/pir`;
+        const message = enabled ? 'on' : 'off';
+        await this.publish(topic, message);
+    }
+    /**
+     * Send query command via neolink MQTT
+     */
+    async sendQuery(cameraName, query) {
+        const topic = `neolink/${cameraName}/query/${query}`;
+        await this.publish(topic, '');
     }
     /**
      * Subscribe to MQTT topic

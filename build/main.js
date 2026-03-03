@@ -1388,13 +1388,9 @@ class ReoLinkCamAdapter extends adapter_core_1.Adapter {
                     this.log.error(`Failed to stop services: ${err.message}`);
                     callback();
                 });
-                return;
+                return; // CRITICAL: Return here to prevent double callback call
             }
             // Here you must clear all timeouts or intervals that may still be active
-            // clearTimeout(timeout1);
-            // clearTimeout(timeout2);
-            // ...
-            // clearInterval(interval1);
             if (this.refreshStateTimeout) {
                 this.log.debug('refreshStateTimeout: UNLOAD');
                 this.clearTimeout(this.refreshStateTimeout);
@@ -1407,11 +1403,12 @@ class ReoLinkCamAdapter extends adapter_core_1.Adapter {
                 this.log.debug('mqttAutoDisableTimer: UNLOAD');
                 this.clearTimeout(this.mqttAutoDisableTimer);
             }
+            callback();
         }
         catch (error) {
             this.log.error(`onUnload: ${error}`);
+            callback();
         }
-        callback();
     }
     /**
      * Is called if a subscribed state changes
@@ -1442,6 +1439,25 @@ class ReoLinkCamAdapter extends adapter_core_1.Adapter {
                 }
                 if (id.endsWith('floodlight')) {
                     await this.handleBatteryCamFloodlight(!!state.val);
+                    return;
+                }
+                if (id.endsWith('query.battery')) {
+                    await this.handleBatteryCamQuery('battery');
+                    await this.setStateAsync('query.battery', false, true);
+                    return;
+                }
+                if (id.endsWith('query.pir')) {
+                    await this.handleBatteryCamQuery('pir');
+                    await this.setStateAsync('query.pir', false, true);
+                    return;
+                }
+                if (id.endsWith('query.preview')) {
+                    await this.handleBatteryCamQuery('preview');
+                    await this.setStateAsync('query.preview', false, true);
+                    return;
+                }
+                if (id.endsWith('.pir')) {
+                    await this.handleBatteryCamPir(!!state.val);
                     return;
                 }
                 if (id.endsWith('ai_config.raw')) {
@@ -1599,8 +1615,9 @@ class ReoLinkCamAdapter extends adapter_core_1.Adapter {
             // Create battery cam states
             await this.createBatteryCamStates();
             // Calculate RTSP URLs (will be available when stream starts)
-            const mainStreamUrl = this.neolinkManager.getRtspUrl(this.name, 'mainStream');
-            const subStreamUrl = this.neolinkManager.getRtspUrl(this.name, 'subStream');
+            // Use camera name (not adapter name) for RTSP URLs - already defined above
+            const mainStreamUrl = this.neolinkManager.getRtspUrl(this.neolinkConfig.name, 'mainStream');
+            const subStreamUrl = this.neolinkManager.getRtspUrl(this.neolinkConfig.name, 'subStream');
             this.log.info(`RTSP Main Stream URL (when enabled): ${mainStreamUrl}`);
             this.log.info(`RTSP Sub Stream URL (when enabled): ${subStreamUrl}`);
             await this.setStateAsync('streams.mainStream', mainStreamUrl, true);
@@ -1612,6 +1629,10 @@ class ReoLinkCamAdapter extends adapter_core_1.Adapter {
             this.subscribeStates('mqtt.enable');
             this.subscribeStates('snapshot');
             this.subscribeStates('floodlight');
+            this.subscribeStates('pir');
+            this.subscribeStates('query.battery');
+            this.subscribeStates('query.pir');
+            this.subscribeStates('query.preview');
             this.log.info('Battery camera ready!');
         }
         catch (error) {
@@ -1768,6 +1789,18 @@ class ReoLinkCamAdapter extends adapter_core_1.Adapter {
             },
             native: {},
         });
+        await this.setObjectNotExistsAsync('status.pir', {
+            type: 'state',
+            common: {
+                name: 'PIR Status',
+                type: 'boolean',
+                role: 'indicator.status',
+                read: true,
+                write: false,
+                desc: 'PIR enabled status from camera (requires mqtt.enable = true)',
+            },
+            native: {},
+        });
         await this.setObjectNotExistsAsync('status.preview', {
             type: 'state',
             common: {
@@ -1780,6 +1813,11 @@ class ReoLinkCamAdapter extends adapter_core_1.Adapter {
             },
             native: {},
         });
+        // Initialize status states with default values
+        await this.setStateAsync('status.motion', false, true);
+        await this.setStateAsync('status.floodlight', false, true);
+        await this.setStateAsync('status.pir', false, true);
+        await this.setStateAsync('status.preview', '', true);
         // Snapshot (requires ffmpeg)
         await this.setObjectNotExistsAsync('snapshot', {
             type: 'state',
@@ -1838,6 +1876,69 @@ class ReoLinkCamAdapter extends adapter_core_1.Adapter {
             native: {},
         });
         await this.setStateAsync('floodlight', false, true);
+        await this.setObjectNotExistsAsync('pir', {
+            type: 'state',
+            common: {
+                name: 'PIR On/Off',
+                type: 'boolean',
+                role: 'switch.enable',
+                read: true,
+                write: true,
+                def: false,
+                desc: 'Control camera PIR mode (requires MQTT enabled)',
+            },
+            native: {},
+        });
+        await this.setStateAsync('pir', false, true);
+        await this.setObjectNotExistsAsync('query', {
+            type: 'channel',
+            common: {
+                name: 'Neolink Queries',
+            },
+            native: {},
+        });
+        await this.setObjectNotExistsAsync('query.battery', {
+            type: 'state',
+            common: {
+                name: 'Query Battery Status',
+                type: 'boolean',
+                role: 'button',
+                read: false,
+                write: true,
+                def: false,
+                desc: 'Send MQTT query for battery status',
+            },
+            native: {},
+        });
+        await this.setStateAsync('query.battery', false, true);
+        await this.setObjectNotExistsAsync('query.pir', {
+            type: 'state',
+            common: {
+                name: 'Query PIR Status',
+                type: 'boolean',
+                role: 'button',
+                read: false,
+                write: true,
+                def: false,
+                desc: 'Send MQTT query for PIR status',
+            },
+            native: {},
+        });
+        await this.setStateAsync('query.pir', false, true);
+        await this.setObjectNotExistsAsync('query.preview', {
+            type: 'state',
+            common: {
+                name: 'Query Preview Image',
+                type: 'boolean',
+                role: 'button',
+                read: false,
+                write: true,
+                def: false,
+                desc: 'Send MQTT query for immediate preview update',
+            },
+            native: {},
+        });
+        await this.setStateAsync('query.preview', false, true);
         this.log.debug('Battery camera states created');
     }
     /**
@@ -1856,10 +1957,16 @@ class ReoLinkCamAdapter extends adapter_core_1.Adapter {
             'status.motion',
             'status.battery_level',
             'status.floodlight',
+            'status.pir',
             'status.preview',
             'snapshotImage',
             'snapshotStatus',
             'floodlight',
+            'pir',
+            'query',
+            'query.battery',
+            'query.pir',
+            'query.preview',
             'info.uid',
             'info.neolink_status',
         ];
@@ -1954,7 +2061,8 @@ class ReoLinkCamAdapter extends adapter_core_1.Adapter {
             this.log.info(`MQTT enabled - auto-disable in ${autoDisableSeconds}s (battery protection)`);
             this.log.info(`MQTT Broker: ${broker}:${port}`);
             this.log.info(`MQTT topics: neolink/${this.neolinkConfig.name}/status/{motion,battery_level,floodlight,preview}`);
-            this.log.info(`Control topic: neolink/${this.neolinkConfig.name}/control/floodlight`);
+            this.log.info(`Control topics: neolink/${this.neolinkConfig.name}/control/{floodlight,pir}`);
+            this.log.info(`Query topics: neolink/${this.neolinkConfig.name}/query/{battery,pir,preview}`);
             // Start MQTT process
             try {
                 await this.neolinkManager.startMqtt(this.neolinkConfig);
@@ -1996,7 +2104,12 @@ class ReoLinkCamAdapter extends adapter_core_1.Adapter {
                     await this.mqttHelper.subscribe(`neolink/${cameraName}/status/motion`);
                     await this.mqttHelper.subscribe(`neolink/${cameraName}/status/battery_level`);
                     await this.mqttHelper.subscribe(`neolink/${cameraName}/status/floodlight`);
+                    await this.mqttHelper.subscribe(`neolink/${cameraName}/status/pir`);
                     await this.mqttHelper.subscribe(`neolink/${cameraName}/status/preview`);
+                    // Re-initialize states (overwrites defaults with current values if camera published)
+                    await this.setStateAsync('status.motion', false, true);
+                    await this.setStateAsync('status.floodlight', false, true);
+                    await this.setStateAsync('status.pir', false, true);
                     // Send initial battery query via CLI (not MQTT - subprocess doesn't respond to MQTT queries)
                     void this.queryBatteryStatus();
                     // Start periodic battery query via CLI (every 30s)
@@ -2059,18 +2172,50 @@ class ReoLinkCamAdapter extends adapter_core_1.Adapter {
         }
         try {
             await this.setStateAsync('snapshotStatus', 'capturing', true);
+            // Ensure RTSP stream is running
+            const wasRunning = this.neolinkManager.isRtspRunning();
+            if (!wasRunning) {
+                this.log.info('Starting RTSP stream for snapshot...');
+                if (!this.neolinkConfig) {
+                    throw new Error('Neolink config not available');
+                }
+                await this.neolinkManager.startRtsp(this.neolinkConfig);
+                await this.setStateAsync('info.neolink_status', 'running', true);
+                // Wait for stream to be fully ready (neolink needs time to connect, login, and setup RTSP server)
+                // This takes approximately 5-8 seconds based on network latency and camera response
+                this.log.info('Waiting for RTSP stream to be fully ready (8 seconds)...');
+                await new Promise(resolve => setTimeout(resolve, 8000));
+            }
             this.log.info('Capturing snapshot from mainStream...');
-            const rtspUrl = this.neolinkManager.getRtspUrl(this.name, 'mainStream');
+            const cameraName = this.neolinkConfig.name;
+            const rtspUrl = this.neolinkManager.getRtspUrl(cameraName, 'mainStream');
+            this.log.debug(`Snapshot RTSP URL: ${rtspUrl}`);
             const imageBuffer = await (0, snapshot_helper_1.captureSnapshot)({ rtspUrl, timeoutMs: 15000 });
             // Convert to base64
             const base64Image = `data:image/jpeg;base64,${imageBuffer.toString('base64')}`;
             await this.setStateAsync('snapshotImage', base64Image, true);
             await this.setStateAsync('snapshotStatus', 'success', true);
             this.log.info(`Snapshot captured successfully (${imageBuffer.length} bytes)`);
+            // If we started the stream for the snapshot, stop it after capture to save battery
+            if (!wasRunning) {
+                this.log.info('Stopping RTSP stream (started for snapshot only)');
+                await this.neolinkManager.stopRtsp();
+                await this.setStateAsync('info.neolink_status', 'stopped', true);
+            }
         }
         catch (error) {
             this.log.error(`Snapshot failed: ${error instanceof Error ? error.message : error}`);
             await this.setStateAsync('snapshotStatus', 'error', true);
+            // Clean up: stop stream if we started it
+            if (this.neolinkManager && !this.neolinkManager.isRtspRunning()) {
+                try {
+                    await this.neolinkManager.stopRtsp();
+                    await this.setStateAsync('info.neolink_status', 'stopped', true);
+                }
+                catch {
+                    // Ignore cleanup errors
+                }
+            }
         }
     }
     /**
@@ -2124,6 +2269,9 @@ class ReoLinkCamAdapter extends adapter_core_1.Adapter {
             case 'floodlight':
                 await this.handleFloodlightStatusMessage(payload);
                 break;
+            case 'pir':
+                await this.handlePirStatusMessage(payload);
+                break;
             case 'preview':
                 await this.handlePreviewMessage(payload);
                 break;
@@ -2135,7 +2283,7 @@ class ReoLinkCamAdapter extends adapter_core_1.Adapter {
      * Handle motion detection message
      */
     async handleMotionMessage(payload) {
-        if (payload === 'triggered') {
+        if (payload === 'triggered' || payload === 'on') {
             this.log.info('Motion detected!');
             await this.setStateAsync('status.motion', true, true);
             // Clear motion after 5 seconds
@@ -2143,7 +2291,7 @@ class ReoLinkCamAdapter extends adapter_core_1.Adapter {
                 await this.setStateAsync('status.motion', false, true);
             }, 5000);
         }
-        else if (payload === 'clear') {
+        else if (payload === 'clear' || payload === 'off') {
             await this.setStateAsync('status.motion', false, true);
         }
     }
@@ -2166,6 +2314,28 @@ class ReoLinkCamAdapter extends adapter_core_1.Adapter {
         const enabled = payload === 'on';
         this.log.debug(`Floodlight status: ${enabled ? 'ON' : 'OFF'}`);
         await this.setStateAsync('status.floodlight', enabled, true);
+    }
+    /**
+     * Handle PIR status message
+     */
+    async handlePirStatusMessage(payload) {
+        let enabled = null;
+        if (payload === 'on' || payload === 'off') {
+            enabled = payload === 'on';
+        }
+        else {
+            const xmlMatch = payload.match(/<enable>(\d+)<\/enable>/);
+            if (xmlMatch && xmlMatch[1]) {
+                enabled = xmlMatch[1] === '1';
+            }
+        }
+        if (enabled === null) {
+            this.log.warn(`[MQTT] Could not parse PIR status payload: ${payload.substring(0, 200)}`);
+            return;
+        }
+        this.log.info(`PIR status: ${enabled ? 'ON' : 'OFF'}`);
+        await this.setStateAsync('status.pir', enabled, true);
+        await this.setStateAsync('pir', enabled, true);
     }
     /**
      * Handle preview image message
@@ -2193,6 +2363,43 @@ class ReoLinkCamAdapter extends adapter_core_1.Adapter {
         catch (error) {
             this.log.error(`Floodlight control failed: ${error instanceof Error ? error.message : error}`);
             await this.setStateAsync('floodlight', !enabled, true); // Revert on error
+        }
+    }
+    /**
+     * Handle PIR control for battery camera
+     */
+    async handleBatteryCamPir(enabled) {
+        if (!this.mqttHelper) {
+            this.log.error('PIR control failed: MQTT not connected');
+            this.log.error('Enable MQTT in adapter settings (mqtt.enable = true)');
+            await this.setStateAsync('pir', !enabled, true);
+            return;
+        }
+        try {
+            this.log.info(`Setting PIR: ${enabled ? 'ON' : 'OFF'}`);
+            await this.mqttHelper.setPir(this.neolinkConfig.name, enabled);
+            await this.setStateAsync('pir', enabled, true);
+        }
+        catch (error) {
+            this.log.error(`PIR control failed: ${error instanceof Error ? error.message : error}`);
+            await this.setStateAsync('pir', !enabled, true);
+        }
+    }
+    /**
+     * Send query command for battery camera
+     */
+    async handleBatteryCamQuery(query) {
+        if (!this.mqttHelper) {
+            this.log.error(`Query ${query} failed: MQTT not connected`);
+            this.log.error('Enable MQTT in adapter settings (mqtt.enable = true)');
+            return;
+        }
+        try {
+            this.log.info(`Sending query: ${query}`);
+            await this.mqttHelper.sendQuery(this.neolinkConfig.name, query);
+        }
+        catch (error) {
+            this.log.error(`Query ${query} failed: ${error instanceof Error ? error.message : error}`);
         }
     }
 }

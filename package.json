@@ -1,6 +1,6 @@
 {
   "name": "iobroker.reolink",
-  "version": "1.4.0-alpha.1",
+  "version": "2.0.0",
   "description": "reolink",
   "author": {
     "name": "Andy Grundt",
@@ -36,8 +36,8 @@
     "@iobroker/testing": "^5.2.2",
     "chai": "^4.5.0",
     "chai-as-promised": "^7.1.2",
-    "mocha": "^11.0.1",
-    "sinon": "^19.0.2",
+    "mocha": "^11.7.5",
+    "sinon": "^19.0.5",
     "sinon-chai": "^3.7.0",
     "typescript": "^5.9.3"
   },
