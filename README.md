@@ -194,46 +194,11 @@ RLC-420-5MP, E1 Zoom, RLC-522, RLC-810A, RLC-823A, Duo 3 PoE
 ---
 
 ## Changelog
-<!--
-    Placeholder for the next version (at the beginning of the line):
-    ### **WORK IN PROGRESS**
--->
-### **WORK IN PROGRESS**
-* (bloop-herbert-bot) 🔋 **Battery Camera Support via Neolink**
-  - Support for Reolink battery cameras (Argus 3 Pro)
-  - Integrated neolink v0.6.2 (RTSP bridge for Baichuan protocol)
-  - ARM support - Raspberry Pi compatible!
-  - Runtime MQTT + Stream control with auto-disable (30s default)
-  - Config fields: `isBatteryCam`, `cameraUID`, `mqttAutoDisableSeconds`, `streamAutoDisableSeconds`
-  - RTSP stream URLs exposed: `rtsp://127.0.0.1:8554/<InstanceName>/mainStream`
-  - **Battery Saving Features:**
-    - Streams DISABLED by default (enable via `streams.enable` datapoint)
-    - **Auto-disable timer** - Stream automatically disables after timeout (default 30s, configurable 10-3600s)
-    - **Configurable pause timeout** - Adjust stream pause delay (default 2.1s, range 1-10s)
-    - Auto-pause when no RTSP client connected
-    - Idle disconnect after timeout
-    - MQTT support for motion/battery monitoring WITHOUT streaming
-  - **MQTT Integration:**
-    - Motion detection via MQTT (no streaming needed)
-    - Battery level monitoring via MQTT
-    - Configurable MQTT broker (`mqtt.enable`, `mqtt.broker`, `mqtt.port`)
-    - **Floodlight control** - Turn camera floodlight on/off via MQTT
-    - **PIR control** - Turn PIR on/off via MQTT
-    - **Query controls** - Trigger battery/PIR/preview updates via MQTT query topics
-    - Added status datapoint for PIR (`status.pir`)
-  - **Snapshot Feature:**
-    - Capture snapshots from RTSP stream using ffmpeg
-    - `snapshot` button datapoint triggers capture
-    - `snapshotImage` datapoint contains base64 JPEG
-    - `snapshotStatus` shows capture status (idle/capturing/success/error)
-  - **Dependency Checking:**
-    - Automatic check for GStreamer RTSP library (required, Linux only)
-    - Automatic check for ffmpeg (optional, for snapshots)
-    - Clear error messages with installation instructions in adapter log
-  - **System Dependencies:** 
-    - **Required:** GStreamer RTSP library on Linux (`gstreamer1.0-rtsp`)
-    - **Optional:** ffmpeg for snapshot feature
-  - Zero breaking changes - HTTP API cameras work as before
+### 1.4.0-beta.1 (2026-03-03)
+* (bloop-herbert-bot) Battery camera support via Neolink
+  - Added battery-cam RTSP/MQTT workflow with battery-saving auto-disable.
+  - Added MQTT controls and states for floodlight, PIR, and query (`battery`, `pir`, `preview`).
+  - Added snapshot support and dependency checks (GStreamer required, ffmpeg optional).
 
 ### 1.3.0 (2025-12-20)
 * (agross) AiCfg config
