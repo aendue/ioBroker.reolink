@@ -100,6 +100,9 @@ sendTo("reolink.0",{action: "snap"}, function(result){
 - Argus 4 (maybe all Argus are not working)
 
 ## Changelog
+
+### **WORK IN PROGRESS**
+- (iobroker-bot) Adapter requires node.js >= 20 now.
 <!--
     Placeholder for the next version (at the beginning of the line):
     ### **WORK IN PROGRESS**
