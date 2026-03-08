@@ -194,8 +194,12 @@ RLC-420-5MP, E1 Zoom, RLC-522, RLC-810A, RLC-823A, Duo 3 PoE
 ---
 
 ## Changelog
-### 1.4.0-beta.1 (2026-03-03)
-* (bloop-herbert-bot) Battery camera support via Neolink
+<!--
+    Placeholder for the next version (at the beginning of the line):
+    ### **WORK IN PROGRESS**
+-->
+### **WORK IN PROGRESS**
+* (bloop16) Battery camera support via Neolink
   - Added battery-cam RTSP/MQTT workflow with battery-saving auto-disable.
   - Added MQTT controls and states for floodlight, PIR, and query (`battery`, `pir`, `preview`).
   - Added snapshot support and dependency checks (GStreamer required, ffmpeg optional).
