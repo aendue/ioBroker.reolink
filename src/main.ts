@@ -184,8 +184,11 @@ class ReoLinkCamAdapter extends Adapter {
             return; // Don't continue with HTTP API
         }
 
-        // HTTP API camera mode - clean up any battery cam states
+        // HTTP API camera mode:
+        // 1. Remove any leftover battery cam states (in case user switched camera type)
+        // 2. Create HTTP cam states dynamically (analog to createBatteryCamStates for battery cams)
         await this.cleanupBatteryCamStates();
+        await this.createHttpCamStates();
 
         if (!this.config.cameraProtocol) {
             this.log.error('no protocol (http/https) set!');
@@ -1629,6 +1632,9 @@ class ReoLinkCamAdapter extends Adapter {
             return;
         }
 
+        // Remove any leftover HTTP cam states (in case user switched camera type)
+        await this.cleanupHttpCamStates();
+
         try {
             // Check system dependencies
             this.log.info('Checking system dependencies for battery camera...');
@@ -2100,6 +2106,700 @@ class ReoLinkCamAdapter extends Adapter {
         }
 
         this.log.debug('Battery camera states cleanup complete');
+    }
+
+    /**
+     * Create state objects for HTTP API cameras (standard Reolink cameras).
+     * Called on adapter start when isBatteryCam = false, analogous to
+     * createBatteryCamStates() for battery cameras. This ensures all states
+     * exist before any setState() call, without relying on instanceObjects.
+     */
+    private async createHttpCamStates(): Promise<void> {
+        this.log.debug('Creating HTTP camera states...');
+
+        // --- AI Config ---
+        await this.setObjectNotExistsAsync('ai_config', { type: 'channel', common: { name: 'AI Config' }, native: {} });
+        await this.setObjectNotExistsAsync('ai_config.raw', {
+            type: 'state',
+            common: { role: 'value', name: { en: 'Raw AI Config' }, type: 'object', read: true, write: true },
+            native: {},
+        });
+
+        // --- Sensor ---
+        await this.setObjectNotExistsAsync('sensor', {
+            type: 'channel',
+            common: { name: { en: 'sensor', de: 'sensor' } },
+            native: {},
+        });
+        await this.setObjectNotExistsAsync('sensor.motion', {
+            type: 'state',
+            common: {
+                role: 'sensor.motion',
+                name: { en: 'motion detection', de: 'Bewegungserkennung' },
+                type: 'boolean',
+                read: true,
+                write: false,
+            },
+            native: {},
+        });
+        await this.setObjectNotExistsAsync('sensor.dog_cat', {
+            type: 'channel',
+            common: { name: { en: 'dog cat', de: 'hund katze' } },
+            native: {},
+        });
+        await this.setObjectNotExistsAsync('sensor.dog_cat.state', {
+            type: 'state',
+            common: {
+                role: 'value',
+                name: { en: 'dog cat detection', de: 'hund katze erkennung' },
+                type: 'boolean',
+                read: true,
+                write: false,
+            },
+            native: {},
+        });
+        await this.setObjectNotExistsAsync('sensor.dog_cat.support', {
+            type: 'state',
+            common: {
+                role: 'value',
+                name: { en: 'dog cat support', de: 'hund katze unterstützung' },
+                type: 'boolean',
+                read: true,
+                write: false,
+            },
+            native: {},
+        });
+        await this.setObjectNotExistsAsync('sensor.face', {
+            type: 'channel',
+            common: { name: { en: 'face', de: 'gesicht' } },
+            native: {},
+        });
+        await this.setObjectNotExistsAsync('sensor.face.state', {
+            type: 'state',
+            common: {
+                role: 'value',
+                name: { en: 'face detection', de: 'gesichtserkennung' },
+                type: 'boolean',
+                read: true,
+                write: false,
+            },
+            native: {},
+        });
+        await this.setObjectNotExistsAsync('sensor.face.support', {
+            type: 'state',
+            common: {
+                role: 'value',
+                name: { en: 'face support', de: 'gesicht unterstützung' },
+                type: 'boolean',
+                read: true,
+                write: false,
+            },
+            native: {},
+        });
+        await this.setObjectNotExistsAsync('sensor.people', {
+            type: 'channel',
+            common: { name: { en: 'people', de: 'personen' } },
+            native: {},
+        });
+        await this.setObjectNotExistsAsync('sensor.people.state', {
+            type: 'state',
+            common: {
+                role: 'value',
+                name: { en: 'people detection', de: 'personenerkennung' },
+                type: 'boolean',
+                read: true,
+                write: false,
+            },
+            native: {},
+        });
+        await this.setObjectNotExistsAsync('sensor.people.support', {
+            type: 'state',
+            common: {
+                role: 'value',
+                name: { en: 'people support', de: 'personen unterstützung' },
+                type: 'boolean',
+                read: true,
+                write: false,
+            },
+            native: {},
+        });
+        await this.setObjectNotExistsAsync('sensor.vehicle', {
+            type: 'channel',
+            common: { name: { en: 'vehicle', de: 'fahrzeug' } },
+            native: {},
+        });
+        await this.setObjectNotExistsAsync('sensor.vehicle.state', {
+            type: 'state',
+            common: {
+                role: 'value',
+                name: { en: 'vehicle detection', de: 'fahrzeugerkennung' },
+                type: 'boolean',
+                read: true,
+                write: false,
+            },
+            native: {},
+        });
+        await this.setObjectNotExistsAsync('sensor.vehicle.support', {
+            type: 'state',
+            common: {
+                role: 'value',
+                name: { en: 'vehicle support', de: 'fahrzeug unterstützung' },
+                type: 'boolean',
+                read: true,
+                write: false,
+            },
+            native: {},
+        });
+
+        // --- Disc ---
+        await this.setObjectNotExistsAsync('disc', {
+            type: 'channel',
+            common: { name: { en: 'disc', de: 'festplatte' } },
+            native: {},
+        });
+        await this.setObjectNotExistsAsync('disc.capacity', {
+            type: 'state',
+            common: {
+                role: 'value',
+                name: { en: 'disc capacity', de: 'festplattenkapazität' },
+                type: 'number',
+                unit: 'MB',
+                read: true,
+                write: false,
+            },
+            native: {},
+        });
+        await this.setObjectNotExistsAsync('disc.formatted', {
+            type: 'state',
+            common: {
+                role: 'value',
+                name: { en: 'disc formatted', de: 'festplatte formatiert' },
+                type: 'number',
+                unit: 'MB',
+                read: true,
+                write: false,
+            },
+            native: {},
+        });
+        await this.setObjectNotExistsAsync('disc.mounted', {
+            type: 'state',
+            common: {
+                role: 'value',
+                name: { en: 'disc mounted', de: 'festplatte eingehängt' },
+                type: 'boolean',
+                read: true,
+                write: false,
+            },
+            native: {},
+        });
+        await this.setObjectNotExistsAsync('disc.free', {
+            type: 'state',
+            common: {
+                role: 'value',
+                name: { en: 'disc free', de: 'festplatte frei' },
+                type: 'number',
+                unit: 'MB',
+                read: true,
+                write: false,
+            },
+            native: {},
+        });
+
+        // --- Network ---
+        await this.setObjectNotExistsAsync('network', {
+            type: 'channel',
+            common: { name: { en: 'network', de: 'netzwerk' } },
+            native: {},
+        });
+        await this.setObjectNotExistsAsync('network.ip', {
+            type: 'state',
+            common: {
+                role: 'info.ip',
+                name: { en: 'IP address', de: 'IP-Adresse' },
+                type: 'string',
+                read: true,
+                write: false,
+            },
+            native: {},
+        });
+        await this.setObjectNotExistsAsync('network.channel', {
+            type: 'state',
+            common: { role: 'value', name: { en: 'channel', de: 'kanal' }, type: 'number', read: true, write: false },
+            native: {},
+        });
+        await this.setObjectNotExistsAsync('network.connected', {
+            type: 'state',
+            common: {
+                role: 'indicator.connected',
+                name: { en: 'connected', de: 'verbunden' },
+                type: 'boolean',
+                read: true,
+                write: false,
+            },
+            native: {},
+        });
+        await this.setObjectNotExistsAsync('network.mac', {
+            type: 'state',
+            common: {
+                role: 'info.mac',
+                name: { en: 'MAC address', de: 'MAC-Adresse' },
+                type: 'string',
+                read: true,
+                write: false,
+            },
+            native: {},
+        });
+        await this.setObjectNotExistsAsync('network.activeLink', {
+            type: 'state',
+            common: {
+                role: 'value',
+                name: { en: 'active link', de: 'aktiver link' },
+                type: 'string',
+                read: true,
+                write: false,
+            },
+            native: {},
+        });
+        await this.setObjectNotExistsAsync('network.dns', {
+            type: 'state',
+            common: { role: 'info.ip', name: { en: 'DNS', de: 'DNS' }, type: 'string', read: true, write: false },
+            native: {},
+        });
+        await this.setObjectNotExistsAsync('network.gateway', {
+            type: 'state',
+            common: {
+                role: 'info.ip',
+                name: { en: 'gateway', de: 'gateway' },
+                type: 'string',
+                read: true,
+                write: false,
+            },
+            native: {},
+        });
+        await this.setObjectNotExistsAsync('network.mask', {
+            type: 'state',
+            common: {
+                role: 'value',
+                name: { en: 'subnet mask', de: 'subnetzmaske' },
+                type: 'string',
+                read: true,
+                write: false,
+            },
+            native: {},
+        });
+        await this.setObjectNotExistsAsync('network.networkType', {
+            type: 'state',
+            common: {
+                role: 'value',
+                name: { en: 'network type', de: 'netzwerktyp' },
+                type: 'string',
+                read: true,
+                write: false,
+            },
+            native: {},
+        });
+
+        // --- Device ---
+        await this.setObjectNotExistsAsync('device', {
+            type: 'channel',
+            common: { name: { en: 'device', de: 'gerät' } },
+            native: {},
+        });
+        await this.setObjectNotExistsAsync('device.model', {
+            type: 'state',
+            common: { role: 'value', name: { en: 'model', de: 'modell' }, type: 'string', read: true, write: false },
+            native: {},
+        });
+        await this.setObjectNotExistsAsync('device.buildDay', {
+            type: 'state',
+            common: {
+                role: 'value',
+                name: { en: 'build day', de: 'build tag' },
+                type: 'string',
+                read: true,
+                write: false,
+            },
+            native: {},
+        });
+        await this.setObjectNotExistsAsync('device.cfgVer', {
+            type: 'state',
+            common: {
+                role: 'value',
+                name: { en: 'config version', de: 'konfigurationsversion' },
+                type: 'string',
+                read: true,
+                write: false,
+            },
+            native: {},
+        });
+        await this.setObjectNotExistsAsync('device.detail', {
+            type: 'state',
+            common: { role: 'value', name: { en: 'detail', de: 'detail' }, type: 'string', read: true, write: false },
+            native: {},
+        });
+        await this.setObjectNotExistsAsync('device.diskNum', {
+            type: 'state',
+            common: {
+                role: 'value',
+                name: { en: 'disk number', de: 'festplattenanzahl' },
+                type: 'number',
+                read: true,
+                write: false,
+            },
+            native: {},
+        });
+        await this.setObjectNotExistsAsync('device.firmVer', {
+            type: 'state',
+            common: {
+                role: 'value',
+                name: { en: 'firmware version', de: 'firmwareversion' },
+                type: 'string',
+                read: true,
+                write: false,
+            },
+            native: {},
+        });
+        await this.setObjectNotExistsAsync('device.name', {
+            type: 'state',
+            common: { role: 'info.name', name: { en: 'name', de: 'name' }, type: 'string', read: true, write: false },
+            native: {},
+        });
+        await this.setObjectNotExistsAsync('device.serial', {
+            type: 'state',
+            common: {
+                role: 'value',
+                name: { en: 'serial', de: 'seriennummer' },
+                type: 'string',
+                read: true,
+                write: false,
+            },
+            native: {},
+        });
+        await this.setObjectNotExistsAsync('device.wifi', {
+            type: 'state',
+            common: { role: 'value', name: { en: 'wifi', de: 'wifi' }, type: 'boolean', read: true, write: false },
+            native: {},
+        });
+
+        // --- Settings ---
+        await this.setObjectNotExistsAsync('settings', {
+            type: 'channel',
+            common: { name: { en: 'settings', de: 'einstellungen' } },
+            native: {},
+        });
+        await this.setObjectNotExistsAsync('settings.ir', {
+            type: 'state',
+            common: {
+                role: 'switch',
+                name: { en: 'infrared', de: 'infrarot' },
+                type: 'boolean',
+                read: true,
+                write: true,
+            },
+            native: {},
+        });
+        await this.setObjectNotExistsAsync('settings.switchLed', {
+            type: 'state',
+            common: {
+                role: 'switch',
+                name: { en: 'LED switch', de: 'LED-Schalter' },
+                type: 'boolean',
+                read: true,
+                write: true,
+            },
+            native: {},
+        });
+        await this.setObjectNotExistsAsync('settings.ledBrightness', {
+            type: 'state',
+            common: {
+                role: 'level',
+                name: { en: 'LED brightness', de: 'LED-Helligkeit' },
+                type: 'number',
+                read: true,
+                write: true,
+            },
+            native: {},
+        });
+        await this.setObjectNotExistsAsync('settings.ledMode', {
+            type: 'state',
+            common: {
+                role: 'value',
+                name: { en: 'LED mode', de: 'LED-Modus' },
+                type: 'number',
+                read: true,
+                write: true,
+            },
+            native: {},
+        });
+        await this.setObjectNotExistsAsync('settings.ptzPreset', {
+            type: 'state',
+            common: {
+                role: 'value',
+                name: { en: 'PTZ preset', de: 'PTZ-preset' },
+                type: 'number',
+                read: true,
+                write: true,
+            },
+            native: {},
+        });
+        await this.setObjectNotExistsAsync('settings.ptzPatrol', {
+            type: 'state',
+            common: {
+                role: 'switch',
+                name: { en: 'PTZ patrol', de: 'PTZ-patrol' },
+                type: 'boolean',
+                read: true,
+                write: true,
+            },
+            native: {},
+        });
+        await this.setObjectNotExistsAsync('settings.push', {
+            type: 'state',
+            common: {
+                role: 'switch',
+                name: { en: 'push notification', de: 'push-benachrichtigung' },
+                type: 'boolean',
+                read: true,
+                write: true,
+            },
+            native: {},
+        });
+        await this.setObjectNotExistsAsync('settings.ftp', {
+            type: 'state',
+            common: { role: 'switch', name: { en: 'FTP', de: 'FTP' }, type: 'boolean', read: true, write: true },
+            native: {},
+        });
+        await this.setObjectNotExistsAsync('settings.autoFocus', {
+            type: 'state',
+            common: {
+                role: 'switch',
+                name: { en: 'auto focus', de: 'autofokus' },
+                type: 'boolean',
+                read: true,
+                write: true,
+            },
+            native: {},
+        });
+        await this.setObjectNotExistsAsync('settings.EmailNotification', {
+            type: 'state',
+            common: {
+                role: 'switch',
+                name: { en: 'email notification', de: 'E-Mail-Benachrichtigung' },
+                type: 'boolean',
+                read: true,
+                write: true,
+            },
+            native: {},
+        });
+        await this.setObjectNotExistsAsync('settings.setZoomFocus', {
+            type: 'state',
+            common: {
+                role: 'value',
+                name: { en: 'set zoom focus', de: 'zoom fokus setzen' },
+                type: 'object',
+                read: true,
+                write: true,
+            },
+            native: {},
+        });
+        await this.setObjectNotExistsAsync('settings.focus', {
+            type: 'state',
+            common: { role: 'value', name: { en: 'focus', de: 'fokus' }, type: 'object', read: true, write: false },
+            native: {},
+        });
+        await this.setObjectNotExistsAsync('settings.scheduledRecording', {
+            type: 'state',
+            common: {
+                role: 'switch',
+                name: { en: 'scheduled recording', de: 'geplante aufnahme' },
+                type: 'boolean',
+                read: true,
+                write: true,
+            },
+            native: {},
+        });
+        await this.setObjectNotExistsAsync('settings.playAlarm', {
+            type: 'state',
+            common: {
+                role: 'switch',
+                name: { en: 'play alarm', de: 'alarm abspielen' },
+                type: 'boolean',
+                read: true,
+                write: true,
+            },
+            native: {},
+        });
+        await this.setObjectNotExistsAsync('settings.getDiscData', {
+            type: 'state',
+            common: {
+                role: 'switch',
+                name: { en: 'get disc data', de: 'festplattendaten abrufen' },
+                type: 'boolean',
+                read: true,
+                write: true,
+            },
+            native: {},
+        });
+        await this.setObjectNotExistsAsync('settings.ptzEnableGuard', {
+            type: 'state',
+            common: {
+                role: 'switch',
+                name: { en: 'PTZ enable guard', de: 'PTZ-wächter aktivieren' },
+                type: 'boolean',
+                read: true,
+                write: true,
+            },
+            native: {},
+        });
+        await this.setObjectNotExistsAsync('settings.ptzCheck', {
+            type: 'state',
+            common: {
+                role: 'switch',
+                name: { en: 'PTZ check', de: 'PTZ-prüfung' },
+                type: 'boolean',
+                read: true,
+                write: true,
+            },
+            native: {},
+        });
+        await this.setObjectNotExistsAsync('settings.ptzGuardTimeout', {
+            type: 'state',
+            common: {
+                role: 'value',
+                name: { en: 'PTZ guard timeout', de: 'PTZ-wächter timeout' },
+                type: 'number',
+                read: true,
+                write: true,
+            },
+            native: {},
+        });
+
+        // --- Command ---
+        await this.setObjectNotExistsAsync('command', {
+            type: 'channel',
+            common: { name: { en: 'command', de: 'befehl' } },
+            native: {},
+        });
+        await this.setObjectNotExistsAsync('command.reboot', {
+            type: 'state',
+            common: {
+                role: 'button',
+                name: { en: 'reboot', de: 'neustart' },
+                type: 'boolean',
+                read: false,
+                write: true,
+            },
+            native: {},
+        });
+
+        // --- RAW ---
+        await this.setObjectNotExistsAsync('RAW', {
+            type: 'channel',
+            common: { name: { en: 'RAW', de: 'RAW' } },
+            native: {},
+        });
+        await this.setObjectNotExistsAsync('RAW.Email', {
+            type: 'state',
+            common: {
+                role: 'value',
+                name: { en: 'Email RAW config', de: 'E-Mail RAW Konfiguration' },
+                type: 'object',
+                read: true,
+                write: true,
+            },
+            native: {},
+        });
+
+        this.log.debug('HTTP camera states created');
+    }
+
+    /**
+     * Cleanup HTTP camera states when switching to battery cam mode.
+     * Removes all states that were created by createHttpCamStates().
+     */
+    private async cleanupHttpCamStates(): Promise<void> {
+        this.log.debug('Cleaning up HTTP camera states...');
+
+        const httpCamObjects = [
+            'ai_config.raw',
+            'ai_config',
+            'sensor.motion',
+            'sensor.dog_cat.state',
+            'sensor.dog_cat.support',
+            'sensor.dog_cat',
+            'sensor.face.state',
+            'sensor.face.support',
+            'sensor.face',
+            'sensor.people.state',
+            'sensor.people.support',
+            'sensor.people',
+            'sensor.vehicle.state',
+            'sensor.vehicle.support',
+            'sensor.vehicle',
+            'sensor',
+            'disc.capacity',
+            'disc.formatted',
+            'disc.mounted',
+            'disc.free',
+            'disc',
+            'network.ip',
+            'network.channel',
+            'network.connected',
+            'network.mac',
+            'network.activeLink',
+            'network.dns',
+            'network.gateway',
+            'network.mask',
+            'network.networkType',
+            'network',
+            'device.model',
+            'device.buildDay',
+            'device.cfgVer',
+            'device.detail',
+            'device.diskNum',
+            'device.firmVer',
+            'device.name',
+            'device.serial',
+            'device.wifi',
+            'device',
+            'settings.ir',
+            'settings.switchLed',
+            'settings.ledBrightness',
+            'settings.ledMode',
+            'settings.ptzPreset',
+            'settings.ptzPatrol',
+            'settings.push',
+            'settings.ftp',
+            'settings.autoFocus',
+            'settings.EmailNotification',
+            'settings.setZoomFocus',
+            'settings.focus',
+            'settings.scheduledRecording',
+            'settings.playAlarm',
+            'settings.getDiscData',
+            'settings.ptzEnableGuard',
+            'settings.ptzCheck',
+            'settings.ptzGuardTimeout',
+            'settings',
+            'command.reboot',
+            'command',
+            'RAW.Email',
+            'RAW',
+        ];
+
+        for (const id of httpCamObjects) {
+            try {
+                const obj = await this.getObjectAsync(id);
+                if (obj) {
+                    await this.delObjectAsync(id);
+                    this.log.debug(`Deleted HTTP cam state: ${id}`);
+                }
+            } catch {
+                // Ignore - object might not exist
+            }
+        }
+
+        this.log.debug('HTTP camera states cleanup complete');
     }
 
     /**

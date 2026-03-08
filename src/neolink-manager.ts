@@ -10,7 +10,7 @@ import type { ChildProcess } from 'child_process';
 import { spawn, exec } from 'child_process';
 import * as fs from 'fs';
 import * as path from 'path';
-import { getNeolinkBinary } from './neolink-binary';
+import { ensureNeolinkBinary } from './neolink-binary';
 
 export interface NeolinkConfig {
     name: string;
@@ -40,6 +40,8 @@ export class NeolinkManager {
     private currentConfig: NeolinkConfig | null = null;
     private dataDir: string;
     private logCallback?: (cameraName: string, level: string, message: string) => void;
+    /** Cached binary path after first successful download */
+    private cachedBinaryPath: string | null = null;
 
     constructor(dataDir: string, logCallback?: (cameraName: string, level: string, message: string) => void) {
         this.dataDir = dataDir;
@@ -52,6 +54,17 @@ export class NeolinkManager {
     }
 
     /**
+     * Ensure the neolink binary is downloaded and return its path.
+     * Downloads once on first call, then returns the cached path.
+     */
+    private async ensureBinary(): Promise<string> {
+        if (this.cachedBinaryPath) return this.cachedBinaryPath;
+        const binary = await ensureNeolinkBinary((msg) => this.log('neolink', 'info', msg));
+        this.cachedBinaryPath = binary.path;
+        return binary.path;
+    }
+
+    /**
      * Start RTSP process (provides RTSP streams)
      */
     public async startRtsp(config: NeolinkConfig): Promise<void> {
@@ -59,14 +72,14 @@ export class NeolinkManager {
             throw new Error(`RTSP process already running for camera: ${config.name}`);
         }
 
-        const binary = getNeolinkBinary();
-        this.log(config.name, 'info', `Starting RTSP process: ${binary.path} (${binary.platform}/${binary.arch})`);
+        const binaryPath = await this.ensureBinary();
+        this.log(config.name, 'info', `Starting RTSP process: ${binaryPath}`);
 
         // Generate RTSP-only config (no MQTT section)
         const configPath = this.generateRtspConfig(config);
 
         // Spawn neolink RTSP process
-        const proc = spawn(binary.path, ['rtsp', '--config', configPath], {
+        const proc = spawn(binaryPath, ['rtsp', '--config', configPath], {
             cwd: this.dataDir,
             stdio: ['ignore', 'pipe', 'pipe'],
         });
@@ -96,14 +109,14 @@ export class NeolinkManager {
             throw new Error(`MQTT process already running for camera: ${config.name}`);
         }
 
-        const binary = getNeolinkBinary();
-        this.log(config.name, 'info', `Starting MQTT process: ${binary.path}`);
+        const binaryPath = await this.ensureBinary();
+        this.log(config.name, 'info', `Starting MQTT process: ${binaryPath}`);
 
         // Generate MQTT-only config
         const configPath = this.generateMqttConfig(config);
 
         // Spawn neolink MQTT process
-        const proc = spawn(binary.path, ['mqtt', '--config', configPath], {
+        const proc = spawn(binaryPath, ['mqtt', '--config', configPath], {
             cwd: this.dataDir,
             stdio: ['ignore', 'pipe', 'pipe'],
         });
@@ -363,7 +376,7 @@ discovery = "local"
             throw new Error('MQTT config not found - start MQTT first');
         }
 
-        const neolinkBin = getNeolinkBinary().path;
+        const neolinkBin = await this.ensureBinary();
         const cmd = `"${neolinkBin}" battery --config="${configPath}" ${this.currentConfig.name}`;
 
         this.log(this.currentConfig.name, 'debug', `Querying battery status: ${cmd}`);

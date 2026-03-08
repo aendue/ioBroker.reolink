@@ -1,12 +1,8 @@
 {
   "common": {
     "name": "reolink",
-    "version": "1.4.0-beta.1",
+    "version": "1.3.0",
     "news": {
-      "1.4.0-beta.1": {
-        "en": "Battery camera support via neolink (Argus 3 Pro, B400, D400, E1 Outdoor)",
-        "de": "Akkukamera-Unterstützung via neolink (Argus 3 Pro, B400, D400, E1 Outdoor)"
-      },
       "1.3.0": {
         "en": "AiCfg config\nbump some libs #202\nmigration to ts\nrevoking classic token #204\nstate changes from info log to debug #206",
         "de": "AiCfg config\nstoßen einige libs #202\nmigration in ts\nklassisch token #204\nzustandsänderungen von info log zu debug #206",
