@@ -84,9 +84,9 @@ sendTo("reolink.0",{action: "snap"}, function(result){
 });
 ```
 
-## Battery-Powered Cameras 
+## Battery-Powered Cameras
 
-Battery cameras (Argus 3 Pro,...) use a proprietary protocol. This adapter supports them via **neolink**.
+Battery cameras (Argus PT, Argus 3 Pro, ...) use a proprietary protocol and are supported via **[neolink](https://github.com/QuantumEntangledAndy/neolink)** — an open-source tool that is downloaded automatically on first use.
 
 ### Quick Setup
 
@@ -96,89 +96,101 @@ Battery cameras (Argus 3 Pro,...) use a proprietary protocol. This adapter suppo
    ```bash
    sudo apt install gstreamer1.0-rtsp
    ```
-4. **Start Adapter** → RTSP streams at `rtsp://127.0.0.1:8554/<CameraName>/mainStream`
+4. **Start Adapter** → RTSP streams available at `rtsp://<server-ip>:8554/<CameraName>/mainStream`
+
+> The server IP is detected automatically. `<CameraName>` is the name set in the adapter config.
 
 ### Battery Saving
 
-**Battery drains fast when active!** Use these controls:
+**Battery drains fast when active!** The adapter uses an auto-disable strategy:
 
-- **`streams.enable`** (boolean) - Enable/disable streaming
-  - Default: `false` (battery saving)
-  - Auto-disables after 30s (configurable)
-  - Pauses when no client connected
-  
-- **`mqtt.enable`** (boolean) - Motion/battery via MQTT
-  - No streaming needed for motion detection
-  - Auto-disables after 30s
+- **`streams.enable`** (boolean) — Enable/disable RTSP streaming
+  - Default: `false` (off = battery saving)
+  - Auto-disables after 30 s (configurable)
+  - Stream pauses automatically when no client is connected
+
+- **`mqtt.enable`** (boolean) — Enable MQTT integration for motion/battery/floodlight
+  - No streaming needed — camera stays idle between events
+  - Auto-disables after 30 s
   - Configure broker in adapter settings
 
-### Battery Camera Datapoints (quick overview)
+### Battery Camera States
 
-- **Control**
-  - `streams.enable` - Start/stop RTSP stream
-  - `mqtt.enable` - Start/stop MQTT integration
-  - `floodlight` - Switch floodlight on/off
-  - `pir` - Switch PIR on/off
-  - `snapshot` - Trigger snapshot capture
-  - `query.battery` / `query.pir` / `query.preview` - Trigger Neolink MQTT queries
+| State | Type | Description |
+|---|---|---|
+| `streams.enable` | boolean | Start/stop RTSP stream |
+| `streams.mainStream` | string | RTSP URL for main stream |
+| `streams.subStream` | string | RTSP URL for sub stream |
+| `mqtt.enable` | boolean | Start/stop MQTT integration |
+| `floodlight` | boolean | Switch floodlight on/off (auto-starts MQTT if needed) |
+| `snapshot` | button | Capture snapshot via RTSP |
+| `query.battery` | button | Request current battery level |
+| `query.preview` | button | Capture snapshot and write to `status.preview` |
+| `ptz.preset` | number | Move camera to saved preset position |
+| `ptz.up/down/left/right` | boolean | Hold-to-move in direction (`true`=start, `false`=stop) |
+| `ptz.speed` | number | PTZ movement speed (1–100, default 32) |
+| `status.motion` | boolean | Motion detected |
+| `status.battery_level` | number | Battery level in % |
+| `status.floodlight` | boolean | Floodlight state |
+| `status.preview` | string | Last preview image (base64, data URI) |
+| `snapshotImage` | string | Last snapshot image (base64, data URI) |
+| `snapshotStatus` | string | Snapshot status: `idle` / `capturing` / `success` / `error` |
+| `info.neolink_status` | string | neolink process state: `stopped` / `running` |
 
-- **Status**
-  - `status.motion` - Motion status
-  - `status.battery_level` - Battery level in %
-  - `status.floodlight` - Floodlight status
-  - `status.pir` - PIR status
-  - `status.preview` - Preview image (base64)
+### PTZ Control
 
-### New Datapoints (full IDs)
+PTZ works via neolink — no MQTT needed, commands run a short-lived neolink CLI process.
 
-These are the new datapoints for PIR and Query features (replace `<instance>` with your adapter instance, e.g. `0`):
+**Directional movement** (`ptz.up/down/left/right`):
+- Set to `true` → camera starts moving, auto-stops after 5 s
+- Set to `false` → camera stops immediately
+- In VIS: configure a button with `mousedown=true` / `mouseup=false` for intuitive hold-to-move
+- Adjust speed with `ptz.speed` (1–100)
 
-- `reolink.<instance>.pir`
-- `reolink.<instance>.status.pir`
-- `reolink.<instance>.query.battery`
-- `reolink.<instance>.query.pir`
-- `reolink.<instance>.query.preview`
-
-**Best Practice:** Enable only when viewing, then disable immediately!
+**Presets** (`ptz.preset`): Set to a preset number (0–9) to move to that saved position.
 
 ### Features
 
 ✅ RTSP streams (main + sub)  
-✅ Snapshot (requires ffmpeg)  
-✅ Floodlight control (via MQTT)  
-✅ PIR control (via MQTT)  
+✅ Snapshot capture (requires ffmpeg)  
+✅ Floodlight control (via MQTT, auto-started on demand)  
 ✅ Motion detection (via MQTT)  
-✅ Battery level (via MQTT)  
-✅ Query commands (battery/PIR/preview via MQTT)  
-✅ Multi-platform (Linux x64/ARM, macOS, Windows)  
+✅ Battery level (periodic via neolink CLI)  
+✅ PTZ control — directional movement + presets  
+✅ Multi-platform — neolink binary downloaded automatically (Linux x64/ARM/ARM64, macOS, Windows)  
 
-❌ PTZ control  
-❌ HTTP API features  
+❌ PIR control (not yet implemented)  
+
 
 ### MQTT Setup
 
 Configure in adapter settings:
-- **Broker Host** (default: 127.0.0.1)
-- **Broker Port** (default: 1883)
-- **Username/Password** (optional)
+- **Broker Host** (default: `127.0.0.1`)
+- **Broker Port** (default: `1883`)
+- **Username / Password** (optional)
+- **Auto-disable timeout** (default: `30` s, battery protection)
 
-Topics:
+MQTT is used by the camera to publish status updates. The adapter subscribes automatically when `mqtt.enable` is set to `true`.
+
+Status topics (published by camera via neolink):
 - `neolink/<camera>/status/motion`
 - `neolink/<camera>/status/battery_level`
 - `neolink/<camera>/status/floodlight`
-- `neolink/<camera>/status/pir`
+
+Control topics (published by adapter to camera):
 - `neolink/<camera>/control/floodlight`
-- `neolink/<camera>/control/pir`
-- `neolink/<camera>/query/battery`
-- `neolink/<camera>/query/pir`
-- `neolink/<camera>/query/preview`
 
 ### Troubleshooting
 
-**"Camera UID required"** → Enter UID from Reolink app  
-**"libgstrtspserver not found"** → `sudo apt install gstreamer1.0-rtsp`  
-**Stream won't connect** → Enable `streams.enable`, wait 5s  
-**Battery drains fast** → Disable streaming when not viewing, use MQTT for motion  
+| Problem | Solution |
+|---|---|
+| "Camera UID required" | Enter UID from Reolink app → Device Info |
+| "libgstrtspserver not found" | `sudo apt install gstreamer1.0-rtsp` |
+| Stream won't connect | Enable `streams.enable`, wait ~5 s for neolink to start |
+| Snapshot fails | Install ffmpeg: `sudo apt install ffmpeg` |
+| Floodlight doesn't react | MQTT starts automatically — wait ~3 s after clicking |
+| Battery drains fast | Disable streaming when not in use; use MQTT only for motion |
+| PTZ unresponsive | Each PTZ command needs ~2 s (P2P camera login) — this is normal |
 
 ---
 
@@ -189,7 +201,8 @@ RLC-420-5MP, E1 Zoom, RLC-522, RLC-810A, RLC-823A, Duo 3 PoE
 
 ### Battery Cameras (via Neolink)
 
-✅ Argus 3 Pro
+✅ Reolink Argus PT  
+✅ Reolink Argus 3 Pro  
 
 ---
 
@@ -199,10 +212,7 @@ RLC-420-5MP, E1 Zoom, RLC-522, RLC-810A, RLC-823A, Duo 3 PoE
     ### **WORK IN PROGRESS**
 -->
 ### **WORK IN PROGRESS**
-* (bloop16) Battery camera support via Neolink
-  - Added battery-cam RTSP/MQTT workflow with battery-saving auto-disable.
-  - Added MQTT controls and states for floodlight, PIR, and query (`battery`, `pir`, `preview`).
-  - Added snapshot support and dependency checks (GStreamer required, ffmpeg optional).
+* (bloop16) Battery camera support via neolink
 
 ### 1.3.0 (2025-12-20)
 * (agross) AiCfg config

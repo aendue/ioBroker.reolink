@@ -125,6 +125,7 @@ class ReoLinkCamAdapter extends Adapter {
     private neolinkConfig: NeolinkConfig | null = null; // Store for MQTT control
     private streamAutoDisableTimer: ioBroker.Timeout | undefined = undefined;
     private mqttAutoDisableTimer: ioBroker.Timeout | undefined = undefined;
+    private ptzAutoStopTimer: ioBroker.Timeout | undefined = undefined;
     private ffmpegAvailable = false;
     private mqttHelper: MqttHelper | null = null;
     private mqttBatteryQueryInterval: ioBroker.Interval | undefined = undefined;
@@ -1458,14 +1459,14 @@ class ReoLinkCamAdapter extends Adapter {
         try {
             // Stop neolink if running
             if (this.neolinkManager) {
-                this.log.info('Stopping neolink processes...');
+                this.log.debug('Stopping neolink processes...');
 
                 // Also disconnect MQTT
                 const mqttPromise = this.mqttHelper ? this.mqttHelper.disconnect() : Promise.resolve();
 
                 Promise.all([this.neolinkManager.stopAll(), mqttPromise])
                     .then(() => {
-                        this.log.info('Neolink and MQTT stopped');
+                        this.log.debug('Neolink and MQTT stopped');
                         callback();
                     })
                     .catch(err => {
@@ -1533,18 +1534,28 @@ class ReoLinkCamAdapter extends Adapter {
                     await this.setStateAsync('query.battery', false, true);
                     return;
                 }
-                if (id.endsWith('query.pir')) {
-                    await this.handleBatteryCamQuery('pir');
-                    await this.setStateAsync('query.pir', false, true);
-                    return;
-                }
                 if (id.endsWith('query.preview')) {
-                    await this.handleBatteryCamQuery('preview');
+                    // Use RTSP snapshot (reliable) instead of MQTT query
+                    await this.handleBatteryCamSnapshot();
                     await this.setStateAsync('query.preview', false, true);
                     return;
                 }
-                if (id.endsWith('.pir')) {
-                    await this.handleBatteryCamPir(!!state.val);
+                if (id.endsWith('ptz.preset')) {
+                    await this.handleBatteryCamPtzPreset(state.val as number);
+                    return;
+                }
+                if (
+                    id.endsWith('ptz.up') ||
+                    id.endsWith('ptz.down') ||
+                    id.endsWith('ptz.left') ||
+                    id.endsWith('ptz.right')
+                ) {
+                    const dir = id.split('.').pop() as 'up' | 'down' | 'left' | 'right';
+                    if (state.val === true) {
+                        await this.handleBatteryCamPtzStart(dir);
+                    } else {
+                        await this.handleBatteryCamPtzStop();
+                    }
                     return;
                 }
 
@@ -1637,7 +1648,7 @@ class ReoLinkCamAdapter extends Adapter {
 
         try {
             // Check system dependencies
-            this.log.info('Checking system dependencies for battery camera...');
+            this.log.debug('Checking system dependencies for battery camera...');
             const deps = await checkAllDependencies();
 
             // GStreamer check (critical for neolink RTSP server)
@@ -1668,13 +1679,15 @@ class ReoLinkCamAdapter extends Adapter {
             // Use absolute path in ioBroker data directory
             const dataDir = path.join(utils.getAbsoluteDefaultDataDir(), this.namespace.replace(/\./g, '_'));
             this.neolinkManager = new NeolinkManager(dataDir, (cameraName, level, message) => {
-                // Log callback
                 switch (level) {
                     case 'error':
                         this.log.error(`[${cameraName}] ${message}`);
                         break;
                     case 'warn':
                         this.log.warn(`[${cameraName}] ${message}`);
+                        break;
+                    case 'debug':
+                        this.log.debug(`[${cameraName}] ${message}`);
                         break;
                     default:
                         this.log.info(`[${cameraName}] ${message}`);
@@ -1701,7 +1714,7 @@ class ReoLinkCamAdapter extends Adapter {
             // DON'T start RTSP automatically - only when user enables streams!
             // Store config for later use
             this.log.info(`Battery camera configured: ${cameraName}`);
-            this.log.info(`MQTT topics will use camera name: ${cameraName}`);
+            this.log.debug(`MQTT topics will use camera name: ${cameraName}`);
 
             // Create battery cam states
             await this.createBatteryCamStates();
@@ -1711,8 +1724,8 @@ class ReoLinkCamAdapter extends Adapter {
             const mainStreamUrl = this.neolinkManager.getRtspUrl(this.neolinkConfig.name, 'mainStream');
             const subStreamUrl = this.neolinkManager.getRtspUrl(this.neolinkConfig.name, 'subStream');
 
-            this.log.info(`RTSP Main Stream URL (when enabled): ${mainStreamUrl}`);
-            this.log.info(`RTSP Sub Stream URL (when enabled): ${subStreamUrl}`);
+            this.log.debug(`RTSP Main Stream URL (when enabled): ${mainStreamUrl}`);
+            this.log.debug(`RTSP Sub Stream URL (when enabled): ${subStreamUrl}`);
 
             await this.setStateAsync('streams.mainStream', mainStreamUrl, true);
             await this.setStateAsync('streams.subStream', subStreamUrl, true);
@@ -1724,9 +1737,12 @@ class ReoLinkCamAdapter extends Adapter {
             this.subscribeStates('mqtt.enable');
             this.subscribeStates('snapshot');
             this.subscribeStates('floodlight');
-            this.subscribeStates('pir');
+            this.subscribeStates('ptz.preset');
+            this.subscribeStates('ptz.up');
+            this.subscribeStates('ptz.down');
+            this.subscribeStates('ptz.left');
+            this.subscribeStates('ptz.right');
             this.subscribeStates('query.battery');
-            this.subscribeStates('query.pir');
             this.subscribeStates('query.preview');
 
             this.log.info('Battery camera ready!');
@@ -1801,6 +1817,7 @@ class ReoLinkCamAdapter extends Adapter {
                 role: 'text.url',
                 read: true,
                 write: false,
+                desc: 'Sub stream RTSP URL. NOTE: May use H.265 (HEVC) - if white noise appears, use mainStream or set subStream to H.264 in Reolink app.',
             },
             native: {},
         });
@@ -1897,19 +1914,6 @@ class ReoLinkCamAdapter extends Adapter {
             native: {},
         });
 
-        await this.setObjectNotExistsAsync('status.pir', {
-            type: 'state',
-            common: {
-                name: 'PIR Status',
-                type: 'boolean',
-                role: 'indicator.status',
-                read: true,
-                write: false,
-                desc: 'PIR enabled status from camera (requires mqtt.enable = true)',
-            },
-            native: {},
-        });
-
         await this.setObjectNotExistsAsync('status.preview', {
             type: 'state',
             common: {
@@ -1926,7 +1930,6 @@ class ReoLinkCamAdapter extends Adapter {
         // Initialize status states with default values
         await this.setStateAsync('status.motion', false, true);
         await this.setStateAsync('status.floodlight', false, true);
-        await this.setStateAsync('status.pir', false, true);
         await this.setStateAsync('status.preview', '', true);
 
         // Snapshot (requires ffmpeg)
@@ -1991,20 +1994,99 @@ class ReoLinkCamAdapter extends Adapter {
         });
         await this.setStateAsync('floodlight', false, true);
 
-        await this.setObjectNotExistsAsync('pir', {
-            type: 'state',
+        // PTZ control (pan/tilt/zoom via neolink CLI)
+        await this.setObjectNotExistsAsync('ptz', {
+            type: 'channel',
             common: {
-                name: 'PIR On/Off',
-                type: 'boolean',
-                role: 'switch.enable',
-                read: true,
-                write: true,
-                def: false,
-                desc: 'Control camera PIR mode (requires MQTT enabled)',
+                name: 'PTZ Control',
             },
             native: {},
         });
-        await this.setStateAsync('pir', false, true);
+
+        await this.setObjectNotExistsAsync('ptz.preset', {
+            type: 'state',
+            common: {
+                name: { en: 'Move to PTZ Preset', de: 'Zu PTZ-Preset fahren' },
+                type: 'number',
+                role: 'value',
+                read: true,
+                write: true,
+                min: 0,
+                max: 255,
+                def: 0,
+                desc: 'Enter preset ID and write to move camera to that position',
+            },
+            native: {},
+        });
+        await this.setStateAsync('ptz.preset', 0, true);
+
+        await this.setObjectNotExistsAsync('ptz.up', {
+            type: 'state',
+            common: {
+                name: { en: 'PTZ Up (true = move, false = stop)', de: 'PTZ Hoch (true = bewegen, false = stopp)' },
+                type: 'boolean',
+                role: 'switch',
+                read: true,
+                write: true,
+                def: false,
+            },
+            native: {},
+        });
+
+        await this.setObjectNotExistsAsync('ptz.down', {
+            type: 'state',
+            common: {
+                name: { en: 'PTZ Down (true = move, false = stop)', de: 'PTZ Runter (true = bewegen, false = stopp)' },
+                type: 'boolean',
+                role: 'switch',
+                read: true,
+                write: true,
+                def: false,
+            },
+            native: {},
+        });
+
+        await this.setObjectNotExistsAsync('ptz.left', {
+            type: 'state',
+            common: {
+                name: { en: 'PTZ Left (true = move, false = stop)', de: 'PTZ Links (true = bewegen, false = stopp)' },
+                type: 'boolean',
+                role: 'switch',
+                read: true,
+                write: true,
+                def: false,
+            },
+            native: {},
+        });
+
+        await this.setObjectNotExistsAsync('ptz.right', {
+            type: 'state',
+            common: {
+                name: { en: 'PTZ Right (true = move, false = stop)', de: 'PTZ Rechts (true = bewegen, false = stopp)' },
+                type: 'boolean',
+                role: 'switch',
+                read: true,
+                write: true,
+                def: false,
+            },
+            native: {},
+        });
+
+        await this.setObjectNotExistsAsync('ptz.speed', {
+            type: 'state',
+            common: {
+                name: { en: 'PTZ Speed (1–100)', de: 'PTZ Geschwindigkeit (1–100)' },
+                type: 'number',
+                role: 'level',
+                min: 1,
+                max: 100,
+                read: true,
+                write: true,
+                def: 32,
+            },
+            native: {},
+        });
+        await this.setStateAsync('ptz.speed', 32, true);
 
         await this.setObjectNotExistsAsync('query', {
             type: 'channel',
@@ -2028,21 +2110,6 @@ class ReoLinkCamAdapter extends Adapter {
             native: {},
         });
         await this.setStateAsync('query.battery', false, true);
-
-        await this.setObjectNotExistsAsync('query.pir', {
-            type: 'state',
-            common: {
-                name: 'Query PIR Status',
-                type: 'boolean',
-                role: 'button',
-                read: false,
-                write: true,
-                def: false,
-                desc: 'Send MQTT query for PIR status',
-            },
-            native: {},
-        });
-        await this.setStateAsync('query.pir', false, true);
 
         await this.setObjectNotExistsAsync('query.preview', {
             type: 'state',
@@ -2079,15 +2146,18 @@ class ReoLinkCamAdapter extends Adapter {
             'status.motion',
             'status.battery_level',
             'status.floodlight',
-            'status.pir',
             'status.preview',
             'snapshotImage',
             'snapshotStatus',
             'floodlight',
-            'pir',
+            'ptz',
+            'ptz.preset',
+            'ptz.up',
+            'ptz.down',
+            'ptz.left',
+            'ptz.right',
             'query',
             'query.battery',
-            'query.pir',
             'query.preview',
             'info.uid',
             'info.neolink_status',
@@ -2831,12 +2901,12 @@ class ReoLinkCamAdapter extends Adapter {
             // Get auto-disable timeout from config (default: 30s)
             const autoDisableSeconds = this.config.streamAutoDisableSeconds || 30;
 
-            this.log.info(`Streaming enabled - auto-disable in ${autoDisableSeconds}s (battery protection)`);
+            this.log.debug(`Streaming enabled - auto-disable in ${autoDisableSeconds}s (battery protection)`);
             await this.setStateAsync('streams.enable', true, true);
 
             // Set auto-disable timer
             this.streamAutoDisableTimer = this.setTimeout(async () => {
-                this.log.info(`Auto-disabling stream after ${autoDisableSeconds}s (battery protection)`);
+                this.log.debug(`Auto-disabling stream after ${autoDisableSeconds}s (battery protection)`);
                 await this.setStateAsync('streams.enable', false, false);
                 this.streamAutoDisableTimer = undefined;
             }, autoDisableSeconds * 1000);
@@ -2844,13 +2914,13 @@ class ReoLinkCamAdapter extends Adapter {
             // Note: Neolink streams auto-pause when no RTSP client is connected (pause_on_client=true)
             // This timer is an additional battery protection layer
         } else {
-            this.log.info('Streaming disabled - stopping RTSP process');
+            this.log.debug('Streaming disabled - stopping RTSP process');
 
             // Stop RTSP process
             if (this.neolinkManager.isRtspRunning()) {
                 await this.neolinkManager.stopRtsp();
                 await this.setStateAsync('info.neolink_status', 'stopped', true);
-                this.log.info('✅ RTSP stream stopped');
+                this.log.debug('RTSP stream stopped');
             }
 
             await this.setStateAsync('streams.enable', false, true);
@@ -2890,12 +2960,12 @@ class ReoLinkCamAdapter extends Adapter {
             const autoDisableSeconds = this.config.mqttAutoDisableSeconds || 30;
 
             this.log.info(`MQTT enabled - auto-disable in ${autoDisableSeconds}s (battery protection)`);
-            this.log.info(`MQTT Broker: ${broker}:${port}`);
-            this.log.info(
+            this.log.debug(`MQTT Broker: ${broker}:${port}`);
+            this.log.debug(
                 `MQTT topics: neolink/${this.neolinkConfig.name}/status/{motion,battery_level,floodlight,preview}`,
             );
-            this.log.info(`Control topics: neolink/${this.neolinkConfig.name}/control/{floodlight,pir}`);
-            this.log.info(`Query topics: neolink/${this.neolinkConfig.name}/query/{battery,pir,preview}`);
+            this.log.debug(`Control topics: neolink/${this.neolinkConfig.name}/control/floodlight`);
+            this.log.debug(`Query topics: neolink/${this.neolinkConfig.name}/query/{battery,preview}`);
 
             // Start MQTT process
             try {
@@ -2944,13 +3014,11 @@ class ReoLinkCamAdapter extends Adapter {
                     await this.mqttHelper.subscribe(`neolink/${cameraName}/status/motion`);
                     await this.mqttHelper.subscribe(`neolink/${cameraName}/status/battery_level`);
                     await this.mqttHelper.subscribe(`neolink/${cameraName}/status/floodlight`);
-                    await this.mqttHelper.subscribe(`neolink/${cameraName}/status/pir`);
                     await this.mqttHelper.subscribe(`neolink/${cameraName}/status/preview`);
 
-                    // Re-initialize states (overwrites defaults with current values if camera published)
+                    // Re-initialize states
                     await this.setStateAsync('status.motion', false, true);
                     await this.setStateAsync('status.floodlight', false, true);
-                    await this.setStateAsync('status.pir', false, true);
 
                     // Send initial battery query via CLI (not MQTT - subprocess doesn't respond to MQTT queries)
                     void this.queryBatteryStatus();
@@ -2960,7 +3028,7 @@ class ReoLinkCamAdapter extends Adapter {
                         void this.queryBatteryStatus();
                     }, 30000);
 
-                    this.log.info(`✅ Subscribed to status topics for ${cameraName}`);
+                    this.log.debug(`Subscribed to status topics for ${cameraName}`);
                 } catch (error) {
                     this.log.error(`Failed to connect MQTT client: ${error instanceof Error ? error.message : error}`);
                     this.log.error(`Check MQTT broker settings: ${broker}:${port}`);
@@ -2970,14 +3038,14 @@ class ReoLinkCamAdapter extends Adapter {
 
             // Set auto-disable timer
             this.mqttAutoDisableTimer = this.setTimeout(async () => {
-                this.log.info(`Auto-disabling MQTT after ${autoDisableSeconds}s (battery protection)`);
+                this.log.debug(`Auto-disabling MQTT after ${autoDisableSeconds}s (battery protection)`);
                 await this.setStateAsync('mqtt.enable', false, false);
                 this.mqttAutoDisableTimer = undefined;
             }, autoDisableSeconds * 1000);
 
             await this.setStateAsync('mqtt.enable', true, true);
         } else {
-            this.log.info('MQTT disabled - battery saving mode');
+            this.log.debug('MQTT disabled - battery saving mode');
 
             // Clear battery query interval
             if (this.mqttBatteryQueryInterval) {
@@ -2988,7 +3056,7 @@ class ReoLinkCamAdapter extends Adapter {
             // Stop MQTT process
             try {
                 await this.neolinkManager.stopMqtt();
-                this.log.info('MQTT process stopped');
+                this.log.debug('MQTT process stopped');
             } catch (error) {
                 this.log.error(`Failed to stop MQTT process: ${error instanceof Error ? error.message : error}`);
             }
@@ -3026,20 +3094,18 @@ class ReoLinkCamAdapter extends Adapter {
             // Ensure RTSP stream is running
             const wasRunning = this.neolinkManager.isRtspRunning();
             if (!wasRunning) {
-                this.log.info('Starting RTSP stream for snapshot...');
+                this.log.debug('Starting RTSP stream for snapshot...');
                 if (!this.neolinkConfig) {
                     throw new Error('Neolink config not available');
                 }
                 await this.neolinkManager.startRtsp(this.neolinkConfig);
                 await this.setStateAsync('info.neolink_status', 'running', true);
 
-                // Wait for stream to be fully ready (neolink needs time to connect, login, and setup RTSP server)
-                // This takes approximately 5-8 seconds based on network latency and camera response
-                this.log.info('Waiting for RTSP stream to be fully ready (8 seconds)...');
+                this.log.debug('Waiting for RTSP stream to be fully ready (8 seconds)...');
                 await new Promise(resolve => setTimeout(resolve, 8000));
             }
 
-            this.log.info('Capturing snapshot from mainStream...');
+            this.log.debug('Capturing snapshot from mainStream...');
             const cameraName = this.neolinkConfig!.name;
             const rtspUrl = this.neolinkManager.getRtspUrl(cameraName, 'mainStream');
             this.log.debug(`Snapshot RTSP URL: ${rtspUrl}`);
@@ -3049,13 +3115,14 @@ class ReoLinkCamAdapter extends Adapter {
             const base64Image = `data:image/jpeg;base64,${imageBuffer.toString('base64')}`;
 
             await this.setStateAsync('snapshotImage', base64Image, true);
+            await this.setStateAsync('status.preview', base64Image, true);
             await this.setStateAsync('snapshotStatus', 'success', true);
 
             this.log.info(`Snapshot captured successfully (${imageBuffer.length} bytes)`);
 
             // If we started the stream for the snapshot, stop it after capture to save battery
             if (!wasRunning) {
-                this.log.info('Stopping RTSP stream (started for snapshot only)');
+                this.log.debug('Stopping RTSP stream after snapshot');
                 await this.neolinkManager.stopRtsp();
                 await this.setStateAsync('info.neolink_status', 'stopped', true);
             }
@@ -3095,7 +3162,7 @@ class ReoLinkCamAdapter extends Adapter {
             if (match && match[1]) {
                 const batteryLevel = parseInt(match[1], 10);
                 await this.setStateAsync('status.battery_level', batteryLevel, true);
-                this.log.info(`[Battery Query] Battery level: ${batteryLevel}%`);
+                this.log.debug(`[Battery Query] Battery level: ${batteryLevel}%`);
             } else {
                 this.log.warn(
                     `[Battery Query] Could not parse battery level from response: ${xmlOutput.substring(0, 200)}`,
@@ -3133,9 +3200,6 @@ class ReoLinkCamAdapter extends Adapter {
             case 'floodlight':
                 await this.handleFloodlightStatusMessage(payload);
                 break;
-            case 'pir':
-                await this.handlePirStatusMessage(payload);
-                break;
             case 'preview':
                 await this.handlePreviewMessage(payload);
                 break;
@@ -3171,7 +3235,7 @@ class ReoLinkCamAdapter extends Adapter {
             return;
         }
 
-        this.log.info(`Battery level: ${batteryLevel}%`);
+        this.log.debug(`Battery level via MQTT: ${batteryLevel}%`);
         await this.setStateAsync('status.battery_level', batteryLevel, true);
     }
 
@@ -3185,31 +3249,6 @@ class ReoLinkCamAdapter extends Adapter {
     }
 
     /**
-     * Handle PIR status message
-     */
-    private async handlePirStatusMessage(payload: string): Promise<void> {
-        let enabled: boolean | null = null;
-
-        if (payload === 'on' || payload === 'off') {
-            enabled = payload === 'on';
-        } else {
-            const xmlMatch = payload.match(/<enable>(\d+)<\/enable>/);
-            if (xmlMatch && xmlMatch[1]) {
-                enabled = xmlMatch[1] === '1';
-            }
-        }
-
-        if (enabled === null) {
-            this.log.warn(`[MQTT] Could not parse PIR status payload: ${payload.substring(0, 200)}`);
-            return;
-        }
-
-        this.log.info(`PIR status: ${enabled ? 'ON' : 'OFF'}`);
-        await this.setStateAsync('status.pir', enabled, true);
-        await this.setStateAsync('pir', enabled, true);
-    }
-
-    /**
      * Handle preview image message
      */
     private async handlePreviewMessage(payload: string): Promise<void> {
@@ -3219,14 +3258,36 @@ class ReoLinkCamAdapter extends Adapter {
     }
 
     /**
-     * Handle floodlight control for battery camera
+     * Handle floodlight control for battery camera.
+     * Auto-starts MQTT if not running (waits for connection).
      */
     private async handleBatteryCamFloodlight(enabled: boolean): Promise<void> {
         if (!this.mqttHelper) {
-            this.log.error('Floodlight control failed: MQTT not connected');
-            this.log.error('Enable MQTT in adapter settings (mqtt.enable = true)');
-            await this.setStateAsync('floodlight', !enabled, true); // Revert state
-            return;
+            if (!this.neolinkConfig || !this.neolinkManager) {
+                this.log.error('Floodlight control failed: neolink not initialized');
+                await this.setStateAsync('floodlight', !enabled, true);
+                return;
+            }
+
+            if (!this.neolinkManager.isMqttRunning()) {
+                // MQTT completely off — start it now (ack=true so onStateChange doesn't re-trigger)
+                this.log.info('Floodlight: MQTT not active, starting automatically...');
+                await this.setStateAsync('mqtt.enable', true, true);
+                await this.handleBatteryCamMqttControl();
+            } else {
+                // MQTT process is starting concurrently — wait up to 10s for helper to connect
+                let waited = 0;
+                while (!this.mqttHelper && waited < 10000) {
+                    await new Promise(resolve => setTimeout(resolve, 200));
+                    waited += 200;
+                }
+            }
+
+            if (!this.mqttHelper) {
+                this.log.error('Floodlight control failed: MQTT connection timeout');
+                await this.setStateAsync('floodlight', !enabled, true);
+                return;
+            }
         }
 
         try {
@@ -3240,23 +3301,76 @@ class ReoLinkCamAdapter extends Adapter {
     }
 
     /**
-     * Handle PIR control for battery camera
+     * Move battery camera PTZ to a preset position via neolink CLI
      */
-    private async handleBatteryCamPir(enabled: boolean): Promise<void> {
-        if (!this.mqttHelper) {
-            this.log.error('PIR control failed: MQTT not connected');
-            this.log.error('Enable MQTT in adapter settings (mqtt.enable = true)');
-            await this.setStateAsync('pir', !enabled, true);
+    private async handleBatteryCamPtzPreset(presetId: number): Promise<void> {
+        if (!this.neolinkManager) {
+            this.log.error('PTZ preset failed: neolink not initialized');
             return;
         }
-
         try {
-            this.log.info(`Setting PIR: ${enabled ? 'ON' : 'OFF'}`);
-            await this.mqttHelper.setPir(this.neolinkConfig!.name, enabled);
-            await this.setStateAsync('pir', enabled, true);
+            this.log.debug(`PTZ: moving to preset ${presetId}`);
+            await this.neolinkManager.ptzPreset(presetId);
         } catch (error) {
-            this.log.error(`PIR control failed: ${error instanceof Error ? error.message : error}`);
-            await this.setStateAsync('pir', !enabled, true);
+            this.log.error(`PTZ preset failed: ${error instanceof Error ? error.message : error}`);
+        }
+    }
+
+    /**
+     * Start PTZ movement in a direction. Auto-stops after 5s as safety net.
+     * In VIS: configure button with mousedown=true, mouseup=false for hold-to-move.
+     */
+    private async handleBatteryCamPtzStart(direction: 'left' | 'right' | 'up' | 'down'): Promise<void> {
+        if (this.ptzAutoStopTimer) {
+            this.clearTimeout(this.ptzAutoStopTimer);
+            this.ptzAutoStopTimer = undefined;
+        }
+        // Reset all other direction switches
+        for (const d of ['up', 'down', 'left', 'right']) {
+            if (d !== direction) {
+                await this.setStateAsync(`ptz.${d}`, false, true);
+            }
+        }
+        const speed = ((await this.getStateAsync('ptz.speed'))?.val as number) ?? 32;
+        await this.handleBatteryCamPtzMove(direction, speed);
+        // Auto-stop after 5s
+        this.ptzAutoStopTimer = this.setTimeout(async () => {
+            this.ptzAutoStopTimer = undefined;
+            await this.handleBatteryCamPtzStop();
+        }, 5000);
+    }
+
+    /**
+     * Stop PTZ movement.
+     */
+    private async handleBatteryCamPtzStop(): Promise<void> {
+        if (this.ptzAutoStopTimer) {
+            this.clearTimeout(this.ptzAutoStopTimer);
+            this.ptzAutoStopTimer = undefined;
+        }
+        for (const d of ['up', 'down', 'left', 'right']) {
+            await this.setStateAsync(`ptz.${d}`, false, true);
+        }
+        await this.handleBatteryCamPtzMove('stop');
+    }
+
+    /**
+     * Move battery camera PTZ in a direction via neolink CLI
+     */
+    private async handleBatteryCamPtzMove(
+        direction: 'left' | 'right' | 'up' | 'down' | 'stop',
+        speed?: number,
+    ): Promise<void> {
+        if (!this.neolinkManager) {
+            this.log.error('PTZ move failed: neolink not initialized');
+            return;
+        }
+        try {
+            const amount = direction === 'stop' ? 0 : 100;
+            this.log.debug(`PTZ: moving ${direction}`);
+            await this.neolinkManager.ptzMove(direction, amount, speed);
+        } catch (error) {
+            this.log.error(`PTZ move failed: ${error instanceof Error ? error.message : error}`);
         }
     }
 
@@ -3271,7 +3385,7 @@ class ReoLinkCamAdapter extends Adapter {
         }
 
         try {
-            this.log.info(`Sending query: ${query}`);
+            this.log.debug(`Sending query: ${query}`);
             await this.mqttHelper.sendQuery(this.neolinkConfig!.name, query);
         } catch (error) {
             this.log.error(`Query ${query} failed: ${error instanceof Error ? error.message : error}`);

@@ -9,8 +9,21 @@
 import type { ChildProcess } from 'child_process';
 import { spawn, exec } from 'child_process';
 import * as fs from 'fs';
+import * as os from 'os';
 import * as path from 'path';
 import { ensureNeolinkBinary } from './neolink-binary';
+
+/** Returns the primary non-loopback IPv4 address of this machine, or 127.0.0.1 as fallback. */
+function getLocalIp(): string {
+    for (const ifaces of Object.values(os.networkInterfaces())) {
+        for (const iface of ifaces ?? []) {
+            if (iface.family === 'IPv4' && !iface.internal) {
+                return iface.address;
+            }
+        }
+    }
+    return '127.0.0.1';
+}
 
 export interface NeolinkConfig {
     name: string;
@@ -58,8 +71,10 @@ export class NeolinkManager {
      * Downloads once on first call, then returns the cached path.
      */
     private async ensureBinary(): Promise<string> {
-        if (this.cachedBinaryPath) return this.cachedBinaryPath;
-        const binary = await ensureNeolinkBinary((msg) => this.log('neolink', 'info', msg));
+        if (this.cachedBinaryPath) {
+            return this.cachedBinaryPath;
+        }
+        const binary = await ensureNeolinkBinary(msg => this.log('neolink', 'info', msg));
         this.cachedBinaryPath = binary.path;
         return binary.path;
     }
@@ -73,7 +88,7 @@ export class NeolinkManager {
         }
 
         const binaryPath = await this.ensureBinary();
-        this.log(config.name, 'info', `Starting RTSP process: ${binaryPath}`);
+        this.log(config.name, 'debug', `Starting RTSP process: ${binaryPath}`);
 
         // Generate RTSP-only config (no MQTT section)
         const configPath = this.generateRtspConfig(config);
@@ -97,7 +112,7 @@ export class NeolinkManager {
         // Store config for battery queries
         this.currentConfig = config;
 
-        this.log(config.name, 'info', `RTSP process started (PID: ${proc.pid})`);
+        this.log(config.name, 'debug', `RTSP process started (PID: ${proc.pid})`);
         await this.waitForReady(config.name, 'rtsp', 5000);
     }
 
@@ -110,7 +125,7 @@ export class NeolinkManager {
         }
 
         const binaryPath = await this.ensureBinary();
-        this.log(config.name, 'info', `Starting MQTT process: ${binaryPath}`);
+        this.log(config.name, 'debug', `Starting MQTT process: ${binaryPath}`);
 
         // Generate MQTT-only config
         const configPath = this.generateMqttConfig(config);
@@ -134,7 +149,7 @@ export class NeolinkManager {
         // Store config for battery queries
         this.currentConfig = config;
 
-        this.log(config.name, 'info', `MQTT process started (PID: ${proc.pid})`);
+        this.log(config.name, 'debug', `MQTT process started (PID: ${proc.pid})`);
         await this.waitForReady(config.name, 'mqtt', 3000);
     }
 
@@ -187,7 +202,7 @@ export class NeolinkManager {
      * Get RTSP stream URL
      */
     public getRtspUrl(cameraName: string, stream: 'mainStream' | 'subStream' = 'mainStream'): string {
-        return `rtsp://127.0.0.1:8554/${cameraName}/${stream}`;
+        return `rtsp://${getLocalIp()}:8554/${cameraName}/${stream}`;
     }
 
     /**
@@ -271,7 +286,7 @@ discovery = "local"
             const lines = data.toString().split('\n');
             lines.forEach(line => {
                 if (line.trim()) {
-                    this.log(cameraName, 'info', `[${prefix}] ${line.trim()}`);
+                    this.log(cameraName, 'debug', `[${prefix}] ${line.trim()}`);
                 }
             });
         });
@@ -280,13 +295,17 @@ discovery = "local"
             const lines = data.toString().split('\n');
             lines.forEach(line => {
                 if (line.trim()) {
-                    this.log(cameraName, 'warn', `[${prefix}] ${line.trim()}`);
+                    this.log(cameraName, 'debug', `[${prefix}] ${line.trim()}`);
                 }
             });
         });
 
         proc.on('exit', (code, signal) => {
-            this.log(cameraName, 'warn', `${prefix} process exited (code: ${code}, signal: ${signal})`);
+            // SIGTERM/SIGKILL = intentional stop by us → debug
+            // unexpected exit (code != 0, no signal) → warn
+            const intentional = signal === 'SIGTERM' || signal === 'SIGKILL';
+            const level = intentional || code === 0 ? 'debug' : 'warn';
+            this.log(cameraName, level, `${prefix} process exited (code: ${code}, signal: ${signal})`);
             if (mode === 'rtsp') {
                 this.rtspProcess = null;
             } else {
@@ -308,7 +327,7 @@ discovery = "local"
      * Stop a process
      */
     private async stopProcess(procInfo: NeolinkProcess): Promise<void> {
-        this.log(procInfo.config.name, 'info', `Stopping ${procInfo.mode.toUpperCase()} process...`);
+        this.log(procInfo.config.name, 'debug', `Stopping ${procInfo.mode.toUpperCase()} process...`);
 
         procInfo.process.kill('SIGTERM');
 
@@ -331,7 +350,7 @@ discovery = "local"
         // Config will be regenerated when process starts again
         this.log(procInfo.config.name, 'debug', `Config file kept at: ${procInfo.configPath}`);
 
-        this.log(procInfo.config.name, 'info', `${procInfo.mode.toUpperCase()} process stopped`);
+        this.log(procInfo.config.name, 'debug', `${procInfo.mode.toUpperCase()} process stopped`);
     }
 
     /**
@@ -350,7 +369,7 @@ discovery = "local"
             await new Promise(resolve => setTimeout(resolve, 500));
         }
 
-        this.log(cameraName, 'info', `${mode.toUpperCase()} process ready`);
+        this.log(cameraName, 'debug', `${mode.toUpperCase()} process ready`);
     }
 
     /**
@@ -360,6 +379,95 @@ discovery = "local"
         if (this.logCallback) {
             this.logCallback(cameraName, level, message);
         }
+    }
+
+    /**
+     * Get the path to an available neolink config file (RTSP or MQTT).
+     * PTZ and other CLI commands need any valid config with camera credentials.
+     */
+    private getAvailableConfigPath(): string {
+        if (!this.currentConfig) {
+            throw new Error('Neolink not configured');
+        }
+        const rtspConfig = path.join(this.dataDir, `neolink-rtsp-${this.currentConfig.name}.toml`);
+        if (fs.existsSync(rtspConfig)) {
+            return rtspConfig;
+        }
+
+        const mqttConfig = path.join(this.dataDir, `neolink-mqtt-${this.currentConfig.name}.toml`);
+        if (fs.existsSync(mqttConfig)) {
+            return mqttConfig;
+        }
+
+        throw new Error('No neolink config found - start RTSP or MQTT first');
+    }
+
+    /**
+     * Move PTZ camera to a stored preset via CLI
+     */
+    public async ptzPreset(presetId: number): Promise<void> {
+        if (!this.currentConfig) {
+            throw new Error('Neolink not configured');
+        }
+
+        const configPath = this.getAvailableConfigPath();
+        const neolinkBin = await this.ensureBinary();
+        const cmd = `"${neolinkBin}" ptz --config="${configPath}" ${this.currentConfig.name} preset ${presetId}`;
+
+        this.log(this.currentConfig.name, 'debug', `PTZ preset command: ${cmd}`);
+
+        return new Promise((resolve, reject) => {
+            exec(cmd, { timeout: 10000 }, (error: any, _stdout: any, stderr: any) => {
+                if (error) {
+                    this.log(this.currentConfig!.name, 'error', `PTZ preset failed: ${error.message}`);
+                    reject(new Error(`PTZ preset failed: ${error.message}`));
+                    return;
+                }
+                if (stderr) {
+                    this.log(this.currentConfig!.name, 'debug', `PTZ preset stderr: ${stderr.trim()}`);
+                }
+                this.log(this.currentConfig!.name, 'debug', `PTZ moved to preset ${presetId}`);
+                resolve();
+            });
+        });
+    }
+
+    /**
+     * Move PTZ camera in a direction via CLI
+     * direction: left | right | up | down | stop
+     * amount: number of steps (use 1 for directional, 0 for stop)
+     * speed: optional movement speed
+     */
+    public async ptzMove(
+        direction: 'left' | 'right' | 'up' | 'down' | 'stop',
+        amount: number = 1,
+        speed?: number,
+    ): Promise<void> {
+        if (!this.currentConfig) {
+            throw new Error('Neolink not configured');
+        }
+
+        const configPath = this.getAvailableConfigPath();
+        const neolinkBin = await this.ensureBinary();
+        const speedArg = speed !== undefined ? ` ${speed}` : '';
+        const cmd = `"${neolinkBin}" ptz --config="${configPath}" ${this.currentConfig.name} control ${amount} ${direction}${speedArg}`;
+
+        this.log(this.currentConfig.name, 'debug', `PTZ move command: ${cmd}`);
+
+        return new Promise((resolve, reject) => {
+            exec(cmd, { timeout: 10000 }, (error: any, _stdout: any, stderr: any) => {
+                if (error) {
+                    this.log(this.currentConfig!.name, 'error', `PTZ move failed: ${error.message}`);
+                    reject(new Error(`PTZ move failed: ${error.message}`));
+                    return;
+                }
+                if (stderr) {
+                    this.log(this.currentConfig!.name, 'debug', `PTZ move stderr: ${stderr.trim()}`);
+                }
+                this.log(this.currentConfig!.name, 'debug', `PTZ moved ${direction}`);
+                resolve();
+            });
+        });
     }
 
     /**
