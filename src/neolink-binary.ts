@@ -12,6 +12,7 @@ import * as os from 'os';
 import * as path from 'path';
 import * as fs from 'fs';
 import * as https from 'https';
+import AdmZip from 'adm-zip';
 
 /** Pinned neolink version — update this when upgrading neolink */
 export const NEOLINK_VERSION = '0.6.2';
@@ -25,32 +26,37 @@ export interface NeolinkBinary {
     arch: string;
 }
 
-/**
- * Map the current platform/arch to the neolink binary filename used in GitHub Releases.
- */
-function getBinaryName(): string {
+/** Map platform/arch to the ZIP asset name on GitHub Releases */
+function getAssetName(): string {
     const platform = os.platform();
     const arch = os.arch();
 
     if (platform === 'linux') {
-        if (arch === 'x64') return 'neolink-linux-x64';
-        if (arch === 'arm64') return 'neolink-linux-arm64';
-        if (arch === 'arm') return 'neolink-linux-arm';
-        throw new Error(
-            `Unsupported Linux architecture: ${arch}. Battery camera support requires x64, arm64, or arm.`,
-        );
+        if (arch === 'x64') {
+            return 'neolink_linux_x86_64_ubuntu.zip';
+        }
+        if (arch === 'arm64') {
+            return 'neolink_linux_arm64.zip';
+        }
+        if (arch === 'arm') {
+            return 'neolink_linux_armhf.zip';
+        }
+        throw new Error(`Unsupported Linux architecture: ${arch}. Requires x64, arm64, or arm.`);
     }
     if (platform === 'darwin') {
-        // macOS: one binary covers both Intel (x64) and Apple Silicon (arm64)
-        return 'neolink-macos-x64';
+        return 'neolink_macos.zip';
     }
     if (platform === 'win32') {
-        return 'neolink-win-x64.exe';
+        return 'neolink_windows.zip';
     }
     throw new Error(
-        `Unsupported platform: ${platform} ${arch}. ` +
-            `Battery camera support requires Linux (x64/arm64/arm), macOS, or Windows (x64).`,
+        `Unsupported platform: ${platform} ${arch}. Requires Linux (x64/arm64/arm), macOS, or Windows (x64).`,
     );
+}
+
+/** Local binary name after extraction */
+function getLocalBinaryName(): string {
+    return os.platform() === 'win32' ? 'neolink.exe' : 'neolink';
 }
 
 /**
@@ -63,7 +69,7 @@ function downloadFile(url: string, destPath: string): Promise<void> {
 
         const request = (currentUrl: string): void => {
             https
-                .get(currentUrl, (response) => {
+                .get(currentUrl, response => {
                     // Follow redirects (GitHub releases redirect to S3)
                     if (response.statusCode === 301 || response.statusCode === 302) {
                         const location = response.headers.location;
@@ -86,14 +92,14 @@ function downloadFile(url: string, destPath: string): Promise<void> {
                         resolve();
                     });
                 })
-                .on('error', (err) => {
+                .on('error', err => {
                     fs.unlink(destPath, () => {}); // Clean up partial file
                     reject(err);
                 });
         };
 
         request(url);
-        file.on('error', (err) => {
+        file.on('error', err => {
             fs.unlink(destPath, () => {}); // Clean up partial file
             reject(err);
         });
@@ -109,16 +115,15 @@ function downloadFile(url: string, destPath: string): Promise<void> {
 export async function ensureNeolinkBinary(logFn?: (msg: string) => void): Promise<NeolinkBinary> {
     const platform = os.platform();
     const arch = os.arch();
-    const binaryName = getBinaryName();
+    const localName = getLocalBinaryName();
     const libDir = path.join(__dirname, '..', 'lib');
-    const binaryPath = path.join(libDir, binaryName);
+    const binaryPath = path.join(libDir, localName);
 
-    // Ensure lib/ directory exists (it won't be in the repo anymore)
     if (!fs.existsSync(libDir)) {
         fs.mkdirSync(libDir, { recursive: true });
     }
 
-    // Check if binary already exists and is executable — skip download if so
+    // Check if binary already exists and is executable
     if (fs.existsSync(binaryPath)) {
         if (platform !== 'win32') {
             try {
@@ -132,21 +137,49 @@ export async function ensureNeolinkBinary(logFn?: (msg: string) => void): Promis
         }
     }
 
-    // Download binary from GitHub Releases
-    const downloadUrl = `${RELEASE_BASE}/${binaryName}`;
+    // Download ZIP from GitHub Releases
+    const assetName = getAssetName();
+    const downloadUrl = `${RELEASE_BASE}/${assetName}`;
+    const zipPath = path.join(libDir, assetName);
+
     logFn?.(`Downloading neolink v${NEOLINK_VERSION} for ${platform}/${arch} ...`);
-    logFn?.(`  Source: ${downloadUrl}`);
+    logFn?.(`Source: ${downloadUrl}`);
 
     try {
-        await downloadFile(downloadUrl, binaryPath);
+        await downloadFile(downloadUrl, zipPath);
     } catch (err) {
-        // Clean up any partial download before throwing
-        if (fs.existsSync(binaryPath)) fs.unlinkSync(binaryPath);
+        if (fs.existsSync(zipPath)) {
+            fs.unlinkSync(zipPath);
+        }
         throw new Error(
             `Failed to download neolink binary: ${err instanceof Error ? err.message : err}\n` +
                 `You can manually place the binary at: ${binaryPath}\n` +
                 `Download URL: ${downloadUrl}`,
         );
+    }
+
+    // Extract neolink binary from ZIP using adm-zip (pure Node.js, no system dependencies)
+    try {
+        const zip = new AdmZip(zipPath);
+        const targetName = platform === 'win32' ? 'neolink.exe' : 'neolink';
+        const entry = zip.getEntries().find(e => path.basename(e.entryName) === targetName && !e.isDirectory);
+        if (!entry) {
+            throw new Error(`Binary '${targetName}' not found inside ${assetName}`);
+        }
+        fs.writeFileSync(binaryPath, entry.getData());
+    } catch (err) {
+        if (fs.existsSync(binaryPath)) {
+            fs.unlinkSync(binaryPath);
+        }
+        if (fs.existsSync(zipPath)) {
+            fs.unlinkSync(zipPath);
+        }
+        throw new Error(`Failed to extract neolink ZIP: ${err instanceof Error ? err.message : err}`);
+    }
+
+    // Clean up ZIP
+    if (fs.existsSync(zipPath)) {
+        fs.unlinkSync(zipPath);
     }
 
     // Make executable on Unix

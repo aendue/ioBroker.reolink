@@ -22,8 +22,6 @@ admin/i18n/*/flat.txt
 build/
 
 # Neolink binaries — downloaded automatically at runtime, not bundled (AGPL-3.0)
-lib/neolink-linux-x64
-lib/neolink-linux-arm64
-lib/neolink-linux-arm
-lib/neolink-macos-x64
-lib/neolink-win-x64.exe
+lib/neolink
+lib/neolink.exe
+lib/*.zip
