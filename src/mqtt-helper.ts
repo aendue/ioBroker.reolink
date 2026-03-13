@@ -109,14 +109,6 @@ export class MqttHelper {
     }
 
     /**
-     * Send query command via neolink MQTT
-     */
-    public async sendQuery(cameraName: string, query: 'battery' | 'pir' | 'preview'): Promise<void> {
-        const topic = `neolink/${cameraName}/query/${query}`;
-        await this.publish(topic, '');
-    }
-
-    /**
      * Subscribe to MQTT topic
      */
     public async subscribe(topic: string): Promise<void> {
