@@ -215,8 +215,10 @@ RLC-420-5MP, E1 Zoom, RLC-522, RLC-810A, RLC-823A, Duo 3 PoE
     Placeholder for the next version (at the beginning of the line):
     ### **WORK IN PROGRESS**
 -->
+
 ### **WORK IN PROGRESS**
 * (bloop16) Battery camera support via neolink
+* (oelison) Adapter requires node.js >= 20 now.
 
 ### 1.3.0 (2025-12-20)
 * (agross) AiCfg config
@@ -276,7 +278,7 @@ RLC-420-5MP, E1 Zoom, RLC-522, RLC-810A, RLC-823A, Duo 3 PoE
 ## License
 MIT License
 
-Copyright (c) 2025 Andy Grundt <andygrundt@gmail.com>
+Copyright (c) 2026 Andy Grundt <andygrundt@gmail.com>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
