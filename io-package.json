@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "reolink",
-    "version": "1.3.0",
+    "version": "1.4.0",
     "news": {
+      "1.4.0": {
+        "en": "Battery camera support via neolink\nAdapter requires node.js >= 20 now.",
+        "de": "Batteriekamera-Unterstützung über Neolink\nAdapter benötigt jetzt node.js >= 20.",
+        "ru": "Поддержка аккумуляторной камеры через neolink\nАдаптер требует node.js >= 20 сейчас.",
+        "pt": "Suporte à câmera de bateria via neolink\nO adaptador requer gnod.js >= 20 agora.",
+        "nl": "Accu camera ondersteuning via neolink\nVoor de adapter zijn node.js < 20 nu nodig.",
+        "fr": "Prise en charge de la caméra par la batterie via néolink\nAdaptateur nécessite node.js >= 20 maintenant.",
+        "it": "Supporto della fotocamera della batteria tramite neolink\nAdattatore richiede node.js >= 20 ora.",
+        "es": "Soporte de cámara de batería mediante neolink\nAdaptador requiere node.js >= 20 ahora.",
+        "pl": "Obsługa kamery akumulatorowej poprzez neolink\nAdapter wymaga node.js > = 20 teraz.",
+        "uk": "Підтримка камери акумулятора через Neolink\nАдаптер вимагає node.js >= 20 тепер.",
+        "zh-cn": "通过新链接的电池相机支持\n适配器需要节点.js >= 20 现在."
+      },
       "1.3.0": {
         "en": "AiCfg config\nbump some libs #202\nmigration to ts\nrevoking classic token #204\nstate changes from info log to debug #206",
         "de": "AiCfg config\nstoßen einige libs #202\nmigration in ts\nklassisch token #204\nzustandsänderungen von info log zu debug #206",
@@ -80,19 +93,6 @@
         "pl": "[# 22] (https: / / github.com / aendue / ioBroker.reolink / issues / 22) hasło z trochę więcej specjalnych znaków działa teraz\nostrzeżenia adaptera ustąpiły",
         "uk": "[#22](https://github.com/aendue/ioBroker.reolink/products/22) пароля з деякими спеціальними chars працює зараз\nпопередження адаптерів",
         "zh-cn": "[#22] (https://github.com/aendue/ioBroker.reolink/issues/22) (中文(简体) ). 密码加上一些特殊的字符\n已解决适配器警告"
-      },
-      "1.1.1": {
-        "en": "removed warnings from adapter check\nadded ftp support\nchannel now distinguishing most requests\n[#79](https://github.com/aendue/ioBroker.reolink/issues/79) error messages with more info where",
-        "de": "entfernte warnungen aus der adapterprüfung\nftp unterstützung\nkanal jetzt unterscheiden die meisten anfragen\n[#79](https://github.com/aendue/ioBroker.reolink/issues/79) Fehlermeldungen mit mehr Info wo",
-        "ru": "удаленные предупреждения от проверки адаптера\nдобавленная поддержка ftp\nканал теперь различает большинство запросов\n[#79] (https://github.com/aendue/ioBroker.reolink/issues/79) сообщения об ошибках с большей информацией, где",
-        "pt": "avisos removidos da verificação do adaptador\nsuporte de ftp adicionado\ncanal agora distingue a maioria dos pedidos\n[#79](https://github.com/aendue/ioBroker.reolink/issues/79) mensagens de erro com mais informações onde",
-        "nl": "verwijderde waarschuwingen van adaptercontrole\ntoegevoegde ftp-ondersteuning\nkanaal dat nu de meeste verzoeken onderscheidt\n[#79](https://github.com/aendue/ioBroker.reolink/issues/79) foutmeldingen met meer informatie waar",
-        "fr": "avertissements supprimés de la vérification de l'adaptateur\nsupport ftp ajouté\ncanal distinguant maintenant la plupart des requêtes\n[#79](https://github.com/aendue/ioBroker.reolink/issues/79) messages d'erreur avec plus d'informations où",
-        "it": "avvisi rimossi dal controllo dell'adattatore\nsupporto ftp aggiunto\ncanale ora distinguere la maggior parte delle richieste\n[#79](https://github.com/aendue/ioBroker.reolink/issues/79) messaggi di errore con più informazioni dove",
-        "es": "advertencias eliminadas de la comprobación del adaptador\napoyo añadido ftp\ncanal ahora distingue la mayoría de las solicitudes\n[#79](https://github.com/aendue/ioBroker.reolink/issues/79) mensajes de error con más información",
-        "pl": "usunięte ostrzeżenia z kontroli adaptera\ndodane wsparcie ftp\nkanał wyróżniający większość żądań\n[# 79] (https: / / github.com / aendue / ioBroker.reolink / issues / 79) komunikaty błędów z więcej informacji, gdzie",
-        "uk": "видалити попередження з перевірки адаптера\nдодано підтримку ftp\nканал тепер відрізняє більшість запитів\n[#79](https://github.com/aendue/ioBroker.reolink/issues/79) повідомлення про помилки з більш детальною інформацією, де",
-        "zh-cn": "从适配器检查中删除警告\n添加 ftp 支持\n频道现在区分大多数请求\n[79] (https://github.com/aendue/ioBroker.reolink/issues/79) (中文(简体) ). 带有更多信息的错误信息"
       }
     },
     "titleLang": {

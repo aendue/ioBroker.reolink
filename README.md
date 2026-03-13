@@ -215,8 +215,7 @@ RLC-420-5MP, E1 Zoom, RLC-522, RLC-810A, RLC-823A, Duo 3 PoE
     Placeholder for the next version (at the beginning of the line):
     ### **WORK IN PROGRESS**
 -->
-
-### **WORK IN PROGRESS**
+### 1.4.0 (2026-03-13)
 * (bloop16) Battery camera support via neolink
 * (oelison) Adapter requires node.js >= 20 now.
 
