@@ -109,42 +109,42 @@ Battery cameras (Argus PT, Argus 3 Pro, ...) use a proprietary protocol and are 
   - Auto-disables after 30 s (configurable)
   - Stream pauses automatically when no client is connected
 
-- **`mqtt.enable`** (boolean) — Enable MQTT integration for motion/battery/floodlight
-  - No streaming needed — camera stays idle between events
-  - Auto-disables after 30 s
+- **`mqtt.enable`** (boolean) — Enable MQTT integration for motion/battery/floodlight/PIR
+  - Required for status updates and floodlight/PIR control
+  - Auto-disables after configurable timeout (battery protection)
   - Configure broker in adapter settings
 
 ### Battery Camera States
 
-| State | Type | Description |
-|---|---|---|
-| `streams.enable` | boolean | Start/stop RTSP stream |
-| `streams.mainStream` | string | RTSP URL for main stream |
-| `streams.subStream` | string | RTSP URL for sub stream |
-| `mqtt.enable` | boolean | Start/stop MQTT integration |
-| `floodlight` | boolean | Switch floodlight on/off (auto-starts MQTT if needed) |
-| `snapshot` | button | Capture snapshot via RTSP |
-| `query.battery` | button | Request current battery level |
-| `query.preview` | button | Capture snapshot and write to `status.preview` |
-| `ptz.preset` | number | Move camera to saved preset position |
-| `ptz.up/down/left/right` | boolean | Hold-to-move in direction (`true`=start, `false`=stop) |
-| `ptz.speed` | number | PTZ movement speed (1–100, default 32) |
-| `status.motion` | boolean | Motion detected |
-| `status.battery_level` | number | Battery level in % |
-| `status.floodlight` | boolean | Floodlight state |
-| `status.preview` | string | Last preview image (base64, data URI) |
-| `snapshotImage` | string | Last snapshot image (base64, data URI) |
-| `snapshotStatus` | string | Snapshot status: `idle` / `capturing` / `success` / `error` |
-| `info.neolink_status` | string | neolink process state: `stopped` / `running` |
+| State | Type | R/W | Description |
+|---|---|---|---|
+| `streams.enable` | boolean | R/W | Start/stop RTSP stream |
+| `streams.mainStream` | string | R | RTSP URL for main stream |
+| `streams.subStream` | string | R | RTSP URL for sub stream |
+| `mqtt.enable` | boolean | R/W | Start/stop MQTT integration |
+| `floodlight` | boolean | R/W | Floodlight on/off — status via MQTT, control via MQTT (auto-starts MQTT) |
+| `pir` | boolean | R/W | PIR sensor on/off — status via MQTT, control via MQTT (auto-starts MQTT) |
+| `snapshot` | button | W | Capture snapshot via RTSP |
+| `query.battery` | button | W | Query battery level via neolink CLI |
+| `query.preview` | button | W | Capture snapshot via RTSP |
+| `ptz.preset` | number | R/W | Move camera to saved preset position (0–9) |
+| `ptz.up/down/left/right` | boolean | R/W | Hold-to-move (`true`=start, `false`=stop) |
+| `ptz.speed` | number | R/W | PTZ movement speed (1–100, default 32) |
+| `status.motion` | boolean | R | Motion detected (via MQTT) |
+| `status.battery_level` | number | R | Battery level in % (via neolink CLI, periodic) |
+
+| `snapshotImage` | string | R | Last snapshot image (base64, data URI) |
+| `snapshotStatus` | string | R | Snapshot status: `idle` / `capturing` / `success` / `error` |
+| `info.neolink_status` | string | R | neolink process state: `stopped` / `running` |
 
 ### PTZ Control
 
-PTZ works via neolink — no MQTT needed, commands run a short-lived neolink CLI process.
+PTZ works via neolink CLI — no MQTT needed.
 
 **Directional movement** (`ptz.up/down/left/right`):
 - Set to `true` → camera starts moving, auto-stops after 5 s
 - Set to `false` → camera stops immediately
-- In VIS: configure a button with `mousedown=true` / `mouseup=false` for intuitive hold-to-move
+- In VIS: configure a button with `mousedown=true` / `mouseup=false` for hold-to-move
 - Adjust speed with `ptz.speed` (1–100)
 
 **Presets** (`ptz.preset`): Set to a preset number (0–9) to move to that saved position.
@@ -153,13 +153,13 @@ PTZ works via neolink — no MQTT needed, commands run a short-lived neolink CLI
 
 ✅ RTSP streams (main + sub)  
 ✅ Snapshot capture (requires ffmpeg)  
-✅ Floodlight control (via MQTT, auto-started on demand)  
+✅ Floodlight control (status + control via MQTT)  
+✅ PIR sensor control (status + control via MQTT)  
 ✅ Motion detection (via MQTT)  
 ✅ Battery level (periodic via neolink CLI)  
-✅ PTZ control — directional movement + presets  
-✅ Multi-platform — neolink binary downloaded automatically (Linux x64/ARM/ARM64, macOS, Windows)  
-
-❌ PIR control (not yet implemented)  
+✅ Preview image (auto-updated via MQTT)  
+✅ PTZ control — directional movement + presets (via neolink CLI)  
+✅ Multi-platform — neolink binary downloaded automatically (Linux x64/ARM/ARM64, macOS)  
 
 
 ### MQTT Setup
@@ -170,15 +170,18 @@ Configure in adapter settings:
 - **Username / Password** (optional)
 - **Auto-disable timeout** (default: `30` s, battery protection)
 
-MQTT is used by the camera to publish status updates. The adapter subscribes automatically when `mqtt.enable` is set to `true`.
+MQTT is used for camera status updates and control. The adapter subscribes automatically when `mqtt.enable` is set to `true`.
 
 Status topics (published by camera via neolink):
 - `neolink/<camera>/status/motion`
 - `neolink/<camera>/status/battery_level`
 - `neolink/<camera>/status/floodlight`
+- `neolink/<camera>/status/pir`
+- `neolink/<camera>/status/preview`
 
 Control topics (published by adapter to camera):
 - `neolink/<camera>/control/floodlight`
+- `neolink/<camera>/control/pir`
 
 ### Troubleshooting
 
@@ -188,7 +191,8 @@ Control topics (published by adapter to camera):
 | "libgstrtspserver not found" | `sudo apt install gstreamer1.0-rtsp` |
 | Stream won't connect | Enable `streams.enable`, wait ~5 s for neolink to start |
 | Snapshot fails | Install ffmpeg: `sudo apt install ffmpeg` |
-| Floodlight doesn't react | MQTT starts automatically — wait ~3 s after clicking |
+| Floodlight/PIR doesn't react | MQTT starts automatically — wait ~3 s after toggling |
+| MQTT `NotAuthorized` | Check broker credentials; neolink uses `credentials = ["user", "pass"]` format |
 | Battery drains fast | Disable streaming when not in use; use MQTT only for motion |
 | PTZ unresponsive | Each PTZ command needs ~2 s (P2P camera login) — this is normal |
 
