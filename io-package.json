@@ -142,6 +142,7 @@
     "loglevel": "info",
     "tier": 3,
     "mode": "daemon",
+    "main": "build/main.js",
     "type": "alarm",
     "nogit": true,
     "compact": true,
