@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "reolink",
-    "version": "1.4.0",
+    "version": "1.4.1",
     "news": {
+      "1.4.1": {
+        "en": "fix issue #187",
+        "de": "fehlersuche #187",
+        "ru": "устранение проблемы #187",
+        "pt": "corrigir o problema #187",
+        "nl": "probleem #187 oplossen",
+        "fr": "correction du numéro 187",
+        "it": "problema fix #187",
+        "es": "solucionar el problema #187",
+        "pl": "fix issue # 187",
+        "uk": "виправлено проблему #187",
+        "zh-cn": "固定问题187"
+      },
       "1.4.0": {
         "en": "Battery camera support via neolink\nAdapter requires node.js >= 20 now.",
         "de": "Batteriekamera-Unterstützung über Neolink\nAdapter benötigt jetzt node.js >= 20.",
@@ -80,19 +93,6 @@
         "pl": "aktualizacja informacji o dysku\nuri enconding jest switchable (pomaga czasami przez jeden specjalny znak)\n# 28 PTZ check added",
         "uk": "оновлення інформації диска\nuri enconding (допомагає іноді одним особливим char)\n#28 ПТЗ додано",
         "zh-cn": "更新磁盘信息\nuri 编码是可切换的(有时由一个特殊的字符帮助)\n#28 PTZ (英语). 检查已添加"
-      },
-      "1.1.2": {
-        "en": "[#22](https://github.com/aendue/ioBroker.reolink/issues/22) password with some more special chars works now\nadapter warnings resolved",
-        "de": "[#22](https://github.com/aendue/ioBroker.reolink/issues/22) Passwort mit einigen weiteren speziellen Zeichen funktioniert jetzt\nadapterwarnungen behoben",
-        "ru": "[#22] (https://github.com/aendue/ioBroker.reolink/issues/22) пароль с некоторыми более специальными харями работает сейчас\nпредупреждения адаптера разрешены",
-        "pt": "[#22](https://github.com/aendue/ioBroker.reolink/issues/22) senha com algumas obras de caridade mais especiais agora\navisos do adaptador resolvidos",
-        "nl": "[#22](https://github.com/aendue/ioBroker.reolink/issues/22) wachtwoord met wat meer speciale tekens werkt nu\nadapter waarschuwingen verdwenen",
-        "fr": "[#22](https://github.com/aendue/ioBroker.reolink/issues/22) mot de passe avec des caractères plus spéciaux fonctionne maintenant\navertissements d'adaptateur résolus",
-        "it": "[#22](https://github.com/aendue/ioBroker.reolink/issues/22) password con alcune opere di beneficenza più speciali ora\navvertenze adattatori risolte",
-        "es": "[#22](https://github.com/aendue/ioBroker.reolink/issues/22) contraseña con algunos más obras de caridad especiales ahora\nadmisiones de adaptador resueltas",
-        "pl": "[# 22] (https: / / github.com / aendue / ioBroker.reolink / issues / 22) hasło z trochę więcej specjalnych znaków działa teraz\nostrzeżenia adaptera ustąpiły",
-        "uk": "[#22](https://github.com/aendue/ioBroker.reolink/products/22) пароля з деякими спеціальними chars працює зараз\nпопередження адаптерів",
-        "zh-cn": "[#22] (https://github.com/aendue/ioBroker.reolink/issues/22) (中文(简体) ). 密码加上一些特殊的字符\n已解决适配器警告"
       }
     },
     "titleLang": {
