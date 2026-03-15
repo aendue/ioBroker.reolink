@@ -1307,6 +1307,7 @@ class ReoLinkCamAdapter extends Adapter {
         await this.getMdState();
         await this.getAiState();
         await this.getAiCfg();
+        await this.getMailNotification();
         this.refreshIntervalRecordingTimer++;
         if (this.refreshIntervalRecordingTimer > this.refreshIntervalRecording) {
             await this.getRecording();
@@ -1364,7 +1365,7 @@ class ReoLinkCamAdapter extends Adapter {
                     if ('error' in mail) {
                         this.log.debug(`Error or not supported ${this.getMailNotification.name}`);
                         await this.setState('settings.EmailNotification', {
-                            val: 'Error or not supported',
+                            val: false,
                             ack: true,
                         });
                     } else {
@@ -1373,7 +1374,7 @@ class ReoLinkCamAdapter extends Adapter {
                             ack: true,
                         });
                         await this.setState('settings.EmailNotification', {
-                            val: mail.value.Email.enable,
+                            val: Boolean(mail.value.Email.enable),
                             ack: true,
                         });
                     }
@@ -1389,39 +1390,33 @@ class ReoLinkCamAdapter extends Adapter {
         }
     }
 
-    async setMailNotification(state: 0 | 1 | 2): Promise<void> {
-        if (state === 0 || state === 1) {
-            const mail = await this.getStateAsync('RAW.Email');
-            if (mail) {
-                const val = JSON.parse(mail.val as string).value.Email;
-
-                const mailCmd: ReolinkCommandSetEmailV20[] = [
-                    {
-                        cmd: 'SetEmailV20',
-                        param: {
-                            Email: {
-                                ssl: val.ssl,
-                                enable: state ? 1 : 0,
-                                smtpPort: val.smtpPort,
-                                smtpServer: val.smtpServer,
-                                userName: val.userName,
-                                nickName: val.nickName,
-                                addr1: val.addr1,
-                                addr2: val.addr2,
-                                addr3: val.addr3,
-                                interval: val.interval,
-                            },
+    async setMailNotification(state: boolean): Promise<void> {
+        const mail = await this.getStateAsync('RAW.Email');
+        if (mail) {
+            const val = JSON.parse(mail.val as string).value.Email;
+            const mailCmd: ReolinkCommandSetEmailV20[] = [
+                {
+                    cmd: 'SetEmailV20',
+                    param: {
+                        Email: {
+                            ssl: val.ssl,
+                            enable: state ? 1 : 0,
+                            smtpPort: val.smtpPort,
+                            smtpServer: val.smtpServer,
+                            userName: val.userName,
+                            nickName: val.nickName,
+                            addr1: val.addr1,
+                            addr2: val.addr2,
+                            addr3: val.addr3,
+                            interval: val.interval,
                         },
                     },
-                ];
-                // this.log.debug(JSON.stringify(mailCmd));
-                await this.sendCmd(mailCmd, 'SetEmailV20');
-            } else {
-                this.log.error('Set mail notification: Cannot find RAW.Email!');
-            }
+                },
+            ];
+            // this.log.debug(JSON.stringify(mailCmd));
+            await this.sendCmd(mailCmd, 'SetEmailV20');
         } else {
-            this.log.error('Set mail notification: Value not supported!');
-            await this.getMailNotification();
+            this.log.error('Set mail notification: Cannot find RAW.Email!');
         }
     }
 
@@ -1609,7 +1604,7 @@ class ReoLinkCamAdapter extends Adapter {
                 } else if (propName === 'ptzGuardTimeout') {
                     await this.setPtzGuardTimeout(parseInt(state.val as string, 10));
                 } else if (propName === 'EmailNotification') {
-                    await this.setMailNotification(parseInt(state.val as string, 10) as 0 | 1);
+                    await this.setMailNotification(Boolean(state.val));
                 }
                 if (propName === 'reboot') {
                     await this.rebootCam();
