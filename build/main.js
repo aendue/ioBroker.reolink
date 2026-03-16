@@ -246,7 +246,7 @@ class ReoLinkCamAdapter extends adapter_core_1.Adapter {
         //create state dynamically
         const state = await this.getStateAsync('device.name');
         if (state) {
-            await this.setState('settings.EmailNotification', state.val);
+            await this.setState('Device.Name', state.val);
         }
         await this.getMailNotification();
         this.subscribeStates('settings.EmailNotification');
@@ -2194,8 +2194,7 @@ class ReoLinkCamAdapter extends adapter_core_1.Adapter {
             common: {
                 role: 'value',
                 name: { en: 'disc formatted', de: 'festplatte formatiert' },
-                type: 'number',
-                unit: 'MB',
+                type: 'boolean',
                 read: true,
                 write: false,
             },
@@ -2395,7 +2394,7 @@ class ReoLinkCamAdapter extends adapter_core_1.Adapter {
         });
         await this.setObjectNotExistsAsync('device.wifi', {
             type: 'state',
-            common: { role: 'value', name: { en: 'wifi', de: 'wifi' }, type: 'boolean', read: true, write: false },
+            common: { role: 'value', name: { en: 'wifi', de: 'wifi' }, type: 'number', read: true, write: false },
             native: {},
         });
         // --- Settings ---
@@ -2409,7 +2408,7 @@ class ReoLinkCamAdapter extends adapter_core_1.Adapter {
             common: {
                 role: 'switch',
                 name: { en: 'infrared', de: 'infrarot' },
-                type: 'boolean',
+                type: 'string',
                 read: true,
                 write: true,
             },
@@ -2483,7 +2482,13 @@ class ReoLinkCamAdapter extends adapter_core_1.Adapter {
         });
         await this.setObjectNotExistsAsync('settings.ftp', {
             type: 'state',
-            common: { role: 'switch', name: { en: 'FTP', de: 'FTP' }, type: 'boolean', read: true, write: true },
+            common: {
+                role: 'switch',
+                name: { en: 'FTP', de: 'FTP' },
+                type: 'boolean',
+                read: true,
+                write: true,
+            },
             native: {},
         });
         await this.setObjectNotExistsAsync('settings.autoFocus', {
@@ -2491,7 +2496,7 @@ class ReoLinkCamAdapter extends adapter_core_1.Adapter {
             common: {
                 role: 'switch',
                 name: { en: 'auto focus', de: 'autofokus' },
-                type: 'boolean',
+                type: 'string',
                 read: true,
                 write: true,
             },
@@ -2513,7 +2518,7 @@ class ReoLinkCamAdapter extends adapter_core_1.Adapter {
             common: {
                 role: 'value',
                 name: { en: 'set zoom focus', de: 'zoom fokus setzen' },
-                type: 'object',
+                type: 'number',
                 read: true,
                 write: true,
             },
@@ -2521,7 +2526,7 @@ class ReoLinkCamAdapter extends adapter_core_1.Adapter {
         });
         await this.setObjectNotExistsAsync('settings.focus', {
             type: 'state',
-            common: { role: 'value', name: { en: 'focus', de: 'fokus' }, type: 'object', read: true, write: false },
+            common: { role: 'value', name: { en: 'focus', de: 'fokus' }, type: 'number', read: true, write: false },
             native: {},
         });
         await this.setObjectNotExistsAsync('settings.scheduledRecording', {
