@@ -23,7 +23,7 @@
   },
   "dependencies": {
     "@iobroker/adapter-core": "^3.3.2",
-    "adm-zip": "^0.5.16",
+    "adm-zip": "^0.5.17",
     "axios": "^1.13.6",
     "mqtt": "^5.15.0"
   },
