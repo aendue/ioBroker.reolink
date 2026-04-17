@@ -686,8 +686,11 @@ class ReoLinkCamAdapter extends adapter_core_1.Adapter {
                                 ack: true,
                             });
                             break;
+                        case 'AudioAlarmPlay':
+                            // error detail already logged above; no state update needed
+                            break;
                         default:
-                            this.log.error('not defined');
+                            this.log.error(`sendCmd ${cmdName}: not defined`);
                     }
                 }
             }
@@ -1024,7 +1027,6 @@ class ReoLinkCamAdapter extends adapter_core_1.Adapter {
                 action: 0,
                 param: {
                     alarm_mode: 'times',
-                    manual_switch: 0,
                     times: count,
                     channel: Number(this.config.cameraChannel),
                 },
@@ -1502,7 +1504,16 @@ class ReoLinkCamAdapter extends adapter_core_1.Adapter {
                     await this.setScheduledRecording(state.val === true || state.val === 'true' || state.val === 1 || state.val === '1');
                 }
                 else if (propName === 'playAlarm') {
-                    await this.audioAlarmPlay(parseInt(state.val, 10));
+                    let alarmCount;
+                    if (typeof state.val === 'boolean') {
+                        alarmCount = state.val ? 1 : 0;
+                    }
+                    else {
+                        alarmCount = parseInt(state.val, 10);
+                    }
+                    if (alarmCount > 0 && !isNaN(alarmCount)) {
+                        await this.audioAlarmPlay(alarmCount);
+                    }
                 }
                 else if (propName === 'switchLed') {
                     await this.switchWhiteLed(state.val === true || state.val === 'true' || state.val === 1 || state.val === '1');
@@ -2543,9 +2554,12 @@ class ReoLinkCamAdapter extends adapter_core_1.Adapter {
         await this.setObjectNotExistsAsync('settings.playAlarm', {
             type: 'state',
             common: {
-                role: 'switch',
-                name: { en: 'play alarm', de: 'alarm abspielen' },
-                type: 'boolean',
+                role: 'value',
+                name: { en: 'play alarm (number of times)', de: 'alarm abspielen (anzahl)' },
+                type: 'number',
+                min: 0,
+                max: 10,
+                def: 1,
                 read: true,
                 write: true,
             },
