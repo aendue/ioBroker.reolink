@@ -136,7 +136,6 @@ export type ReolinkCommandAudioAlarmPlay = {
     action: 0;
     param: {
         alarm_mode: 'times';
-        manual_switch: 0;
         times: number;
         channel: number;
     };
