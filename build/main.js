@@ -686,9 +686,6 @@ class ReoLinkCamAdapter extends adapter_core_1.Adapter {
                                 ack: true,
                             });
                             break;
-                        case 'AudioAlarmPlay':
-                            // error detail already logged above; no state update needed
-                            break;
                         default:
                             this.log.error(`sendCmd ${cmdName}: not defined`);
                     }
@@ -1504,14 +1501,8 @@ class ReoLinkCamAdapter extends adapter_core_1.Adapter {
                     await this.setScheduledRecording(state.val === true || state.val === 'true' || state.val === 1 || state.val === '1');
                 }
                 else if (propName === 'playAlarm') {
-                    let alarmCount;
-                    if (typeof state.val === 'boolean') {
-                        alarmCount = state.val ? 1 : 0;
-                    }
-                    else {
-                        alarmCount = parseInt(state.val, 10);
-                    }
-                    if (alarmCount > 0 && !isNaN(alarmCount)) {
+                    const alarmCount = state.val;
+                    if (alarmCount > 0) {
                         await this.audioAlarmPlay(alarmCount);
                     }
                 }
