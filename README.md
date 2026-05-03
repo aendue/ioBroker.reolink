@@ -310,6 +310,8 @@ Reolink Video Doorbell PoE (D340P)
 * (oelison) maybe the last node 16 version
 * (oelison) booleans are now false/true and not 0/1
 
+[Older changelogs can be found there](CHANGELOG_OLD.md)
+
 ## License
 MIT License
 
