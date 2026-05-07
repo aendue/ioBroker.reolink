@@ -8,10 +8,10 @@
  * in the adapter package, which caused licensing concerns.
  */
 
-import * as os from 'os';
-import * as path from 'path';
-import * as fs from 'fs';
-import * as https from 'https';
+import * as os from 'node:os';
+import * as path from 'node:path';
+import * as fs from 'node:fs';
+import * as https from 'node:https';
 import AdmZip from 'adm-zip';
 
 /** Pinned neolink version — update this when upgrading neolink */
@@ -197,7 +197,7 @@ export async function ensureNeolinkBinary(logFn?: (msg: string) => void): Promis
 export function getNeolinkVersion(binaryPath: string): Promise<string> {
     return new Promise((resolve, reject) => {
         // eslint-disable-next-line @typescript-eslint/no-require-imports
-        const { spawn } = require('child_process');
+        const { spawn } = require('node:child_process');
         const proc = spawn(binaryPath, ['--version']);
 
         let output = '';
