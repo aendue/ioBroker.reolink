@@ -9,6 +9,8 @@ export type ReoLinkCamAdapterConfig = {
     sslvalid: boolean;
     UriEncodedPassword: boolean;
     isBatteryCam: boolean;
+    isDoorbell: boolean;
+    onvifPort: number;
     cameraUID: string;
     cameraBatteryName: string;
     streamAutoDisableSeconds: number;
@@ -25,6 +27,8 @@ export type ReolinkCommandName =
     | 'GetAiCfg'
     | 'GetAiState'
     | 'GetAutoFocus'
+    | 'GetAudioFileList'
+    | 'GetAutoReply'
     | 'GetDevInfo'
     | 'GetEmailV20'
     | 'GetHddInfo'
@@ -37,7 +41,9 @@ export type ReolinkCommandName =
     | 'GetZoomFocus'
     | 'PtzCheck'
     | 'PtzCtrl'
+    | 'QuickReplyPlay'
     | 'SetAiCfg'
+    | 'SetAutoReply'
     | 'SetAutoFocus'
     | 'SetEmailV20'
     | 'SetFtp'
@@ -220,6 +226,44 @@ export type ReolinkCommandSetEmailV20 = {
         };
     };
 };
+// --- Doorbell ---
+
+export type ReolinkCommandGetAudioFileList = {
+    cmd: 'GetAudioFileList';
+    action: 1;
+    param: {
+        channel: number;
+    };
+};
+
+export type ReolinkCommandGetAutoReply = {
+    cmd: 'GetAutoReply';
+    action: 0;
+    param: {
+        channel: number;
+    };
+};
+
+export type ReolinkCommandSetAutoReply = {
+    cmd: 'SetAutoReply';
+    param: {
+        AutoReply: {
+            enable: 0 | 1;
+            audioId: number;
+            timeout: number;
+        };
+    };
+};
+
+export type ReolinkCommandQuickReplyPlay = {
+    cmd: 'QuickReplyPlay';
+    action: 0;
+    param: {
+        id: number;
+        channel: number;
+    };
+};
+
 export type ReolinkCommandLogin = {
     cmd: 'Login';
     param: { User: { Version: '0'; userName: string; password: string } };
@@ -327,4 +371,6 @@ export type ReolinkCommand =
     | ReolinkCommandSetPtzGuard
     | ReolinkCommandSetEmailV20
     | ReolinkCommandLogin
+    | ReolinkCommandSetAutoReply
+    | ReolinkCommandQuickReplyPlay
     | ReolinkCommandSetAutoFocus;

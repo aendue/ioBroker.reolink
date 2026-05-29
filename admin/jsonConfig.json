@@ -94,7 +94,33 @@
                     "label": "Battery-powered camera (uses neolink)",
                     "help": "Enable for Argus 3 Pro, B400, D400, E1, and similar battery cameras"
                 },
+                "isDoorbell": {
+                    "newLine": true,
+                    "hidden": "!!data.isBatteryCam",
+                    "type": "checkbox",
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 6,
+                    "lg": 4,
+                    "xl": 4,
+                    "label": "Doorbell camera",
+                    "help": "Enable for wired Reolink doorbells (adds visitor/ring detection, quick reply and auto reply)"
+                },
+                "onvifPort": {
+                    "hidden": "!data.isDoorbell || !!data.isBatteryCam",
+                    "type": "number",
+                    "min": 1,
+                    "max": 65535,
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 6,
+                    "lg": 4,
+                    "xl": 4,
+                    "label": "ONVIF Port",
+                    "help": "Port for ONVIF doorbell ring events (Reolink default: 8000)"
+                },
                 "cameraUID": {
+                    "newLine": true,
                     "hidden": "!data.isBatteryCam",
                     "type": "text",
                     "xs": 12,

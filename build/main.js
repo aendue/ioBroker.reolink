@@ -47,6 +47,7 @@ const neolink_manager_1 = require("./neolink-manager");
 const dependency_check_1 = require("./dependency-check");
 const snapshot_helper_1 = require("./snapshot-helper");
 const mqtt_helper_1 = require("./mqtt-helper");
+const onvif_helper_1 = require("./onvif-helper");
 // typescript
 exports.ReolinkErrorMessages = {
     [-1]: 'Missing parameters',
@@ -145,6 +146,8 @@ class ReoLinkCamAdapter extends adapter_core_1.Adapter {
     mqttHelper = null;
     mqttBatteryQueryInterval = undefined;
     mqttControlBusy = false;
+    onvifHelper = null;
+    visitorClearTimer = undefined;
     constructor(options) {
         super({
             ...options,
@@ -271,6 +274,83 @@ class ReoLinkCamAdapter extends adapter_core_1.Adapter {
         this.subscribeStates('settings.ptzGuardTimeout');
         this.subscribeStates('command.reboot');
         this.subscribeStates('ai_config.*');
+        // Doorbell-specific features (wired Reolink doorbells)
+        if (this.config.isDoorbell) {
+            await this.getAudioFileList();
+            await this.getAutoReply();
+            this.subscribeStates('doorbell.quickReplyPlay');
+            this.subscribeStates('doorbell.autoReplyEnabled');
+            this.subscribeStates('doorbell.autoReplyFileId');
+            this.subscribeStates('doorbell.autoReplyTimeout');
+            this.log.debug('doorbell states subscribed');
+            // The button press ("visitor") is delivered via ONVIF events, not the
+            // HTTP polling API, so start an ONVIF PullPoint listener.
+            await this.startDoorbellOnvif();
+        }
+    }
+    /**
+     * Start the ONVIF event listener used to detect the doorbell button press.
+     * Reolink doorbells report the press as an ONVIF "visitor" event; this is the
+     * only reliable way to detect it (GetAiState has no visitor field).
+     */
+    async startDoorbellOnvif() {
+        // Derive a bare host from the configured camera IP (strip any protocol)
+        const host = this.config.cameraIp.replace(/^https?:\/\//, '').replace(/\/.*$/, '');
+        const port = Number(this.config.onvifPort) || 8000;
+        this.onvifHelper = new onvif_helper_1.OnvifHelper({
+            host,
+            port,
+            username: this.config.cameraUser,
+            password: this.config.cameraPassword,
+        }, (active) => {
+            void this.handleVisitorEvent(active);
+        }, (level, message) => {
+            switch (level) {
+                case 'error':
+                    this.log.error(`[ONVIF] ${message}`);
+                    break;
+                case 'warn':
+                    this.log.warn(`[ONVIF] ${message}`);
+                    break;
+                case 'debug':
+                    this.log.debug(`[ONVIF] ${message}`);
+                    break;
+                default:
+                    this.log.info(`[ONVIF] ${message}`);
+            }
+        });
+        try {
+            await this.onvifHelper.connect();
+            this.log.info(`Doorbell ONVIF listener started (${host}:${port})`);
+        }
+        catch (error) {
+            this.log.error(`Could not start ONVIF listener for doorbell (${host}:${port}): ${error instanceof Error ? error.message : error}`);
+            this.log.error('Check that ONVIF is enabled on the camera and the ONVIF port is correct (Reolink default: 8000).');
+            this.onvifHelper = null;
+        }
+    }
+    /**
+     * Handle a doorbell "visitor" (button press) ONVIF event.
+     * Reflects it in sensor.visitor.state. Because the press is momentary and the
+     * camera does not always send an explicit "false", a fallback timer clears the
+     * state after 10s if no clear event arrives.
+     *
+     * @param active true = button pressed / ringing, false = cleared
+     */
+    async handleVisitorEvent(active) {
+        if (this.visitorClearTimer) {
+            this.clearTimeout(this.visitorClearTimer);
+            this.visitorClearTimer = undefined;
+        }
+        await this.setStateAsync('sensor.visitor.state', { val: active, ack: true });
+        if (active) {
+            this.log.info('Doorbell pressed (visitor)!');
+            // Fallback auto-clear in case no explicit "cleared" event is sent
+            this.visitorClearTimer = this.setTimeout(async () => {
+                this.visitorClearTimer = undefined;
+                await this.setStateAsync('sensor.visitor.state', { val: false, ack: true });
+            }, 10000);
+        }
     }
     // function for getting motion detection
     async getMdState() {
@@ -381,6 +461,24 @@ class ReoLinkCamAdapter extends adapter_core_1.Adapter {
                     catch (error) {
                         this.log.debug(`get ai state vehicle: ${error}`);
                         this.log.debug('vehicle state not found.');
+                    }
+                    // Doorbell button press is reported as the `visitor` AI type
+                    if (this.config.isDoorbell && AiValues.value.visitor) {
+                        try {
+                            await this.setState('sensor.visitor.state', {
+                                val: !!AiValues.value.visitor.alarm_state,
+                                ack: true,
+                            });
+                            await this.setState('sensor.visitor.support', {
+                                val: !!AiValues.value.visitor.support,
+                                ack: true,
+                            });
+                            this.log.debug(`visitor (doorbell) detection:${AiValues.value.visitor.alarm_state}`);
+                        }
+                        catch (error) {
+                            this.log.debug(`get ai state visitor: ${error}`);
+                            this.log.debug('visitor state not found.');
+                        }
                     }
                 }
             }
@@ -657,7 +755,8 @@ class ReoLinkCamAdapter extends adapter_core_1.Adapter {
             try {
                 // cmd, channel, rs, user, password
                 const snapShot = await this.reolinkApiClient.get(this.genUrl('Snap', true, true));
-                const contentType = snapShot.headers['content-type'];
+                const rawContentType = snapShot.headers['content-type'];
+                const contentType = typeof rawContentType === 'string' ? rawContentType : 'image/jpeg';
                 const base64data = Buffer.from(snapShot.data, 'binary').toString('base64');
                 return { type: contentType, base64: base64data };
             }
@@ -1367,6 +1466,132 @@ class ReoLinkCamAdapter extends adapter_core_1.Adapter {
         }
     }
     /**
+     * Get the list of audio files stored on the doorbell (used as quick-reply / auto-reply messages).
+     * The raw list (id, fileName, audioLen, ...) is stored as JSON so the user can look up file ids.
+     * Doorbell cameras only.
+     */
+    async getAudioFileList() {
+        if (!this.reolinkApiClient) {
+            return;
+        }
+        try {
+            const cmd = [
+                {
+                    cmd: 'GetAudioFileList',
+                    action: 1,
+                    param: { channel: Number(this.config.cameraChannel) },
+                },
+            ];
+            const response = await this.reolinkApiClient.post(this.genUrl('GetAudioFileList', false, false), cmd);
+            this.log.debug(`audioFileList ${JSON.stringify(response.status)}: ${JSON.stringify(response.data)}`);
+            if (response.status !== 200) {
+                return;
+            }
+            const data = response.data[0];
+            if ('error' in data) {
+                this.log.debug(`Error or not supported ${this.getAudioFileList.name}`);
+                return;
+            }
+            await this.setState('doorbell.audioFileList', {
+                val: JSON.stringify(data.value.AudioFileList),
+                ack: true,
+            });
+        }
+        catch (error) {
+            const errorMessage = error.message.toString();
+            if (errorMessage.includes('timeout of')) {
+                this.log.debug(`get audio file list: ${error}`);
+            }
+            else {
+                this.log.error(`get audio file list: ${error}`);
+            }
+        }
+    }
+    /**
+     * Get auto-reply configuration of the doorbell (enable, fileId, timeout).
+     * Doorbell cameras only.
+     */
+    async getAutoReply() {
+        if (!this.reolinkApiClient) {
+            return;
+        }
+        try {
+            const cmd = [
+                {
+                    cmd: 'GetAutoReply',
+                    action: 0,
+                    param: { channel: Number(this.config.cameraChannel) },
+                },
+            ];
+            const response = await this.reolinkApiClient.post(this.genUrl('GetAutoReply', false, false), cmd);
+            this.log.debug(`autoReply ${JSON.stringify(response.status)}: ${JSON.stringify(response.data)}`);
+            if (response.status !== 200) {
+                return;
+            }
+            const data = response.data[0];
+            if ('error' in data) {
+                this.log.debug(`Error or not supported ${this.getAutoReply.name}`);
+                return;
+            }
+            const autoReply = data.value.AutoReply;
+            await this.setState('doorbell.autoReplyEnabled', { val: !!autoReply.enable, ack: true });
+            await this.setState('doorbell.autoReplyFileId', { val: autoReply.fileId, ack: true });
+            await this.setState('doorbell.autoReplyTimeout', { val: autoReply.timeout, ack: true });
+        }
+        catch (error) {
+            const errorMessage = error.message.toString();
+            if (errorMessage.includes('timeout of')) {
+                this.log.debug(`get auto reply: ${error}`);
+            }
+            else {
+                this.log.error(`get auto reply: ${error}`);
+            }
+        }
+    }
+    /**
+     * Set auto-reply configuration of the doorbell. Reads the current fileId/timeout/enabled
+     * states so a change to any single one keeps the others intact.
+     * Doorbell cameras only.
+     */
+    async setAutoReply() {
+        const enabledState = await this.getStateAsync('doorbell.autoReplyEnabled');
+        const fileIdState = await this.getStateAsync('doorbell.autoReplyFileId');
+        const timeoutState = await this.getStateAsync('doorbell.autoReplyTimeout');
+        const command = [
+            {
+                cmd: 'SetAutoReply',
+                param: {
+                    AutoReply: {
+                        enable: enabledState?.val ? 1 : 0,
+                        audioId: Number(fileIdState?.val ?? 0),
+                        timeout: Number(timeoutState?.val ?? 0),
+                    },
+                },
+            },
+        ];
+        await this.sendCmd(command, 'SetAutoReply');
+        await this.getAutoReply();
+    }
+    /**
+     * Make the doorbell play one of its stored audio files (quick reply).
+     * Doorbell cameras only.
+     *
+     * @param id audio file id (see doorbell.audioFileList)
+     */
+    async quickReplyPlay(id) {
+        const command = [
+            {
+                cmd: 'QuickReplyPlay',
+                action: 0,
+                param: {
+                    id,
+                    channel: Number(this.config.cameraChannel),
+                },
+            },
+        ];
+        await this.sendCmd(command, 'QuickReplyPlay');
+    }
+    /**
      * Is called when adapter shuts down - callback has to be called under any circumstances!
      *
      * @param callback last execution
@@ -1386,11 +1611,18 @@ class ReoLinkCamAdapter extends adapter_core_1.Adapter {
             if (this.mqttBatteryQueryInterval) {
                 this.clearInterval(this.mqttBatteryQueryInterval);
             }
-            // Stop MQTT client + neolink processes
+            if (this.visitorClearTimer) {
+                this.clearTimeout(this.visitorClearTimer);
+            }
+            // Stop MQTT client + neolink processes + ONVIF listener
             const promises = [];
             if (this.mqttHelper) {
                 this.log.debug('Disconnecting MQTT client...');
                 promises.push(this.mqttHelper.disconnect());
+            }
+            if (this.onvifHelper) {
+                this.log.debug('Disconnecting ONVIF listener...');
+                promises.push(this.onvifHelper.disconnect());
             }
             if (this.neolinkManager) {
                 this.log.debug('Stopping neolink processes (MQTT first, then RTSP)...');
@@ -1529,6 +1761,14 @@ class ReoLinkCamAdapter extends adapter_core_1.Adapter {
                 }
                 else if (propName === 'EmailNotification') {
                     await this.setMailNotification(Boolean(state.val));
+                }
+                else if (propName === 'quickReplyPlay') {
+                    await this.quickReplyPlay(parseInt(state.val, 10));
+                }
+                else if (propName === 'autoReplyEnabled' ||
+                    propName === 'autoReplyFileId' ||
+                    propName === 'autoReplyTimeout') {
+                    await this.setAutoReply();
                 }
                 if (propName === 'reboot') {
                     await this.rebootCam();
@@ -2634,8 +2874,144 @@ class ReoLinkCamAdapter extends adapter_core_1.Adapter {
             },
             native: {},
         });
+        // --- Doorbell (only for wired Reolink doorbells) ---
+        if (this.config.isDoorbell) {
+            await this.createDoorbellStates();
+        }
+        else {
+            await this.removeDoorbellStates();
+        }
         this.log.debug('HTTP camera states created');
     }
+    /**
+     * State objects specific to wired Reolink doorbells.
+     * Created only when isDoorbell = true (see createHttpCamStates).
+     */
+    async createDoorbellStates() {
+        // Visitor (doorbell button press) detection — reported via GetAiState `visitor` type
+        await this.setObjectNotExistsAsync('sensor.visitor', {
+            type: 'channel',
+            common: { name: { en: 'visitor', de: 'Besucher' } },
+            native: {},
+        });
+        await this.setObjectNotExistsAsync('sensor.visitor.state', {
+            type: 'state',
+            common: {
+                role: 'sensor.motion',
+                name: { en: 'doorbell pressed', de: 'Türklingel gedrückt' },
+                type: 'boolean',
+                read: true,
+                write: false,
+            },
+            native: {},
+        });
+        await this.setObjectNotExistsAsync('sensor.visitor.support', {
+            type: 'state',
+            common: {
+                role: 'value',
+                name: { en: 'visitor support', de: 'Besucher Unterstützung' },
+                type: 'boolean',
+                read: true,
+                write: false,
+            },
+            native: {},
+        });
+        await this.setObjectNotExistsAsync('doorbell', {
+            type: 'channel',
+            common: { name: { en: 'doorbell', de: 'Türklingel' } },
+            native: {},
+        });
+        await this.setObjectNotExistsAsync('doorbell.audioFileList', {
+            type: 'state',
+            common: {
+                role: 'json',
+                name: { en: 'audio file list', de: 'Audiodateiliste' },
+                type: 'string',
+                read: true,
+                write: false,
+                desc: 'List of stored audio files (id, fileName, ...) usable for quick reply / auto reply',
+            },
+            native: {},
+        });
+        await this.setObjectNotExistsAsync('doorbell.quickReplyPlay', {
+            type: 'state',
+            common: {
+                role: 'value',
+                name: { en: 'play quick reply (audio file id)', de: 'Schnellantwort abspielen (Audiodatei-ID)' },
+                type: 'number',
+                read: false,
+                write: true,
+                desc: 'Write an audio file id to make the doorbell play it (see doorbell.audioFileList)',
+            },
+            native: {},
+        });
+        await this.setObjectNotExistsAsync('doorbell.autoReplyEnabled', {
+            type: 'state',
+            common: {
+                role: 'switch',
+                name: { en: 'auto reply enabled', de: 'Automatische Antwort aktiviert' },
+                type: 'boolean',
+                read: true,
+                write: true,
+            },
+            native: {},
+        });
+        await this.setObjectNotExistsAsync('doorbell.autoReplyFileId', {
+            type: 'state',
+            common: {
+                role: 'value',
+                name: { en: 'auto reply audio file id', de: 'Audiodatei-ID der automatischen Antwort' },
+                type: 'number',
+                read: true,
+                write: true,
+                desc: 'Audio file id played as auto reply (see doorbell.audioFileList)',
+            },
+            native: {},
+        });
+        await this.setObjectNotExistsAsync('doorbell.autoReplyTimeout', {
+            type: 'state',
+            common: {
+                role: 'value',
+                name: { en: 'auto reply timeout', de: 'Timeout der automatischen Antwort' },
+                type: 'number',
+                unit: 's',
+                read: true,
+                write: true,
+                desc: 'Seconds after the doorbell rings before the auto reply is triggered',
+            },
+            native: {},
+        });
+        this.log.debug('Doorbell states created');
+    }
+    /**
+     * Remove doorbell states (when isDoorbell = false, e.g. after the user disabled it).
+     */
+    async removeDoorbellStates() {
+        for (const id of this.doorbellObjectIds) {
+            try {
+                const obj = await this.getObjectAsync(id);
+                if (obj) {
+                    await this.delObjectAsync(id);
+                    this.log.debug(`Deleted doorbell state: ${id}`);
+                }
+            }
+            catch {
+                // Ignore - object might not exist
+            }
+        }
+    }
+    /** Doorbell object ids (children before parents for clean deletion) */
+    doorbellObjectIds = [
+        'sensor.visitor.state',
+        'sensor.visitor.support',
+        'sensor.visitor',
+        'doorbell.audioFileList',
+        'doorbell.quickReplyPlay',
+        'doorbell.autoReplyEnabled',
+        'doorbell.autoReplyFileId',
+        'doorbell.autoReplyTimeout',
+        'doorbell',
+    ];
     /**
      * Cleanup HTTP camera states when switching to battery cam mode.
      * Removes all states that were created by createHttpCamStates().
@@ -2707,6 +3083,7 @@ class ReoLinkCamAdapter extends adapter_core_1.Adapter {
             'command',
             'RAW.Email',
             'RAW',
+            ...this.doorbellObjectIds,
         ];
         for (const id of httpCamObjects) {
             try {

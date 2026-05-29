@@ -180,6 +180,8 @@
     "apiRefreshInterval": "10",
     "sslvalid": false,
     "UriEncodedPassword": true,
+    "isDoorbell": false,
+    "onvifPort": 8000,
     "cameraBatteryName": "Camera01",
     "streamAutoDisableSeconds": 30,
     "mqttAutoDisableSeconds": 30,
