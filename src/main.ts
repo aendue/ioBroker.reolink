@@ -2,6 +2,7 @@ import { Adapter, type AdapterOptions } from '@iobroker/adapter-core';
 import axios, { type AxiosError, type AxiosInstance } from 'axios';
 import https from 'node:https';
 import path from 'node:path';
+import { networkInterfaces } from 'node:os';
 import * as utils from '@iobroker/adapter-core';
 import { NeolinkManager, type NeolinkConfig } from './neolink-manager';
 import { checkAllDependencies } from './dependency-check';
@@ -1700,12 +1701,19 @@ class ReoLinkCamAdapter extends Adapter {
 
             // Prepare neolink config
             const cameraName = this.config.cameraBatteryName || 'Camera01';
+            const configuredRtspHost = this.getRtspHostForExternalClients();
+            const configuredRtspPort =
+                typeof this.config.rtspPort === 'number' && this.config.rtspPort >= 1 && this.config.rtspPort <= 65535
+                    ? this.config.rtspPort
+                    : 8554;
             this.neolinkConfig = {
                 name: cameraName, // Friendly camera name for MQTT topics
                 username: this.config.cameraUser,
                 password: this.config.cameraPassword,
                 uid: this.config.cameraUID,
                 address: this.config.cameraIp,
+                rtspHost: configuredRtspHost,
+                rtspPort: configuredRtspPort,
                 pauseTimeout: this.config.pauseTimeout || 2.1,
                 // MQTT config (from adapter settings, used when MQTT is enabled)
                 mqttBroker: this.config.mqttBroker || '127.0.0.1',
@@ -1725,11 +1733,28 @@ class ReoLinkCamAdapter extends Adapter {
 
             // Calculate RTSP URLs (will be available when stream starts)
             // Use camera name (not adapter name) for RTSP URLs - already defined above
-            const mainStreamUrl = this.neolinkManager.getRtspUrl(this.neolinkConfig.name, 'mainStream');
-            const subStreamUrl = this.neolinkManager.getRtspUrl(this.neolinkConfig.name, 'subStream');
+            const mainStreamUrl = this.neolinkManager.getRtspUrl(
+                this.neolinkConfig.name,
+                'mainStream',
+                this.neolinkConfig.rtspHost,
+                this.neolinkConfig.rtspPort,
+            );
+            const subStreamUrl = this.neolinkManager.getRtspUrl(
+                this.neolinkConfig.name,
+                'subStream',
+                this.neolinkConfig.rtspHost,
+                this.neolinkConfig.rtspPort,
+            );
+            const snapshotStreamUrl = this.neolinkManager.getRtspUrl(
+                this.neolinkConfig.name,
+                'mainStream',
+                this.neolinkConfig.rtspHost,
+                this.neolinkConfig.rtspPort,
+            );
 
             this.log.debug(`RTSP Main Stream URL (when enabled): ${mainStreamUrl}`);
             this.log.debug(`RTSP Sub Stream URL (when enabled): ${subStreamUrl}`);
+            this.log.debug(`RTSP URL for snapshots: ${snapshotStreamUrl}`);
 
             await this.setStateAsync('streams.mainStream', mainStreamUrl, true);
             await this.setStateAsync('streams.subStream', subStreamUrl, true);
@@ -1760,6 +1785,66 @@ class ReoLinkCamAdapter extends Adapter {
             await this.setStateAsync('info.neolink_status', 'error', true);
             await this.setStateAsync('info.connection', false, true);
         }
+    }
+
+    /**
+     * Resolve RTSP host used in stream URLs for external clients.
+     * If config is empty/localhost/127.0.0.1, auto-detect a non-internal host IPv4.
+     */
+    private getRtspHostForExternalClients(): string {
+        const detectedHost = this.detectHostIpv4Address();
+        if (detectedHost) {
+            this.log.debug(`RTSP host auto-detected: ${detectedHost}`);
+            return detectedHost;
+        }
+
+        this.log.warn('Could not auto-detect RTSP host IP, falling back to 127.0.0.1');
+        return '127.0.0.1';
+    }
+
+    /**
+     * Detect host IPv4 address (prefers private LAN ranges).
+     */
+    private detectHostIpv4Address(): string | undefined {
+        const interfaces = networkInterfaces();
+        const candidates: string[] = [];
+
+        for (const entries of Object.values(interfaces)) {
+            if (!entries) {
+                continue;
+            }
+
+            for (const entry of entries) {
+                const isIpv4 = entry.family === 'IPv4';
+                if (!isIpv4 || entry.internal) {
+                    continue;
+                }
+
+                if (entry.address.startsWith('169.254.')) {
+                    continue;
+                }
+
+                candidates.push(entry.address);
+            }
+        }
+
+        if (candidates.length === 0) {
+            return undefined;
+        }
+
+        const preferred = candidates.find(addr => {
+            if (addr.startsWith('10.')) {
+                return true;
+            }
+            if (addr.startsWith('192.168.')) {
+                return true;
+            }
+
+            const secondOctet = Number(addr.split('.')[1] || '0');
+            return addr.startsWith('172.') && secondOctet >= 16 && secondOctet <= 31;
+        });
+
+        return preferred || candidates[0];
     }
 
     /**
@@ -3109,7 +3194,12 @@ class ReoLinkCamAdapter extends Adapter {
 
             this.log.debug('Capturing snapshot from mainStream...');
             const cameraName = this.neolinkConfig!.name;
-            const rtspUrl = this.neolinkManager.getRtspUrl(cameraName, 'mainStream');
+            const rtspUrl = this.neolinkManager.getRtspUrl(
+                cameraName,
+                'mainStream',
+                this.neolinkConfig!.rtspHost,
+                this.neolinkConfig!.rtspPort,
+            );
             this.log.debug(`Snapshot RTSP URL: ${rtspUrl}`);
             const imageBuffer = await captureSnapshot({ rtspUrl, timeoutMs: 15000 });
 

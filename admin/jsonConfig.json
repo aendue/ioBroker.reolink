@@ -156,6 +156,20 @@
                     "label": "Stream pause timeout (seconds)",
                     "help": "How long to wait before pausing stream when no RTSP client connected (default: 2.1s, neolink setting)"
                 },
+                "rtspPort": {
+                    "hidden": "!data.isBatteryCam",
+                    "newLine": true,
+                    "type": "number",
+                    "min": 1,
+                    "max": 65535,
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 6,
+                    "lg": 4,
+                    "xl": 4,
+                    "label": "RTSP Port (for stream URLs)",
+                    "help": "Port used in stream URLs (default: 8554)"
+                },
                 "mqttBroker": {
                     "hidden": "!data.isBatteryCam",
                     "newLine": true,

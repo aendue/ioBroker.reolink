@@ -184,6 +184,7 @@
     "streamAutoDisableSeconds": 30,
     "mqttAutoDisableSeconds": 30,
     "pauseTimeout": 2.1,
+    "rtspPort": 8554,
     "mqttBroker": "127.0.0.1",
     "mqttPort": 1883,
     "mqttUsername": "",
