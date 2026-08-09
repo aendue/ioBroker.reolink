@@ -49,8 +49,7 @@ jobs:
               with:
                   node-version: ${{ matrix.node-version }}
                   os: ${{ matrix.os }}
-                  # Uncomment the following line if your adapter cannot be installed using 'npm ci'
-                  # install-command: 'npm install'
+                  install-command: ${{ matrix.os == 'windows-latest' && 'npm install --no-audit --no-fund' || 'npm ci' }}
                   build: true
     # Deploys the final package to NPM
     deploy:
