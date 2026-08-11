@@ -214,6 +214,9 @@ Reolink Argus PT, Reolink Argus 3 Pro
     Placeholder for the next version (at the beginning of the line):
     ### **WORK IN PROGRESS**
 -->
+### **WORK IN PROGRESS**
+- (copilot) Adapter requires node.js >= 22 now
+
 ### 1.4.2 (2026-03-16)
 * (oelison) fast fix for issue #230
 
