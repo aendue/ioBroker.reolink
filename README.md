@@ -132,7 +132,6 @@ Battery cameras (Argus PT, Argus 3 Pro, ...) use a proprietary protocol and are 
 | `ptz.speed`              | number  | R/W | PTZ movement speed (1–100, default 32)                                   |
 | `status.motion`          | boolean | R   | Motion detected (via MQTT)                                               |
 | `status.battery_level`   | number  | R   | Battery level in % (via neolink CLI, periodic)                           |
-
 | `snapshotImage` | string | R | Last snapshot image (base64, data URI) |
 | `snapshotStatus` | string | R | Snapshot status: `idle` / `capturing` / `success` / `error` |
 | `info.neolink_status` | string | R | neolink process state: `stopped` / `running` |
