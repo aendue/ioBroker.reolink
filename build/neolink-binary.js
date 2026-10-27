@@ -48,10 +48,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.NEOLINK_VERSION = void 0;
 exports.ensureNeolinkBinary = ensureNeolinkBinary;
 exports.getNeolinkVersion = getNeolinkVersion;
-const os = __importStar(require("os"));
-const path = __importStar(require("path"));
-const fs = __importStar(require("fs"));
-const https = __importStar(require("https"));
+const os = __importStar(require("node:os"));
+const path = __importStar(require("node:path"));
+const fs = __importStar(require("node:fs"));
+const https = __importStar(require("node:https"));
 const adm_zip_1 = __importDefault(require("adm-zip"));
 /** Pinned neolink version — update this when upgrading neolink */
 exports.NEOLINK_VERSION = '0.6.2';
@@ -210,7 +210,7 @@ async function ensureNeolinkBinary(logFn) {
 function getNeolinkVersion(binaryPath) {
     return new Promise((resolve, reject) => {
         // eslint-disable-next-line @typescript-eslint/no-require-imports
-        const { spawn } = require('child_process');
+        const { spawn } = require('node:child_process');
         const proc = spawn(binaryPath, ['--version']);
         let output = '';
         proc.stdout.on('data', (data) => {

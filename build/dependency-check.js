@@ -8,9 +8,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.checkGStreamer = checkGStreamer;
 exports.checkFfmpeg = checkFfmpeg;
 exports.checkAllDependencies = checkAllDependencies;
-const child_process_1 = require("child_process");
-const util_1 = require("util");
-const execAsync = (0, util_1.promisify)(child_process_1.exec);
+const node_child_process_1 = require("node:child_process");
+const node_util_1 = require("node:util");
+const execAsync = (0, node_util_1.promisify)(node_child_process_1.exec);
 /**
  * Check if GStreamer RTSP server library is available (required for neolink)
  */

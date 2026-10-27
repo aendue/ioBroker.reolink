@@ -6,7 +6,7 @@
  */
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.captureSnapshot = captureSnapshot;
-const child_process_1 = require("child_process");
+const node_child_process_1 = require("node:child_process");
 /**
  * Capture snapshot from RTSP stream using ffmpeg
  */
@@ -28,7 +28,7 @@ async function captureSnapshot(options) {
             '2', // Quality (2 = high)
             '-', // Output to stdout
         ];
-        const ffmpeg = (0, child_process_1.spawn)('ffmpeg', args, {
+        const ffmpeg = (0, node_child_process_1.spawn)('ffmpeg', args, {
             stdio: ['ignore', 'pipe', 'pipe'],
         });
         const chunks = [];

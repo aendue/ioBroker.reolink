@@ -41,9 +41,9 @@ var __importStar = (this && this.__importStar) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.NeolinkManager = void 0;
-const child_process_1 = require("child_process");
-const fs = __importStar(require("fs"));
-const path = __importStar(require("path"));
+const node_child_process_1 = require("node:child_process");
+const fs = __importStar(require("node:fs"));
+const path = __importStar(require("node:path"));
 const neolink_binary_1 = require("./neolink-binary");
 class NeolinkManager {
     rtspProcess = null;
@@ -85,7 +85,7 @@ class NeolinkManager {
         // Generate RTSP-only config (no MQTT section)
         const configPath = this.generateRtspConfig(config);
         // Spawn neolink RTSP process
-        const proc = (0, child_process_1.spawn)(binaryPath, ['rtsp', '--config', configPath], {
+        const proc = (0, node_child_process_1.spawn)(binaryPath, ['rtsp', '--config', configPath], {
             cwd: this.dataDir,
             stdio: ['ignore', 'pipe', 'pipe'],
         });
@@ -115,7 +115,7 @@ class NeolinkManager {
         // Generate MQTT-only config
         const configPath = this.generateMqttConfig(config);
         // Spawn neolink MQTT process
-        const proc = (0, child_process_1.spawn)(binaryPath, ['mqtt', '--config', configPath], {
+        const proc = (0, node_child_process_1.spawn)(binaryPath, ['mqtt', '--config', configPath], {
             cwd: this.dataDir,
             stdio: ['ignore', 'pipe', 'pipe'],
         });
@@ -138,7 +138,7 @@ class NeolinkManager {
      */
     async killOrphanedProcesses() {
         return new Promise(resolve => {
-            (0, child_process_1.exec)(`pkill -f "neolink.*(mqtt|rtsp).*${this.dataDir.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}"`, () => {
+            (0, node_child_process_1.exec)(`pkill -f "neolink.*(mqtt|rtsp).*${this.dataDir.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}"`, () => {
                 // pkill returns exit code 1 if no processes found — that's fine
                 resolve();
             });
@@ -379,7 +379,7 @@ discovery = "relay"
         const cmd = `"${neolinkBin}" ptz --config="${configPath}" ${this.currentConfig.name} preset ${presetId}`;
         this.log(this.currentConfig.name, 'debug', `PTZ preset command: ${cmd}`);
         return new Promise((resolve, reject) => {
-            (0, child_process_1.exec)(cmd, { timeout: 10000 }, (error, _stdout, stderr) => {
+            (0, node_child_process_1.exec)(cmd, { timeout: 10000 }, (error, _stdout, stderr) => {
                 if (error) {
                     this.log(this.currentConfig.name, 'error', `PTZ preset failed: ${error.message}`);
                     reject(new Error(`PTZ preset failed: ${error.message}`));
@@ -409,7 +409,7 @@ discovery = "relay"
         const cmd = `"${neolinkBin}" ptz --config="${configPath}" ${this.currentConfig.name} control ${amount} ${direction}${speedArg}`;
         this.log(this.currentConfig.name, 'debug', `PTZ move command: ${cmd}`);
         return new Promise((resolve, reject) => {
-            (0, child_process_1.exec)(cmd, { timeout: 10000 }, (error, _stdout, stderr) => {
+            (0, node_child_process_1.exec)(cmd, { timeout: 10000 }, (error, _stdout, stderr) => {
                 if (error) {
                     this.log(this.currentConfig.name, 'error', `PTZ move failed: ${error.message}`);
                     reject(new Error(`PTZ move failed: ${error.message}`));
@@ -433,7 +433,7 @@ discovery = "relay"
         const cmd = `"${neolinkBin}" pir --config="${configPath}" ${this.currentConfig.name}`;
         this.log(this.currentConfig.name, 'debug', `Querying PIR status: ${cmd}`);
         return new Promise((resolve, reject) => {
-            (0, child_process_1.exec)(cmd, { timeout: 15000 }, (error, stdout, stderr) => {
+            (0, node_child_process_1.exec)(cmd, { timeout: 15000 }, (error, stdout, stderr) => {
                 if (error) {
                     reject(new Error(`PIR query failed: ${error.message}`));
                     return;
@@ -462,7 +462,7 @@ discovery = "relay"
         const cmd = `"${neolinkBin}" battery --config="${configPath}" ${this.currentConfig.name}`;
         this.log(this.currentConfig.name, 'debug', `Querying battery status: ${cmd}`);
         return new Promise((resolve, reject) => {
-            (0, child_process_1.exec)(cmd, { timeout: 15000 }, (error, stdout, stderr) => {
+            (0, node_child_process_1.exec)(cmd, { timeout: 15000 }, (error, stdout, stderr) => {
                 if (error) {
                     reject(new Error(`Battery query failed: ${error.message}`));
                     return;
