@@ -1,21 +1,8 @@
 {
   "common": {
     "name": "reolink",
-    "version": "1.4.3",
+    "version": "1.4.2",
     "news": {
-      "1.4.3": {
-        "en": "Doorbell support: ring detection via ONVIF events (`sensor.visitor.state`), quick reply and auto reply (enable via \"Doorbell camera\" in config; requires ONVIF enabled on the camera)",
-        "de": "Türklingelunterstützung: Klingelerkennung über ONVIF (`sensor.visitor.state`), Quick Reply und Autoreply (aktiviert über „Türklingel-Kamera“ in der Konfiguration; ONVIF muss aktiviert sein)",
-        "ru": "Поддержка дверных звонков: распознавание звонков с помощью событий ONVIF (`sensor.visitor.state`), быстрый ответ и автоматический ответ (включается с помощью «камеры дверного звонка» в конфигурации; требуется, чтобы на камере был включен ONVIF)",
-        "pt": "Suporte de campainha: detecção de toque via eventos ONVIF (`sensor.visitor.state`), resposta rápida e automática (ativa via “Câmera de campainha” na configuração; requer ONVIF na câmera)",
-        "nl": "Deurbelondersteuning: beldetectie via ONVIF-gebeurtenissen (`sensor.visitor.state`), snel antwoord en automatisch antwoord (inschakelen via „Doorbell camera” in de configuratie; ONVIF moet ingeschakeld zijn op de camera)",
-        "fr": "Support de sonnette : détection des sonneries via les événements ONVIF (« sensor.visitor.state »), réponse rapide et réponse automatique (activées via « Doorbell camera » dans la configuration ; ONVIF doit être activé sur la caméra)",
-        "it": "Supporto campanello: squillo tramite eventi ONVIF (`sensor.visitor.state`), risposta rapida e automatica (abilita tramite «videocamera»; richiede ONVIF abilitato)",
-        "es": "Soporte de timbre: detección de timbre mediante eventos ONVIF (`sensor.visitor.state`), respuesta rápida y automática (activar mediante «cámara de timbre» en la configuración; requiere ONVIF activado en la cámara)",
-        "pl": "Obsługa dzwonka do drzwi: wykrywanie dzwonka za pomocą zdarzeń ONVIF (`sensor.visitor.state`), szybka odpowiedź i automatyczna odpowiedź (włączenie za pomocą „Doorbell camera” w konfiguracji; wymaga włączenia ONVIF w kamerze)",
-        "uk": "Підтримка дверного дзвінка: виявлення дзвінка за допомогою подій ONVIF (`sensor.visitor.state`), швидка відповідь та автоматична відповідь (увімкнути через «камеру дверного дзвінка» у конфігурації; вимагає включення ONVIF на камері)",
-        "zh-cn": "门铃支持：通过 ONVIF 事件（`sensor.visitor.state`）进行铃声检测、快速回复和自动回复（通过配置中的 “门铃摄像头” 启用；需要在摄像机上启用 ONVIF）"
-      },
       "1.4.2": {
         "en": "fast fix for issue #230",
         "de": "schnelle reparatur für ausgabe #230",
@@ -186,6 +173,7 @@
     "streamAutoDisableSeconds": 30,
     "mqttAutoDisableSeconds": 30,
     "pauseTimeout": 2.1,
+    "rtspPort": 8554,
     "mqttBroker": "127.0.0.1",
     "mqttPort": 1883,
     "mqttUsername": "",

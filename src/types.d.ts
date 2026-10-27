@@ -16,6 +16,7 @@ export type ReoLinkCamAdapterConfig = {
     streamAutoDisableSeconds: number;
     mqttAutoDisableSeconds: number;
     pauseTimeout: number;
+    rtspPort?: number;
     mqttBroker?: string;
     mqttPort?: number;
     mqttUsername?: string;

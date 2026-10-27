@@ -225,7 +225,7 @@ On most Reolink doorbells the button press is **not** available through the HTTP
 ## Known Working Cameras
 
 ### HTTP API (Standard)
-RLC-420-5MP, E1 Zoom, RLC-522, RLC-810A, RLC-823A, Duo 3 PoE
+RLC-420-5MP, E1 Outdoor, E1 Zoom, RLC-522, RLC-810A, RLC-823A, Duo 3 PoE
 
 ### Battery Cameras (via Neolink)
 
@@ -242,7 +242,7 @@ Reolink Video Doorbell PoE (D340P)
     Placeholder for the next version (at the beginning of the line):
     ### **WORK IN PROGRESS**
 -->
-### 1.4.3 (2026-09-28)
+### **WORK IN PROGRESS**
 * (@GermanBluefox) Doorbell support: ring detection via ONVIF events (`sensor.visitor.state`), quick reply and auto reply (enable via "Doorbell camera" in config; requires ONVIF enabled on the camera)
 
 ### 1.4.2 (2026-03-16)

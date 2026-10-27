@@ -18,6 +18,8 @@ export interface NeolinkConfig {
     password: string;
     uid: string;
     address: string;
+    rtspHost?: string;
+    rtspPort?: number;
     mqttBroker?: string;
     mqttPort?: number;
     mqttUser?: string;
@@ -202,8 +204,20 @@ export class NeolinkManager {
     /**
      * Get RTSP stream URL
      */
-    public getRtspUrl(cameraName: string, stream: 'mainStream' | 'subStream' = 'mainStream'): string {
-        return `rtsp://127.0.0.1:8554/${cameraName}/${stream}`;
+    public getRtspUrl(
+        cameraName: string,
+        stream: 'mainStream' | 'subStream' = 'mainStream',
+        host: string = '127.0.0.1',
+        port: number = 8554,
+    ): string {
+        return `rtsp://${host}:${port}/${cameraName}/${stream}`;
+    }
+
+    /**
+     * Get internal RTSP stream URL used by adapter-local tools (ffmpeg snapshot).
+     */
+    public getInternalRtspUrl(cameraName: string, stream: 'mainStream' | 'subStream' = 'mainStream'): string {
+        return this.getRtspUrl(cameraName, stream, '127.0.0.1', 8554);
     }
 
     /**
@@ -224,7 +238,7 @@ username = '${config.username}'
 password = '${config.password}'
 uid = "${config.uid}"
 address = "${config.address}"
-discovery = "local"
+discovery = "relay"
 idle_disconnect = true
 
 [cameras.pause]
@@ -261,7 +275,7 @@ username = '${config.username}'
 password = '${config.password}'
 uid = "${config.uid}"
 address = "${config.address}"
-discovery = "local"
+discovery = "relay"
 
 [cameras.mqtt]
   enable_motion = true
