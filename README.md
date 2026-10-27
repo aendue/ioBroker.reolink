@@ -201,7 +201,7 @@ Control topics (published by adapter to camera):
 ## Known Working Cameras
 
 ### HTTP API (Standard)
-RLC-420-5MP, E1 Zoom, RLC-522, RLC-810A, RLC-823A, Duo 3 PoE
+RLC-420-5MP, E1 Outdoor, E1 Zoom, RLC-522, RLC-810A, RLC-823A, Duo 3 PoE
 
 ### Battery Cameras (via Neolink)
 
