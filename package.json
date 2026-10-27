@@ -24,8 +24,8 @@
   "dependencies": {
     "@iobroker/adapter-core": "^3.4.3",
     "adm-zip": "^0.6.1",
-    "axios": "^1.20.0",
-    "mqtt": "^5.16.0",
+    "axios": "^1.21.0",
+    "mqtt": "^5.16.1",
     "onvif": "^0.8.3"
   },
   "devDependencies": {
@@ -35,9 +35,10 @@
     "@alcalzone/release-script-plugin-manual-review": "^5.2.0",
     "@iobroker/adapter-dev": "^1.5.0",
     "@iobroker/eslint-config": "^2.3.4",
-    "@iobroker/testing": "^6.2.2",
-    "@iobroker/types": "^7.2.3",
-    "@types/adm-zip": "^0.5.8",
+    "@iobroker/testing": "^6.3.1",
+    "@iobroker/types": "^7.2.5",
+    "@types/adm-zip": "^0.6.0",
+    "@types/node": "^22.20.5",
     "typescript": "~6.0.3"
   },
   "main": "build/main.js",
@@ -53,6 +54,7 @@
     "test:package": "mocha test/package --exit",
     "test:unit": "mocha test/unit --exit",
     "test:integration": "mocha test/integration --exit",
+    "update-packages": "npx -y npm-check-updates --upgrade",
     "test": "npm run test:js && npm run test:unit && npm run test:package",
     "lint": "eslint -c eslint.config.mjs",
     "build": "tsc -p tsconfig.build.json",
