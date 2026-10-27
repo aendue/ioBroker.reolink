@@ -243,6 +243,7 @@ Reolink Video Doorbell PoE (D340P)
 -->
 ### **WORK IN PROGRESS**
 * (@GermanBluefox) Doorbell support: ring detection via ONVIF events (`sensor.visitor.state`), quick reply and auto reply (enable via "Doorbell camera" in config; requires ONVIF enabled on the camera)
+* (oelison) Adapter requires node.js >= 22 now
 
 ### 1.4.2 (2026-03-16)
 * (oelison) fast fix for issue #230
