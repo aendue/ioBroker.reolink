@@ -246,7 +246,6 @@ class ReoLinkCamAdapter extends Adapter {
         await this.getAutoFocus();
         await this.getZoomAndFocus();
         await this.getIrLights();
-        await this.getWhiteLed();
         await this.getRecording();
 
         this.log.debug('getStateAsync start Email notification');
@@ -1351,6 +1350,12 @@ class ReoLinkCamAdapter extends Adapter {
                     });
 
                     const whiteLed = whiteLedValue.data[0];
+
+                    if ('error' in whiteLed) {
+                        this.log.debug(`Error or not supported ${this.getWhiteLed.name}`);
+                        return;
+                    }
+
                     const brightness = whiteLed.value.WhiteLed.bright;
                     const mode = whiteLed.value.WhiteLed.mode;
                     const switchLed = !!whiteLed.value.WhiteLed.state;
@@ -1420,6 +1425,7 @@ class ReoLinkCamAdapter extends Adapter {
         await this.getMdState();
         await this.getAiState();
         await this.getAiCfg();
+        await this.getWhiteLed();
         await this.getMailNotification();
         this.refreshIntervalRecordingTimer++;
         if (this.refreshIntervalRecordingTimer > this.refreshIntervalRecording) {
